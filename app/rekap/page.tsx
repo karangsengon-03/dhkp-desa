@@ -131,6 +131,7 @@ export default function RekapPage() {
             <Printer size={15} /> Cetak Data DHKP
           </Button>
         </div>
+      </div>
 
       {/* Print Header */}
       <PrintRekapHeader appInfo={appInfo} tahun={tahun} />
