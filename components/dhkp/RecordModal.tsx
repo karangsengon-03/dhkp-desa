@@ -165,7 +165,7 @@ export function RecordModal({
       onSaved();
       onClose();
     } catch {
-      showToast('Terjadi kesalahan. Coba lagi.', 'error');
+      showToast('Terjadi kesalahan. Coba lagi.', 'danger');
     } finally {
       setLoading(false);
     }
