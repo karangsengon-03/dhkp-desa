@@ -90,3 +90,6 @@ export async function updateAppInfo(data: Partial<AppInfo>): Promise<void> {
   const { setDoc } = await import('firebase/firestore');
   await setDoc(ref, data, { merge: true });
 }
+
+// Re-export dari changelog agar bisa diimport dari satu tempat
+export { getChangelog, logChange } from '@/lib/changelog';
