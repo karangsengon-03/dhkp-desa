@@ -102,7 +102,7 @@ export default function RekapPage() {
   }, [records]);
 
   return (
-    <AppShell pageTitle="Rekap & Statistik">
+    <AppShell pageTitle="Rekap Lunas">
       <style>{`
         @media print {
           .no-print { display: none !important; }

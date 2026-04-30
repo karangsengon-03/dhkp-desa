@@ -216,9 +216,10 @@ export default function PengaturanPage() {
 
           {/* Logo */}
           <div className="mb-5">
-            <div className="flex items-center gap-2 mb-3">
-              <ImageIcon size={15} style={{ color: 'var(--color-text-secondary)' }} />
-              <span className="text-sm font-semibold" style={{ color: 'var(--color-text-secondary)' }}>Logo Header (PNG/SVG, maks 500 KB, 200×200 px)</span>
+            <div className="flex items-center gap-2 mb-2">
+              <ImageIcon size={14} style={{ color: 'var(--color-text-secondary)' }} />
+              <span className="text-xs font-semibold" style={{ color: 'var(--color-text-secondary)' }}>Logo Header</span>
+              <span className="text-xs" style={{ color: 'var(--color-text-disabled)' }}>PNG/SVG · maks 500 KB · 200×200px</span>
             </div>
             <div className="grid grid-cols-2 gap-4">
               {(['logoKiri', 'logoKanan'] as const).map((field) => (
@@ -351,10 +352,10 @@ export default function PengaturanPage() {
 
 function SectionHeader({ icon, color, title, sub }: { icon: React.ReactNode; color: string; title: string; sub: string }) {
   return (
-    <div className="flex items-center gap-3 mb-5">
-      <div className="rounded-xl p-2 flex-shrink-0" style={{ background: color }}>{icon}</div>
+    <div className="section-header">
+      <div className="section-icon" style={{ background: color }}>{icon}</div>
       <div>
-        <h2 className="font-bold text-base" style={{ color: 'var(--color-text-primary)' }}>{title}</h2>
+        <h2 className="font-bold text-sm" style={{ color: 'var(--color-text-primary)' }}>{title}</h2>
         <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>{sub}</p>
       </div>
     </div>

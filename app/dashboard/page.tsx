@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import { useDHKP } from '@/hooks/useDHKP';
 import { useGlobalLock } from '@/hooks/useGlobalLock';
 import {
@@ -13,30 +11,29 @@ import {
 import { formatRupiah } from '@/lib/format';
 
 const CURRENT_YEAR = new Date().getFullYear();
+const TAHUN_LIST = Array.from({ length: 5 }, (_, i) => CURRENT_YEAR - i);
 
 export default function DashboardPage() {
   const [tahun, setTahun] = useState(CURRENT_YEAR);
   const { records, loading } = useDHKP(tahun);
   const lock = useGlobalLock();
 
-  const total = records.length;
-  const lunas = records.filter((r) => r.statusLunas).length;
-  const belumLunas = total - lunas;
-  const persenLunas = total > 0 ? Math.round((lunas / total) * 100) : 0;
-  const totalPajak = records.reduce((s, r) => s + r.pajakTerhutang, 0);
-  const totalDibayar = records.filter((r) => r.statusLunas).reduce((s, r) => s + r.pajakTerhutang, 0);
-  const totalTunggakan = totalPajak - totalDibayar;
-  const totalLuasTanah = records.reduce((s, r) => s + (r.luasTanah || 0), 0);
-  const totalLuasBgn = records.reduce((s, r) => s + (r.luasBangunan || 0), 0);
-
-  const tahunList = Array.from({ length: 5 }, (_, i) => CURRENT_YEAR - i);
+  const total        = records.length;
+  const lunas        = records.filter(r => r.statusLunas).length;
+  const belumLunas   = total - lunas;
+  const persen       = total > 0 ? Math.round((lunas / total) * 100) : 0;
+  const totalPajak   = records.reduce((s, r) => s + r.pajakTerhutang, 0);
+  const totalDibayar = records.filter(r => r.statusLunas).reduce((s, r) => s + r.pajakTerhutang, 0);
+  const tunggakan    = totalPajak - totalDibayar;
+  const luasTanah    = records.reduce((s, r) => s + (r.luasTanah || 0), 0);
+  const luasBgn      = records.reduce((s, r) => s + (r.luasBangunan || 0), 0);
 
   return (
     <AppShell pageTitle="Dashboard">
-      {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+      {/* Page header */}
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div>
-          <h1 className="text-xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
+          <h1 className="text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>
             Dashboard
           </h1>
           <p className="text-sm mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
@@ -44,13 +41,14 @@ export default function DashboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <label className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Tahun:</label>
+          <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Tahun:</span>
           <select
-            className="input-field w-auto"
+            className="input-field"
+            style={{ width: 100 }}
             value={tahun}
-            onChange={(e) => setTahun(Number(e.target.value))}
+            onChange={e => setTahun(Number(e.target.value))}
           >
-            {tahunList.map((y) => <option key={y} value={y}>{y}</option>)}
+            {TAHUN_LIST.map(y => <option key={y} value={y}>{y}</option>)}
           </select>
         </div>
       </div>
@@ -58,114 +56,132 @@ export default function DashboardPage() {
       {/* Lock banner */}
       {lock.isLocked && (
         <div
-          className="flex items-center gap-3 px-4 py-3 rounded-xl mb-6 border"
-          style={{ background: 'var(--color-danger-light)', borderColor: 'var(--color-danger)', color: 'var(--color-danger)' }}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl mb-4 text-sm font-medium"
+          style={{ background: 'var(--color-danger-light)', color: 'var(--color-danger)', border: '1px solid var(--color-danger)' }}
         >
-          <Lock size={18} />
-          <span className="text-sm font-semibold">Data dikunci oleh: {lock.lockedBy}</span>
+          <Lock size={15} />
+          Data dikunci oleh: <strong>{lock.lockedBy}</strong>
         </div>
       )}
 
       {loading ? (
-        <div className="flex justify-center py-20">
-          <div className="w-10 h-10 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="stat-card">
+              <div className="w-9 h-9 rounded-lg skeleton" />
+              <div className="w-12 h-5 rounded skeleton" />
+              <div className="w-20 h-3 rounded skeleton" />
+            </div>
+          ))}
         </div>
       ) : (
         <>
-          {/* Baris 1: 6 stat cards sesuai blueprint */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-4">
-            <StatCard label="Total Objek" value={total} icon={<Users size={20} />} color="var(--color-primary)" bg="var(--color-primary-light)" />
-            <StatCard label="Sudah Lunas" value={lunas} icon={<CheckCircle size={20} />} color="var(--color-success)" bg="var(--color-success-light)" sub={`${persenLunas}%`} />
-            <StatCard label="Belum Lunas" value={belumLunas} icon={<XCircle size={20} />} color="var(--color-danger)" bg="var(--color-danger-light)" />
-            <StatCard label="Persentase" value={`${persenLunas}%`} icon={<TrendingUp size={20} />} color="var(--color-gold)" bg="var(--color-gold-light)" />
-            <StatCard label="Luas Tanah" value={`${totalLuasTanah.toLocaleString('id-ID')} m²`} icon={<LayoutGrid size={20} />} color="var(--color-primary)" bg="var(--color-primary-light)" />
-            <StatCard label="Luas Bangunan" value={`${totalLuasBgn.toLocaleString('id-ID')} m²`} icon={<Building2 size={20} />} color="var(--color-gold)" bg="var(--color-gold-light)" />
+          {/* 6 stat cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
+            <StatCard icon={<Users size={18} />} color="var(--color-primary)" bg="var(--color-primary-light)" label="Total Objek" value={total} />
+            <StatCard icon={<CheckCircle size={18} />} color="var(--color-success)" bg="var(--color-success-light)" label="Sudah Lunas" value={lunas} sub={`${persen}%`} />
+            <StatCard icon={<XCircle size={18} />} color="var(--color-danger)" bg="var(--color-danger-light)" label="Belum Lunas" value={belumLunas} />
+            <StatCard icon={<TrendingUp size={18} />} color="var(--color-gold)" bg="var(--color-gold-light)" label="Persentase" value={`${persen}%`} />
+            <StatCard icon={<LayoutGrid size={18} />} color="var(--color-primary)" bg="var(--color-primary-light)" label="Luas Tanah" value={`${luasTanah.toLocaleString('id-ID')}`} sub="m²" />
+            <StatCard icon={<Building2 size={18} />} color="var(--color-gold)" bg="var(--color-gold-light)" label="Luas Bangunan" value={`${luasBgn.toLocaleString('id-ID')}`} sub="m²" />
           </div>
 
-          {/* Baris 2: Finance cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <FinCard label="Total Pajak Terhutang" value={formatRupiah(totalPajak)} color="var(--color-primary)" icon={<Banknote size={18} />} />
-            <FinCard label="Total Sudah Dibayar" value={formatRupiah(totalDibayar)} color="var(--color-success)" icon={<CheckCircle size={18} />} />
-            <FinCard label="Total Tunggakan" value={formatRupiah(totalTunggakan)} color="var(--color-danger)" icon={<XCircle size={18} />} />
+          {/* Finance cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+            <FinCard icon={<Banknote size={17} />} color="var(--color-primary)" bg="var(--color-primary-light)" label="Total Pajak Terhutang" value={`Rp ${formatRupiah(totalPajak)}`} />
+            <FinCard icon={<CheckCircle size={17} />} color="var(--color-success)" bg="var(--color-success-light)" label="Total Sudah Dibayar" value={`Rp ${formatRupiah(totalDibayar)}`} />
+            <FinCard icon={<XCircle size={17} />} color="var(--color-danger)" bg="var(--color-danger-light)" label="Total Tunggakan" value={`Rp ${formatRupiah(tunggakan)}`} />
           </div>
 
-          {/* Progress bar */}
-          <Card className="p-5 mb-6">
-            <div className="flex items-center justify-between mb-3">
+          {/* Progress */}
+          <div className="card p-4 mb-3">
+            <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
                 Progres Pembayaran {tahun}
               </span>
-              <Badge variant={persenLunas >= 80 ? 'success' : persenLunas >= 50 ? 'warning' : 'danger'}>
-                {persenLunas}%
-              </Badge>
-            </div>
-            <div className="w-full h-3 rounded-full" style={{ background: 'var(--color-border)' }}>
-              <div
-                className="h-3 rounded-full transition-all duration-500"
+              <span
+                className="text-xs font-bold px-2 py-0.5 rounded-full"
                 style={{
-                  width: `${persenLunas}%`,
-                  background: persenLunas >= 80 ? 'var(--color-success)' : persenLunas >= 50 ? 'var(--color-warning)' : 'var(--color-danger)',
+                  background: persen >= 80 ? 'var(--color-success-light)' : persen >= 50 ? 'var(--color-warning-light)' : 'var(--color-danger-light)',
+                  color:      persen >= 80 ? 'var(--color-success)'       : persen >= 50 ? 'var(--color-warning)'       : 'var(--color-danger)',
+                }}
+              >
+                {persen}%
+              </span>
+            </div>
+            <div className="w-full h-2.5 rounded-full" style={{ background: 'var(--color-border)' }}>
+              <div
+                className="h-2.5 rounded-full transition-all duration-700"
+                style={{
+                  width: `${persen}%`,
+                  background: persen >= 80 ? 'var(--color-success)' : persen >= 50 ? 'var(--color-warning)' : 'var(--color-danger)',
                 }}
               />
             </div>
-            <div className="flex justify-between mt-2 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+            <div className="flex justify-between mt-1.5 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
               <span>{lunas} lunas</span>
-              <span>{belumLunas} belum</span>
+              <span>{belumLunas} belum lunas</span>
             </div>
-          </Card>
+          </div>
 
-          {/* Lock status */}
-          <Card className="p-4">
+          {/* Kunci status */}
+          <div className="card p-4">
             <div className="flex items-center gap-3">
               {lock.isLocked
-                ? <Lock size={18} style={{ color: 'var(--color-danger)' }} />
-                : <Unlock size={18} style={{ color: 'var(--color-success)' }} />
+                ? <Lock size={16} style={{ color: 'var(--color-danger)' }} />
+                : <Unlock size={16} style={{ color: 'var(--color-success)' }} />
               }
-              <div>
-                <div className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>Status Kunci Data</div>
-                <div className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
-                  {lock.isLocked ? `Dikunci oleh ${lock.lockedBy} — editing tidak tersedia` : 'Data terbuka untuk diedit'}
-                </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                  Status Kunci Data
+                </p>
+                <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
+                  {lock.isLocked ? `Dikunci oleh ${lock.lockedBy}` : 'Data terbuka untuk diedit'}
+                </p>
               </div>
-              <Badge variant={lock.isLocked ? 'danger' : 'success'} className="ml-auto">
+              <span
+                className="badge"
+                style={{
+                  background: lock.isLocked ? 'var(--color-danger-light)' : 'var(--color-success-light)',
+                  color:      lock.isLocked ? 'var(--color-danger)'       : 'var(--color-success)',
+                }}
+              >
                 {lock.isLocked ? 'Terkunci' : 'Terbuka'}
-              </Badge>
+              </span>
             </div>
-          </Card>
+          </div>
         </>
       )}
     </AppShell>
   );
 }
 
-function StatCard({ label, value, icon, color, bg, sub }: {
-  label: string; value: string | number; icon: React.ReactNode;
-  color: string; bg: string; sub?: string;
+function StatCard({ icon, color, bg, label, value, sub }: {
+  icon: React.ReactNode; color: string; bg: string;
+  label: string; value: string | number; sub?: string;
 }) {
   return (
-    <Card className="p-4 flex flex-col gap-2">
-      <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: bg, color }}>
-        {icon}
-      </div>
+    <div className="stat-card">
+      <div className="stat-icon" style={{ background: bg, color }}>{icon}</div>
       <div>
-        <div className="text-xl font-bold leading-tight" style={{ color: 'var(--color-text-primary)' }}>{value}</div>
-        <div className="text-xs font-medium mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>{label}</div>
-        {sub && <div className="text-xs mt-0.5" style={{ color }}>{sub}</div>}
+        <div className="stat-value">{value}</div>
+        {sub && <div className="text-xs font-medium" style={{ color }}>{sub}</div>}
+        <div className="stat-label">{label}</div>
       </div>
-    </Card>
+    </div>
   );
 }
 
-function FinCard({ label, value, color, icon }: { label: string; value: string; color: string; icon: React.ReactNode }) {
+function FinCard({ icon, color, bg, label, value }: {
+  icon: React.ReactNode; color: string; bg: string; label: string; value: string;
+}) {
   return (
-    <Card className="p-4 flex items-center gap-3">
-      <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${color}18`, color }}>
-        {icon}
-      </div>
+    <div className="fin-card">
+      <div className="fin-card-left" style={{ background: bg, color }}>{icon}</div>
       <div className="min-w-0">
-        <div className="text-xs font-medium mb-0.5" style={{ color: 'var(--color-text-secondary)' }}>{label}</div>
-        <div className="text-base font-bold truncate" style={{ color }}>{value}</div>
+        <div className="text-xs mb-0.5" style={{ color: 'var(--color-text-secondary)' }}>{label}</div>
+        <div className="text-sm font-bold truncate" style={{ color }}>{value}</div>
       </div>
-    </Card>
+    </div>
   );
 }
