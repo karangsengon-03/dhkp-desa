@@ -55,8 +55,17 @@ export default function LoginPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--color-bg)' }}>
-        <div className="w-10 h-10 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex flex-col items-center justify-center p-4" style={{ background: 'var(--color-bg)' }}>
+        <div className="w-full max-w-sm">
+          <div className="w-16 h-16 rounded-2xl skeleton mx-auto mb-6" />
+          <div className="w-48 h-5 rounded skeleton mx-auto mb-2" />
+          <div className="w-32 h-3.5 rounded skeleton mx-auto mb-8" />
+          <div className="card p-6 flex flex-col gap-4">
+            <div className="w-full h-11 rounded-lg skeleton" />
+            <div className="w-full h-11 rounded-lg skeleton" />
+            <div className="w-full h-11 rounded-lg skeleton" />
+          </div>
+        </div>
       </div>
     );
   }
