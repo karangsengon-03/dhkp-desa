@@ -35,20 +35,28 @@ function parseNumber(val: unknown): number {
   return isNaN(n) ? 0 : n;
 }
 
+// Helper: pick first non-empty value from multiple possible column name aliases
+function pick(raw: Record<string, unknown>, ...keys: string[]): unknown {
+  for (const k of keys) {
+    if (raw[k] !== undefined && raw[k] !== '') return raw[k];
+  }
+  return undefined;
+}
+
 function validateImportRow(raw: Record<string, unknown>, idx: number): ImportRow {
   const errors: string[] = [];
-  const nomor = parseNumber(raw['No'] ?? raw['nomor'] ?? idx + 1);
-  const nop = String(raw['NOP'] ?? raw['nop'] ?? '').trim();
-  const nomorInduk = String(raw['Nomor Induk'] ?? raw['nomorInduk'] ?? '').trim();
-  const namaWajibPajak = String(raw['Nama WP'] ?? raw['namaWajibPajak'] ?? '').trim();
-  const alamatObjekPajak = String(raw['Alamat Objek Pajak'] ?? raw['alamatObjekPajak'] ?? '').trim();
-  const pajakTerhutang = parseNumber(raw['Pajak Terhutang'] ?? raw['pajakTerhutang'] ?? 0);
-  const perubahanPajak = parseNumber(raw['Perubahan Pajak'] ?? raw['perubahanPajak'] ?? 0);
-  const statusLunas = parseBoolean(raw['Status Lunas'] ?? raw['statusLunas'] ?? false);
-  const tanggalBayar = String(raw['Tanggal Bayar'] ?? raw['tanggalBayar'] ?? '').trim();
-  const luasTanah = parseNumber(raw['Luas Tanah'] ?? raw['luasTanah'] ?? 0);
-  const luasBangunan = parseNumber(raw['Luas Bangunan'] ?? raw['luasBangunan'] ?? 0);
-  const dikelolaOleh = String(raw['Dikelola Oleh'] ?? raw['dikelolaOleh'] ?? '').trim();
+  const nomor = parseNumber(pick(raw, 'No', 'nomor') ?? idx + 1);
+  const nop = String(pick(raw, 'NOP', 'nop') ?? '').trim();
+  const nomorInduk = String(pick(raw, 'Nomor Induk', 'No. Induk', 'nomorInduk') ?? '').trim();
+  const namaWajibPajak = String(pick(raw, 'Nama WP', 'Nama Wajib Pajak', 'namaWajibPajak') ?? '').trim();
+  const alamatObjekPajak = String(pick(raw, 'Alamat Objek Pajak', 'Alamat Objek Pajak / Wajib Pajak', 'alamatObjekPajak') ?? '').trim();
+  const pajakTerhutang = parseNumber(pick(raw, 'Pajak Terhutang', 'pajakTerhutang') ?? 0);
+  const perubahanPajak = parseNumber(pick(raw, 'Perubahan Pajak', 'perubahanPajak') ?? 0);
+  const statusLunas = parseBoolean(pick(raw, 'Status Lunas', 'Lunas', 'statusLunas') ?? false);
+  const tanggalBayar = String(pick(raw, 'Tanggal Bayar', 'Tgl Bayar', 'tanggalBayar') ?? '').trim();
+  const luasTanah = parseNumber(pick(raw, 'Luas Tanah', 'Luas Tanah (m²)', 'luasTanah') ?? 0);
+  const luasBangunan = parseNumber(pick(raw, 'Luas Bangunan', 'Luas Bangunan (m²)', 'luasBangunan') ?? 0);
+  const dikelolaOleh = String(pick(raw, 'Dikelola Oleh', 'dikelolaOleh') ?? '').trim();
 
   if (!namaWajibPajak) errors.push('Nama WP kosong');
   if (!nop) errors.push('NOP kosong');
@@ -148,7 +156,21 @@ export default function ExportImportPage() {
         const data = new Uint8Array(ev.target?.result as ArrayBuffer);
         const wb = XLSX.read(data, { type: 'array' });
         const ws = wb.Sheets[wb.SheetNames[0]];
-        const rawRows: Record<string, unknown>[] = XLSX.utils.sheet_to_json(ws, { defval: '' });
+        // Auto-detect header row (supports files with title rows above header)
+        const allRows: unknown[][] = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' }) as unknown[][];
+        let headerRowIdx = 0;
+        for (let i = 0; i < Math.min(10, allRows.length); i++) {
+          const rowStr = allRows[i].map(String).join('|').toLowerCase();
+          if (rowStr.includes('nop') && (rowStr.includes('nama') || rowStr.includes('pajak'))) {
+            headerRowIdx = i;
+            break;
+          }
+        }
+        const headers = (allRows[headerRowIdx] as string[]).map(h => String(h ?? '').trim());
+        const dataRows = allRows.slice(headerRowIdx + 1).filter(r => (r as unknown[]).some(c => c !== '' && c !== null));
+        const rawRows: Record<string, unknown>[] = dataRows.map(row =>
+          Object.fromEntries(headers.map((h, i) => [h, (row as unknown[])[i] ?? '']))
+        );
         if (rawRows.length === 0) { showToast('File kosong atau format tidak dikenali', 'danger'); return; }
         const parsed = rawRows.map((r, i) => validateImportRow(r, i));
         const nopSeen = new Map<string, number>();
