@@ -2,8 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { LockBanner } from '@/components/dhkp/LockBanner';
 import { useGlobalLock } from '@/hooks/useGlobalLock';
@@ -13,9 +11,8 @@ import { getAppInfo, updateAppInfo, setGlobalLock, getDHKP } from '@/lib/firesto
 import { AppInfo } from '@/types';
 import * as XLSX from 'xlsx';
 import {
-  Settings, Lock, Unlock, User, Building2,
-  Image as ImageIcon, Save, RefreshCw, ShieldAlert,
-  KeyRound, Download, Info,
+  Lock, Unlock, User, Building2, Image as ImageIcon,
+  Save, RefreshCw, ShieldAlert, KeyRound, Download, Info,
 } from 'lucide-react';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -24,21 +21,43 @@ const APP_VERSION = 'v1.0.0';
 const CURRENT_YEAR = new Date().getFullYear();
 const BACKUP_YEARS = Array.from({ length: 5 }, (_, i) => CURRENT_YEAR - i);
 
+function SectionHeader({ icon, iconBg, title, sub }: {
+  icon: React.ReactNode;
+  iconBg: string;
+  title: string;
+  sub: string;
+}) {
+  return (
+    <div className="section-header">
+      <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-md)', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        {icon}
+      </div>
+      <div>
+        <div style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: 'var(--c-text-1)' }}>{title}</div>
+        <div style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)', marginTop: 2 }}>{sub}</div>
+      </div>
+    </div>
+  );
+}
+
+function InfoRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <span style={{ fontSize: 'var(--text-xs)', fontWeight: 500, color: 'var(--c-text-3)' }}>{label}</span>
+      <span style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--c-text-1)' }}>{value}</span>
+    </div>
+  );
+}
+
 export default function PengaturanPage() {
   const { user } = useAuth();
   const { showToast } = useToast();
   const lock = useGlobalLock();
 
   const [appInfo, setAppInfoState] = useState<AppInfo>({
-    kecamatan: '',
-    desaKelurahan: '',
-    tempatPembayaran: '',
-    propinsi: '',
-    kotaKab: '',
-    logoKiri: '',
-    logoKanan: '',
+    kecamatan: '', desaKelurahan: '', tempatPembayaran: '',
+    propinsi: '', kotaKab: '', logoKiri: '', logoKanan: '',
   });
-
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [lockLoading, setLockLoading] = useState(false);
@@ -74,11 +93,8 @@ export default function PengaturanPage() {
     try {
       await updateAppInfo(appInfo);
       showToast('Pengaturan berhasil disimpan', 'success');
-    } catch {
-      showToast('Gagal menyimpan pengaturan', 'danger');
-    } finally {
-      setSaving(false);
-    }
+    } catch { showToast('Gagal menyimpan pengaturan', 'danger'); }
+    finally { setSaving(false); }
   }
 
   async function handleToggleLock() {
@@ -88,11 +104,8 @@ export default function PengaturanPage() {
       const newState = !lock.isLocked;
       await setGlobalLock(newState, user.email);
       showToast(newState ? 'Data berhasil dikunci' : 'Kunci data berhasil dibuka', 'success');
-    } catch {
-      showToast('Gagal mengubah status kunci', 'danger');
-    } finally {
-      setLockLoading(false);
-    }
+    } catch { showToast('Gagal mengubah status kunci', 'danger'); }
+    finally { setLockLoading(false); }
   }
 
   async function handleResetPassword() {
@@ -100,12 +113,9 @@ export default function PengaturanPage() {
     setResetLoading(true);
     try {
       await sendPasswordResetEmail(auth, user.email);
-      showToast(`Link reset password dikirim ke ${user.email}`, 'success');
-    } catch {
-      showToast('Gagal mengirim email reset password', 'danger');
-    } finally {
-      setResetLoading(false);
-    }
+      showToast(`Link reset dikirim ke ${user.email}`, 'success');
+    } catch { showToast('Gagal mengirim email reset', 'danger'); }
+    finally { setResetLoading(false); }
   }
 
   async function handleBackupAll() {
@@ -117,40 +127,24 @@ export default function PengaturanPage() {
         const records = await getDHKP(tahun);
         if (records.length === 0) continue;
         total += records.length;
-        const header = [
-          'Nomor', 'NOP', 'No. Induk', 'Nama Wajib Pajak',
-          'Alamat Objek Pajak', 'Pajak Terhutang', 'Perubahan Pajak',
-          'Lunas', 'Tanggal Bayar', 'Luas Tanah (m²)', 'Luas Bangunan (m²)', 'Dikelola Oleh',
-        ];
-        const rows = records.map((r) => [
-          r.nomor, r.nop, r.nomorInduk, r.namaWajibPajak,
-          r.alamatObjekPajak, r.pajakTerhutang, r.perubahanPajak,
-          r.statusLunas ? 'Ya' : 'Tidak', r.tanggalBayar || '',
-          r.luasTanah || 0, r.luasBangunan || 0, r.dikelolaOleh || '',
-        ]);
+        const header = ['Nomor', 'NOP', 'No. Induk', 'Nama Wajib Pajak', 'Alamat Objek Pajak', 'Pajak Terhutang', 'Perubahan Pajak', 'Lunas', 'Tanggal Bayar', 'Luas Tanah (m²)', 'Luas Bangunan (m²)', 'Dikelola Oleh'];
+        const rows = records.map((r) => [r.nomor, r.nop, r.nomorInduk, r.namaWajibPajak, r.alamatObjekPajak, r.pajakTerhutang, r.perubahanPajak, r.statusLunas ? 'Ya' : 'Tidak', r.tanggalBayar || '', r.luasTanah || 0, r.luasBangunan || 0, r.dikelolaOleh || '']);
         const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
         XLSX.utils.book_append_sheet(wb, ws, `DHKP ${tahun}`);
       }
-      if (total === 0) {
-        showToast('Tidak ada data untuk di-backup', 'warning');
-        return;
-      }
-      const fname = `BACKUP_DHKP_${new Date().toISOString().slice(0, 10)}.xlsx`;
-      XLSX.writeFile(wb, fname);
-      showToast(`Backup berhasil — ${total} record dari ${BACKUP_YEARS.length} tahun`, 'success');
-    } catch {
-      showToast('Gagal membuat backup', 'danger');
-    } finally {
-      setBackupLoading(false);
-    }
+      if (total === 0) { showToast('Tidak ada data untuk di-backup', 'warning'); return; }
+      XLSX.writeFile(wb, `BACKUP_DHKP_${new Date().toISOString().slice(0, 10)}.xlsx`);
+      showToast(`Backup berhasil — ${total} record`, 'success');
+    } catch { showToast('Gagal membuat backup', 'danger'); }
+    finally { setBackupLoading(false); }
   }
 
   if (loading) {
     return (
       <AppShell pageTitle="Pengaturan">
-        <div className="flex justify-center items-center min-h-[200px] gap-3">
-          <RefreshCw size={20} style={{ color: 'var(--color-primary)', animation: 'spin 1s linear infinite' }} />
-          <span style={{ color: 'var(--color-text-secondary)' }}>Memuat pengaturan...</span>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 'var(--sp-12) 0', gap: 'var(--sp-3)' }}>
+          <RefreshCw size={20} className="animate-spin" style={{ color: 'var(--c-navy)' }} />
+          <span style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-sm)' }}>Memuat pengaturan...</span>
         </div>
       </AppShell>
     );
@@ -159,44 +153,50 @@ export default function PengaturanPage() {
   return (
     <AppShell pageTitle="Pengaturan">
       <LockBanner lock={lock} />
-      <div className="flex flex-col gap-5">
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
 
         {/* ── Akun & Keamanan ── */}
-        <Card className="p-6">
-          <SectionHeader icon={<User size={20} color="#fff" />} color="var(--color-primary)" title="Akun & Keamanan" sub="Informasi akun yang sedang login" />
+        <div className="card" style={{ padding: 'var(--sp-5)' }}>
+          <SectionHeader icon={<User size={18} style={{ color: "var(--c-text-inv)" }} />} iconBg="var(--c-navy)" title="Akun & Keamanan" sub="Informasi akun yang sedang login" />
 
-          <div className="flex items-center gap-4 p-4 rounded-xl mb-4" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
-            <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-base flex-shrink-0" style={{ background: 'var(--color-primary)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-4)', padding: 'var(--sp-4)', borderRadius: 'var(--radius-md)', background: 'var(--c-bg)', border: '1px solid var(--c-border)', marginBottom: 'var(--sp-3)' }}>
+            <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--c-navy)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--c-text-inv)', fontWeight: 700, fontSize: 'var(--text-base)', flexShrink: 0 }}>
               {(user?.displayName || user?.email || 'U').charAt(0).toUpperCase()}
             </div>
             <div>
-              <p className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>
+              <div style={{ fontWeight: 600, fontSize: 'var(--text-sm)', color: 'var(--c-text-1)' }}>
                 {user?.displayName || user?.email || 'Pengguna'}
-              </p>
-              <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>{user?.email || '-'}</p>
+              </div>
+              <div style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)', marginTop: 2 }}>{user?.email || '—'}</div>
             </div>
           </div>
 
-          <div className="flex items-start gap-3 p-4 rounded-xl mb-4" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
-            <KeyRound size={18} style={{ color: 'var(--color-text-secondary)', marginTop: 2, flexShrink: 0 }} />
-            <div className="flex-1">
-              <p className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>Ganti Password</p>
-              <p className="text-xs mt-0.5 mb-3" style={{ color: 'var(--color-text-secondary)' }}>
-                Link reset password akan dikirim ke email <strong>{user?.email}</strong>. Cek kotak masuk atau folder spam.
-              </p>
-              <Button variant="secondary" size="sm" onClick={handleResetPassword} disabled={resetLoading}>
-                <KeyRound size={14} />
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--sp-3)', padding: 'var(--sp-4)', borderRadius: 'var(--radius-md)', background: 'var(--c-bg)', border: '1px solid var(--c-border)' }}>
+            <KeyRound size={16} style={{ color: 'var(--c-text-3)', marginTop: 2, flexShrink: 0 }} />
+            <div>
+              <div style={{ fontWeight: 600, fontSize: 'var(--text-sm)', color: 'var(--c-text-1)' }}>Ganti Password</div>
+              <div style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)', margin: '4px 0 12px' }}>
+                Link reset password akan dikirim ke <strong>{user?.email}</strong>.
+              </div>
+              <button
+                className="btn btn-secondary btn-sm"
+                onClick={handleResetPassword}
+                disabled={resetLoading}
+                style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-xs)' }}
+              >
+                <KeyRound size={13} />
                 {resetLoading ? 'Mengirim...' : 'Kirim Link Reset Password'}
-              </Button>
+              </button>
             </div>
           </div>
-        </Card>
+        </div>
 
         {/* ── Informasi Desa ── */}
-        <Card className="p-6">
-          <SectionHeader icon={<Building2 size={20} color="#fff" />} color="var(--color-gold)" title="Informasi Desa" sub="Data yang tampil di header surat dan cetak" />
+        <div className="card" style={{ padding: 'var(--sp-5)' }}>
+          <SectionHeader icon={<Building2 size={18} style={{ color: "var(--c-text-inv)" }} />} iconBg="var(--c-gold)" title="Informasi Desa" sub="Data yang tampil di header cetak dan rekap" />
 
-          <div className="grid gap-4 mb-5" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 'var(--sp-4)', marginBottom: 'var(--sp-5)' }}>
             {([
               ['propinsi', 'Propinsi', 'Contoh: Jawa Timur'],
               ['kotaKab', 'Kota / Kabupaten', 'Contoh: Kabupaten Bondowoso'],
@@ -214,44 +214,38 @@ export default function PengaturanPage() {
             ))}
           </div>
 
-          {/* Logo */}
-          <div className="mb-5">
-            <div className="flex items-center gap-2 mb-2">
-              <ImageIcon size={14} style={{ color: 'var(--color-text-secondary)' }} />
-              <span className="text-xs font-semibold" style={{ color: 'var(--color-text-secondary)' }}>Logo Header</span>
-              <span className="text-xs" style={{ color: 'var(--color-text-disabled)' }}>PNG/SVG · maks 500 KB · 200×200px</span>
+          {/* Logo Upload */}
+          <div style={{ marginBottom: 'var(--sp-5)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', marginBottom: 'var(--sp-2)' }}>
+              <ImageIcon size={13} style={{ color: 'var(--c-text-3)' }} />
+              <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--c-text-3)' }}>Logo Header</span>
+              <span style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-4)' }}>PNG/SVG · maks 500 KB</span>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-4)' }}>
               {(['logoKiri', 'logoKanan'] as const).map((field) => (
                 <div key={field}>
-                  <p className="text-xs font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
+                  <div style={{ fontSize: 'var(--text-xs)', fontWeight: 500, color: 'var(--c-text-3)', marginBottom: 6 }}>
                     Logo {field === 'logoKiri' ? 'Kiri' : 'Kanan'}
-                  </p>
+                  </div>
                   <div
                     onClick={() => (field === 'logoKiri' ? logoKiriRef : logoKananRef).current?.click()}
-                    className="rounded-xl flex flex-col items-center justify-center cursor-pointer transition-colors"
-                    style={{ border: '2px dashed var(--color-border)', minHeight: 96, padding: '1rem', gap: '0.5rem' }}
+                    style={{ border: '2px dashed var(--c-border)', borderRadius: 'var(--radius-md)', minHeight: 90, padding: 'var(--sp-4)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', gap: 6, transition: 'border-color 150ms' }}
                   >
                     {appInfo[field] ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={appInfo[field] as string} alt={field} style={{ maxHeight: 72, maxWidth: '100%', objectFit: 'contain' }} />
+                      <img src={appInfo[field] as string} alt={field} style={{ maxHeight: 68, maxWidth: '100%', objectFit: 'contain' }} />
                     ) : (
                       <>
-                        <ImageIcon size={28} style={{ color: 'var(--color-text-disabled)' }} />
-                        <span className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>Klik untuk upload</span>
+                        <ImageIcon size={26} style={{ color: 'var(--c-text-4)' }} />
+                        <span style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)' }}>Klik untuk upload</span>
                       </>
                     )}
                   </div>
-                  <input
-                    ref={field === 'logoKiri' ? logoKiriRef : logoKananRef}
-                    type="file" accept="image/*" className="hidden"
-                    onChange={(e) => handleLogoUpload(field, e)}
-                  />
+                  <input ref={field === 'logoKiri' ? logoKiriRef : logoKananRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleLogoUpload(field, e)} />
                   {appInfo[field] && (
                     <button
                       onClick={() => handleChange(field, '')}
-                      className="mt-1 text-xs"
-                      style={{ color: 'var(--color-danger)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                      style={{ marginTop: 4, fontSize: 'var(--text-xs)', color: 'var(--c-danger)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                     >
                       Hapus logo
                     </button>
@@ -261,103 +255,93 @@ export default function PengaturanPage() {
             </div>
           </div>
 
-          <div className="flex justify-end">
-            <Button variant="primary" onClick={handleSave} disabled={saving}>
-              <Save size={15} />
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <button
+              className="btn btn-primary"
+              onClick={handleSave}
+              disabled={saving}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-sm)' }}
+            >
+              <Save size={14} />
               {saving ? 'Menyimpan...' : 'Simpan Pengaturan'}
-            </Button>
+            </button>
           </div>
-        </Card>
+        </div>
 
         {/* ── Kunci Data Global ── */}
-        <Card className="p-6">
+        <div className="card" style={{ padding: 'var(--sp-5)' }}>
           <SectionHeader
-            icon={lock.isLocked ? <Lock size={20} color="#fff" /> : <Unlock size={20} color="#fff" />}
-            color={lock.isLocked ? 'var(--color-danger)' : 'var(--color-success)'}
+            icon={lock.isLocked ? <Lock size={18} style={{ color: "var(--c-text-inv)" }} /> : <Unlock size={18} style={{ color: "var(--c-text-inv)" }} />}
+            iconBg={lock.isLocked ? 'var(--c-danger)' : 'var(--c-success)'}
             title="Kunci Data Global"
             sub="Mencegah semua pengguna mengubah data ketika aktif"
           />
 
-          <div
-            className="flex items-center gap-3 p-4 rounded-xl mb-4"
-            style={{
-              border: `1px solid ${lock.isLocked ? 'var(--color-danger)' : 'var(--color-border)'}`,
-              background: lock.isLocked ? 'rgba(198,40,40,0.05)' : 'var(--color-bg)',
-            }}
-          >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', padding: 'var(--sp-4)', borderRadius: 'var(--radius-md)', border: `1px solid ${lock.isLocked ? 'var(--c-danger)' : 'var(--c-border)'}`, background: lock.isLocked ? 'var(--c-danger-light)' : 'var(--c-bg)', marginBottom: 'var(--sp-4)' }}>
             {lock.isLocked
-              ? <ShieldAlert size={20} style={{ color: 'var(--color-danger)', flexShrink: 0 }} />
-              : <Unlock size={20} style={{ color: 'var(--color-success)', flexShrink: 0 }} />
+              ? <ShieldAlert size={18} style={{ color: 'var(--c-danger)', flexShrink: 0 }} />
+              : <Unlock size={18} style={{ color: 'var(--c-success)', flexShrink: 0 }} />
             }
             <div>
-              <p className="text-sm font-semibold" style={{ color: lock.isLocked ? 'var(--color-danger)' : 'var(--color-success)' }}>
+              <div style={{ fontWeight: 600, fontSize: 'var(--text-sm)', color: lock.isLocked ? 'var(--c-danger)' : 'var(--c-success)' }}>
                 {lock.isLocked ? 'Data Sedang Dikunci' : 'Data Tidak Dikunci'}
-              </p>
-              {lock.isLocked && (
-                <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
+              </div>
+              {lock.isLocked && lock.lockedBy && (
+                <div style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)', marginTop: 2 }}>
                   Dikunci oleh: <strong>{lock.lockedBy}</strong>
                   {lock.lockedAt && (
                     <> · {new Date(lock.lockedAt.seconds * 1000).toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</>
                   )}
-                </p>
+                </div>
               )}
             </div>
           </div>
 
-          <Button variant={lock.isLocked ? 'danger' : 'primary'} onClick={handleToggleLock} disabled={lockLoading}>
-            {lock.isLocked ? <Unlock size={15} /> : <Lock size={15} />}
+          <button
+            className={`btn ${lock.isLocked ? 'btn-danger' : 'btn-primary'}`}
+            onClick={handleToggleLock}
+            disabled={lockLoading}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-sm)' }}
+          >
+            {lock.isLocked ? <Unlock size={14} /> : <Lock size={14} />}
             {lockLoading ? 'Memproses...' : lock.isLocked ? 'Buka Kunci Data' : 'Kunci Semua Data'}
-          </Button>
-        </Card>
+          </button>
+        </div>
 
         {/* ── Backup Data ── */}
-        <Card className="p-6">
-          <SectionHeader icon={<Download size={20} color="#fff" />} color="var(--color-primary)" title="Backup Data" sub="Unduh semua data DHKP ke file Excel (.xlsx)" />
+        <div className="card" style={{ padding: 'var(--sp-5)' }}>
+          <SectionHeader icon={<Download size={18} style={{ color: "var(--c-text-inv)" }} />} iconBg="var(--c-navy)" title="Backup Data" sub="Unduh semua data DHKP ke file Excel (.xlsx)" />
 
-          <div className="p-4 rounded-xl mb-4" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
-            <p className="text-sm font-medium mb-1" style={{ color: 'var(--color-text-primary)' }}>Backup Semua Tahun</p>
-            <p className="text-xs mb-3" style={{ color: 'var(--color-text-secondary)' }}>
-              Mengunduh data {BACKUP_YEARS.join(', ')} sekaligus dalam satu file Excel. Setiap tahun menjadi satu sheet tersendiri.
-            </p>
-            <Button variant="secondary" size="sm" onClick={handleBackupAll} disabled={backupLoading}>
-              <Download size={14} />
+          <div style={{ padding: 'var(--sp-4)', borderRadius: 'var(--radius-md)', background: 'var(--c-bg)', border: '1px solid var(--c-border)', marginBottom: 'var(--sp-4)' }}>
+            <div style={{ fontWeight: 600, fontSize: 'var(--text-sm)', color: 'var(--c-text-1)', marginBottom: 4 }}>Backup Semua Tahun</div>
+            <div style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)', marginBottom: 'var(--sp-3)' }}>
+              Mengunduh data {BACKUP_YEARS.join(', ')} dalam satu file Excel. Setiap tahun menjadi satu sheet.
+            </div>
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={handleBackupAll}
+              disabled={backupLoading}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-xs)' }}
+            >
+              <Download size={13} />
               {backupLoading ? 'Memproses...' : 'Download Backup Semua Tahun'}
-            </Button>
+            </button>
           </div>
-        </Card>
+        </div>
 
-        {/* ── Info Versi ── */}
-        <Card className="p-6">
-          <SectionHeader icon={<Info size={20} color="#fff" />} color="var(--color-text-secondary)" title="Informasi Aplikasi" sub="Versi dan detail teknis" />
+        {/* ── Info Aplikasi ── */}
+        <div className="card" style={{ padding: 'var(--sp-5)' }}>
+          <SectionHeader icon={<Info size={18} style={{ color: "var(--c-text-inv)" }} />} iconBg="var(--c-text-3)" title="Informasi Aplikasi" sub="Versi dan detail teknis" />
 
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            {[
-              ['Nama Aplikasi', 'DHKP Desa Karang Sengon'],
-              ['Versi', APP_VERSION],
-              ['Platform', 'Next.js + Firebase'],
-              ['Desa', 'Karang Sengon, Klabang, Bondowoso'],
-            ].map(([k, v]) => (
-              <div key={k} className="flex flex-col gap-0.5">
-                <span className="text-xs font-medium" style={{ color: 'var(--color-text-secondary)' }}>{k}</span>
-                <span className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>{v}</span>
-              </div>
-            ))}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 'var(--sp-4)' }}>
+            <InfoRow label="Nama Aplikasi" value="DHKP Desa Karang Sengon" />
+            <InfoRow label="Versi" value={APP_VERSION} />
+            <InfoRow label="Platform" value="Next.js + Firebase" />
+            <InfoRow label="Desa" value="Karang Sengon, Klabang, Bondowoso" />
           </div>
-        </Card>
+        </div>
 
       </div>
     </AppShell>
-  );
-}
-
-function SectionHeader({ icon, color, title, sub }: { icon: React.ReactNode; color: string; title: string; sub: string }) {
-  return (
-    <div className="section-header">
-      <div className="section-icon" style={{ background: color }}>{icon}</div>
-      <div>
-        <h2 className="font-bold text-sm" style={{ color: 'var(--color-text-primary)' }}>{title}</h2>
-        <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>{sub}</p>
-      </div>
-    </div>
   );
 }

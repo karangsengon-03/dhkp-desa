@@ -9,104 +9,98 @@ interface PrintRekapHeaderProps {
 
 export function PrintRekapHeader({ appInfo, tahun }: PrintRekapHeaderProps) {
   return (
-    <div className="print-header" style={{ display: 'none' }}>
+    <div className="print-rekap-header">
       <style>{`
+        @media screen { .print-rekap-header { display: none !important; } }
         @media print {
-          .print-header {
+          .print-rekap-header {
             display: block !important;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
           }
-          .print-header-inner {
+          .prh-inner {
             display: flex;
             align-items: center;
-            gap: 16px;
-            border-bottom: 3px solid #1E3A5F;
-            padding-bottom: 16px;
-            margin-bottom: 16px;
+            gap: 14px;
+            border-top: 3px solid var(--c-navy, #1E3A5F);
+            border-bottom: 1px solid var(--c-navy, #1E3A5F);
+            padding: 10px 0;
+            margin-bottom: 12px;
           }
-          .print-logo {
-            width: 72px;
-            height: 72px;
+          .prh-logo {
+            width: 64px;
+            height: 64px;
             object-fit: contain;
             flex-shrink: 0;
           }
-          .print-logo-placeholder {
-            width: 72px;
-            height: 72px;
+          .prh-placeholder {
+            width: 64px;
+            height: 64px;
             flex-shrink: 0;
           }
-          .print-title-block {
+          .prh-titles {
             flex: 1;
             text-align: center;
           }
-          .print-title-block h1 {
-            font-size: 16px;
+          .prh-titles .t1 {
+            font-size: 13px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: #1E3A5F;
+            color: var(--c-navy, #1E3A5F);
             margin-bottom: 2px;
           }
-          .print-title-block h2 {
-            font-size: 13px;
+          .prh-titles .t2 {
+            font-size: 11px;
             font-weight: 600;
-            color: #1E3A5F;
+            color: var(--c-navy, #1E3A5F);
             margin-bottom: 2px;
           }
-          .print-title-block p {
-            font-size: 12px;
-            color: #444;
+          .prh-titles .t3 {
+            font-size: 10px;
+            color: var(--c-text-2, #444);
           }
-          .print-subtitle {
+          .prh-subtitle {
             text-align: center;
-            margin-top: 12px;
+            margin-top: 8px;
           }
-          .print-subtitle h3 {
-            font-size: 14px;
+          .prh-subtitle .s1 {
+            font-size: 13px;
             font-weight: 700;
             text-decoration: underline;
             text-transform: uppercase;
-            color: #111;
+            color: var(--c-text-1, #111);
           }
-          .print-subtitle p {
-            font-size: 12px;
-            color: #555;
+          .prh-subtitle .s2 {
+            font-size: 10px;
+            color: var(--c-text-3, #555);
             margin-top: 2px;
           }
         }
       `}</style>
 
-      <div className="print-header-inner">
-        {/* Logo Kiri */}
-        {appInfo?.logoKiri ? (
-          <img src={appInfo.logoKiri} alt="Logo Kiri" className="print-logo" />
-        ) : (
-          <div className="print-logo-placeholder" />
-        )}
+      <div className="prh-inner">
+        {appInfo?.logoKiri
+          ? <img src={appInfo.logoKiri} alt="Logo Kiri" className="prh-logo" />
+          : <div className="prh-placeholder" />}
 
-        {/* Judul Tengah */}
-        <div className="print-title-block">
-          <h1>Pemerintah {appInfo?.kotaKab || 'Kabupaten/Kota'}</h1>
-          <h2>Kecamatan {appInfo?.kecamatan || '-'}</h2>
-          <p>Desa/Kelurahan {appInfo?.desaKelurahan || '-'}</p>
-          {appInfo?.propinsi && (
-            <p>Provinsi {appInfo.propinsi}</p>
-          )}
+        <div className="prh-titles">
+          <div className="t1">Pemerintah {appInfo?.kotaKab || 'Kabupaten/Kota'}</div>
+          <div className="t2">
+            Kecamatan {appInfo?.kecamatan || '-'} &mdash; Desa/Kelurahan {appInfo?.desaKelurahan || '-'}
+          </div>
+          {appInfo?.propinsi && <div className="t3">Provinsi {appInfo.propinsi}</div>}
         </div>
 
-        {/* Logo Kanan */}
-        {appInfo?.logoKanan ? (
-          <img src={appInfo.logoKanan} alt="Logo Kanan" className="print-logo" />
-        ) : (
-          <div className="print-logo-placeholder" />
-        )}
+        {appInfo?.logoKanan
+          ? <img src={appInfo.logoKanan} alt="Logo Kanan" className="prh-logo" />
+          : <div className="prh-placeholder" />}
       </div>
 
-      <div className="print-subtitle">
-        <h3>Rekap DHKP (Daftar Himpunan Ketetapan Pajak & Pembayaran)</h3>
-        <p>Tahun Pajak {tahun}</p>
+      <div className="prh-subtitle">
+        <div className="s1">Rekap DHKP (Daftar Himpunan Ketetapan Pajak &amp; Pembayaran)</div>
+        <div className="s2">Tahun Pajak {tahun}</div>
         {appInfo?.tempatPembayaran && (
-          <p>Tempat Pembayaran: {appInfo.tempatPembayaran}</p>
+          <div className="s2">Tempat Pembayaran: {appInfo.tempatPembayaran}</div>
         )}
       </div>
     </div>

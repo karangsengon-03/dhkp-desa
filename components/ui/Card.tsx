@@ -6,11 +6,17 @@ interface CardProps {
   children: React.ReactNode;
   className?: string;
   padding?: boolean;
+  interactive?: boolean;
+  onClick?: () => void;
 }
 
-export function Card({ children, className = '', padding = true }: CardProps) {
+export function Card({ children, className = '', padding = true, interactive = false, onClick }: CardProps) {
   return (
-    <div className={`card ${padding ? 'p-4' : ''} ${className}`}>
+    <div
+      className={`${interactive ? 'card-interactive' : 'card'} ${padding ? '' : ''} ${className}`}
+      style={padding ? { padding: 'var(--sp-4)' } : undefined}
+      onClick={onClick}
+    >
       {children}
     </div>
   );

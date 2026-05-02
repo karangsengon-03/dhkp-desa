@@ -65,7 +65,6 @@ export function RecordModal({
 
   const isEdit = editRecord !== null;
 
-  // Populate form when editing
   useEffect(() => {
     if (open) {
       if (editRecord) {
@@ -91,8 +90,8 @@ export function RecordModal({
   }, [open, editRecord, maxNomor]);
 
   function set(field: keyof FormData, value: string | boolean) {
-    setForm((f) => ({ ...f, [field]: value }));
-    setErrors((e) => ({ ...e, [field]: undefined }));
+    setForm(f => ({ ...f, [field]: value }));
+    setErrors(e => ({ ...e, [field]: undefined }));
   }
 
   function validate(): boolean {
@@ -128,7 +127,6 @@ export function RecordModal({
 
       if (isEdit && editRecord) {
         await updateRecord(tahun, editRecord.id, payload);
-        // Log changes for each modified field
         const fieldsToLog: Array<{ key: keyof typeof payload; label: string }> = [
           { key: 'namaWajibPajak', label: 'Nama Wajib Pajak' },
           { key: 'nop', label: 'NOP' },
@@ -146,15 +144,7 @@ export function RecordModal({
           const oldVal = editRecord[key as keyof DHKPRecord] as string | number | boolean;
           const newVal = payload[key] as string | number | boolean;
           if (String(oldVal) !== String(newVal)) {
-            await logChange(
-              editRecord.id,
-              tahun,
-              editRecord.namaWajibPajak,
-              currentUser,
-              label,
-              oldVal,
-              newVal
-            );
+            await logChange(editRecord.id, tahun, editRecord.namaWajibPajak, currentUser, label, oldVal, newVal);
           }
         }
         showToast('Record berhasil diperbarui', 'success');
@@ -175,151 +165,149 @@ export function RecordModal({
     <Modal
       open={open}
       onClose={onClose}
-      title={isEdit ? `Edit Record — ${editRecord?.namaWajibPajak}` : 'Tambah Record Baru'}
+      title={isEdit ? `Edit — ${editRecord?.namaWajibPajak}` : 'Tambah Record Baru'}
       size="xl"
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Nomor */}
+
         <Field label="Nomor Urut">
           <input
             className="input-field"
             type="number"
             value={form.nomor}
-            onChange={(e) => set('nomor', e.target.value)}
+            onChange={e => set('nomor', e.target.value)}
             placeholder="Otomatis"
           />
         </Field>
 
-        {/* NOP */}
         <Field label="NOP *" error={errors.nop}>
           <input
-            className="input-field"
+            className={`input-field${errors.nop ? ' input-error' : ''}`}
             value={form.nop}
-            onChange={(e) => set('nop', e.target.value)}
+            onChange={e => set('nop', e.target.value)}
             placeholder="Nomor Objek Pajak"
           />
         </Field>
 
-        {/* Nomor Induk */}
         <Field label="Nomor Induk">
           <input
             className="input-field"
             value={form.nomorInduk}
-            onChange={(e) => set('nomorInduk', e.target.value)}
+            onChange={e => set('nomorInduk', e.target.value)}
             placeholder="Nomor Induk"
           />
         </Field>
 
-        {/* Nama Wajib Pajak */}
         <Field label="Nama Wajib Pajak *" error={errors.namaWajibPajak}>
           <input
-            className="input-field"
+            className={`input-field${errors.namaWajibPajak ? ' input-error' : ''}`}
             value={form.namaWajibPajak}
-            onChange={(e) => set('namaWajibPajak', e.target.value)}
+            onChange={e => set('namaWajibPajak', e.target.value)}
             placeholder="Nama lengkap"
           />
         </Field>
 
-        {/* Alamat — full width */}
         <Field label="Alamat Objek Pajak" className="md:col-span-2">
           <input
             className="input-field"
             value={form.alamatObjekPajak}
-            onChange={(e) => set('alamatObjekPajak', e.target.value)}
+            onChange={e => set('alamatObjekPajak', e.target.value)}
             placeholder="Alamat objek pajak"
           />
         </Field>
 
-        {/* Pajak Terhutang */}
         <Field label="Pajak Terhutang (Rp) *" error={errors.pajakTerhutang}>
           <input
-            className="input-field"
+            className={`input-field${errors.pajakTerhutang ? ' input-error' : ''}`}
             type="number"
             value={form.pajakTerhutang}
-            onChange={(e) => set('pajakTerhutang', e.target.value)}
+            onChange={e => set('pajakTerhutang', e.target.value)}
             placeholder="0"
           />
         </Field>
 
-        {/* Perubahan Pajak */}
         <Field label="Perubahan Pajak (Rp)">
           <input
             className="input-field"
             type="number"
             value={form.perubahanPajak}
-            onChange={(e) => set('perubahanPajak', e.target.value)}
+            onChange={e => set('perubahanPajak', e.target.value)}
             placeholder="0"
           />
         </Field>
 
-        {/* Luas Tanah */}
         <Field label="Luas Tanah (m²)">
           <input
             className="input-field"
             type="number"
             value={form.luasTanah}
-            onChange={(e) => set('luasTanah', e.target.value)}
+            onChange={e => set('luasTanah', e.target.value)}
             placeholder="0"
           />
         </Field>
 
-        {/* Luas Bangunan */}
         <Field label="Luas Bangunan (m²)">
           <input
             className="input-field"
             type="number"
             value={form.luasBangunan}
-            onChange={(e) => set('luasBangunan', e.target.value)}
+            onChange={e => set('luasBangunan', e.target.value)}
             placeholder="0"
           />
         </Field>
 
-        {/* Dikelola Oleh */}
         <Field label="Dikelola Oleh">
           <input
             className="input-field"
             value={form.dikelolaOleh}
-            onChange={(e) => set('dikelolaOleh', e.target.value)}
+            onChange={e => set('dikelolaOleh', e.target.value)}
             placeholder="Nama petugas"
           />
         </Field>
 
-        {/* Tanggal Bayar */}
         <Field label="Tanggal Bayar">
           <input
             className="input-field"
             type="date"
             value={form.tanggalBayar}
-            onChange={(e) => set('tanggalBayar', e.target.value)}
+            onChange={e => set('tanggalBayar', e.target.value)}
           />
         </Field>
 
         {/* Status Lunas — full width */}
         <div className="md:col-span-2">
           <label
-            className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border"
-            style={{ borderColor: 'var(--color-border)', background: 'var(--color-surface-2)' }}
+            className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border transition-colors"
+            style={{
+              borderColor: form.statusLunas ? 'var(--c-success)' : 'var(--c-border)',
+              background: form.statusLunas ? 'var(--c-success-light)' : 'var(--c-surface-2)',
+            }}
           >
+            {/* Toggle visual */}
             <div className="relative flex-shrink-0">
               <input
                 type="checkbox"
                 className="sr-only"
                 checked={form.statusLunas}
-                onChange={(e) => set('statusLunas', e.target.checked)}
+                onChange={e => set('statusLunas', e.target.checked)}
               />
               <div
                 className="w-11 h-6 rounded-full transition-colors duration-200"
-                style={{ backgroundColor: form.statusLunas ? 'var(--color-success)' : 'var(--color-text-disabled)' }}
+                style={{ background: form.statusLunas ? 'var(--c-success)' : 'var(--c-text-4)' }}
               />
               <div
-                className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${form.statusLunas ? 'translate-x-5' : 'translate-x-0'}`}
+                className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"
+                style={{ transform: form.statusLunas ? 'translateX(20px)' : 'translateX(0)' }}
               />
             </div>
             <div>
-              <div className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+              <div
+                className="font-semibold"
+                style={{ color: 'var(--c-text-1)', fontSize: 'var(--text-sm)' }}
+              >
                 Status Lunas
               </div>
-              <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+              <div style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}>
                 {form.statusLunas ? 'Sudah lunas' : 'Belum lunas'}
               </div>
             </div>
@@ -328,7 +316,10 @@ export function RecordModal({
       </div>
 
       {/* Actions */}
-      <div className="flex gap-3 mt-5 pt-4 border-t" style={{ borderColor: 'var(--color-border)' }}>
+      <div
+        className="flex gap-3 mt-5 pt-4 border-t"
+        style={{ borderColor: 'var(--c-border)' }}
+      >
         <Button variant="ghost" onClick={onClose} disabled={loading} className="flex-1">
           <X size={15} /> Batal
         </Button>
@@ -341,24 +332,21 @@ export function RecordModal({
 }
 
 function Field({
-  label,
-  children,
-  error,
-  className = '',
+  label, children, error, className = '',
 }: {
-  label: string;
-  children: React.ReactNode;
-  error?: string;
-  className?: string;
+  label: string; children: React.ReactNode; error?: string; className?: string;
 }) {
   return (
     <div className={className}>
-      <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--color-text-secondary)' }}>
+      <label
+        className="block font-semibold mb-1.5"
+        style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}
+      >
         {label}
       </label>
       {children}
       {error && (
-        <p className="text-xs mt-1" style={{ color: 'var(--color-danger)' }}>
+        <p className="mt-1" style={{ color: 'var(--c-danger)', fontSize: 'var(--text-xs)' }}>
           {error}
         </p>
       )}

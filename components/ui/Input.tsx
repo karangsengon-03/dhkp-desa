@@ -10,21 +10,20 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export function Input({ label, error, wrapperClass = '', className = '', id, ...props }: InputProps) {
   const inputId = id || label?.toLowerCase().replace(/\s/g, '-');
-
   return (
-    <div className={`flex flex-col gap-1 ${wrapperClass}`}>
+    <div className={`flex flex-col ${wrapperClass}`} style={{ gap: '6px' }}>
       {label && (
-        <label htmlFor={inputId} className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+        <label htmlFor={inputId} className="input-label">
           {label}
         </label>
       )}
       <input
         id={inputId}
-        className={`input-field ${error ? 'border-[var(--color-danger)]' : ''} ${className}`}
+        className={`input-field ${error ? 'input-error' : ''} ${className}`}
         {...props}
       />
       {error && (
-        <span className="text-xs" style={{ color: 'var(--color-danger)' }}>
+        <span style={{ fontSize: 'var(--text-xs)', color: 'var(--c-danger)' }}>
           {error}
         </span>
       )}
@@ -40,22 +39,22 @@ interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
 
 export function Textarea({ label, error, wrapperClass = '', className = '', id, ...props }: TextareaProps) {
   const inputId = id || label?.toLowerCase().replace(/\s/g, '-');
-
   return (
-    <div className={`flex flex-col gap-1 ${wrapperClass}`}>
+    <div className={`flex flex-col ${wrapperClass}`} style={{ gap: '6px' }}>
       {label && (
-        <label htmlFor={inputId} className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+        <label htmlFor={inputId} className="input-label">
           {label}
         </label>
       )}
       <textarea
         id={inputId}
-        className={`input-field resize-none ${error ? 'border-[var(--color-danger)]' : ''} ${className}`}
+        className={`input-field resize-none ${error ? 'input-error' : ''} ${className}`}
+        style={{ height: 'auto', paddingTop: 'var(--sp-2)', paddingBottom: 'var(--sp-2)' }}
         rows={3}
         {...props}
       />
       {error && (
-        <span className="text-xs" style={{ color: 'var(--color-danger)' }}>
+        <span style={{ fontSize: 'var(--text-xs)', color: 'var(--c-danger)' }}>
           {error}
         </span>
       )}

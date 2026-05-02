@@ -3,8 +3,6 @@
 import { useState, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import { AppShell } from '@/components/layout/AppShell';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
 import { LockBanner } from '@/components/dhkp/LockBanner';
 import { ImportPreviewModal } from '@/components/dhkp/ImportPreviewModal';
 import { useGlobalLock } from '@/hooks/useGlobalLock';
@@ -12,7 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/components/ui/Toast';
 import { getDHKP, addRecord, getChangelog } from '@/lib/firestore';
 import { DHKPRecord, ChangelogEntry } from '@/types';
-import { formatRupiah, formatTanggal } from '@/lib/format';
+import { formatTanggal } from '@/lib/format';
 import {
   Download, Upload, FileSpreadsheet, History,
   AlertTriangle, CheckCircle,
@@ -21,7 +19,7 @@ import {
 const CURRENT_YEAR = new Date().getFullYear();
 const TAHUN_LIST = Array.from({ length: 5 }, (_, i) => CURRENT_YEAR - i);
 
-interface ImportRow {
+export interface ImportRow {
   row: Partial<DHKPRecord>;
   errors: string[];
 }
@@ -45,20 +43,43 @@ function validateImportRow(raw: Record<string, unknown>, idx: number): ImportRow
   const namaWajibPajak = String(raw['Nama WP'] ?? raw['namaWajibPajak'] ?? '').trim();
   const alamatObjekPajak = String(raw['Alamat Objek Pajak'] ?? raw['alamatObjekPajak'] ?? '').trim();
   const pajakTerhutang = parseNumber(raw['Pajak Terhutang'] ?? raw['pajakTerhutang'] ?? 0);
+  const perubahanPajak = parseNumber(raw['Perubahan Pajak'] ?? raw['perubahanPajak'] ?? 0);
   const statusLunas = parseBoolean(raw['Status Lunas'] ?? raw['statusLunas'] ?? false);
   const tanggalBayar = String(raw['Tanggal Bayar'] ?? raw['tanggalBayar'] ?? '').trim();
   const luasTanah = parseNumber(raw['Luas Tanah'] ?? raw['luasTanah'] ?? 0);
   const luasBangunan = parseNumber(raw['Luas Bangunan'] ?? raw['luasBangunan'] ?? 0);
   const dikelolaOleh = String(raw['Dikelola Oleh'] ?? raw['dikelolaOleh'] ?? '').trim();
-  const perubahanPajak = parseNumber(raw['Perubahan Pajak'] ?? raw['perubahanPajak'] ?? 0);
 
   if (!namaWajibPajak) errors.push('Nama WP kosong');
   if (!nop) errors.push('NOP kosong');
 
   return {
-    row: { nomor, nop, nomorInduk, namaWajibPajak, alamatObjekPajak, pajakTerhutang, statusLunas, perubahanPajak, tanggalBayar, luasTanah, luasBangunan, dikelolaOleh },
+    row: { nomor, nop, nomorInduk, namaWajibPajak, alamatObjekPajak, pajakTerhutang, perubahanPajak, statusLunas, tanggalBayar, luasTanah, luasBangunan, dikelolaOleh },
     errors,
   };
+}
+
+function SectionCard({ icon, iconBg, title, sub, children }: {
+  icon: React.ReactNode;
+  iconBg: string;
+  title: string;
+  sub: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="card" style={{ padding: 'var(--sp-5)' }}>
+      <div className="section-header">
+        <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-md)', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          {icon}
+        </div>
+        <div>
+          <div style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: 'var(--c-text-1)' }}>{title}</div>
+          <div style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)', marginTop: 2 }}>{sub}</div>
+        </div>
+      </div>
+      {children}
+    </div>
+  );
 }
 
 export default function ExportImportPage() {
@@ -71,6 +92,7 @@ export default function ExportImportPage() {
   const [exportLoading, setExportLoading] = useState(false);
   const [exportChangelogLoading, setExportChangelogLoading] = useState(false);
   const [importLoading, setImportLoading] = useState(false);
+  const [importProgress, setImportProgress] = useState<{ done: number; total: number } | null>(null);
   const [importRows, setImportRows] = useState<ImportRow[]>([]);
   const [previewOpen, setPreviewOpen] = useState(false);
 
@@ -80,7 +102,7 @@ export default function ExportImportPage() {
     setExportLoading(true);
     try {
       const records: DHKPRecord[] = await getDHKP(tahunExport);
-      if (records.length === 0) { showToast(`Tidak ada data untuk tahun ${tahunExport}`, 'info'); return; }
+      if (records.length === 0) { showToast(`Tidak ada data tahun ${tahunExport}`, 'info'); return; }
       const wsData = [
         ['No', 'NOP', 'Nomor Induk', 'Nama WP', 'Alamat Objek Pajak', 'Pajak Terhutang', 'Perubahan Pajak', 'Status Lunas', 'Tanggal Bayar', 'Luas Tanah', 'Luas Bangunan', 'Dikelola Oleh'],
         ...records.map((r) => [r.nomor, r.nop, r.nomorInduk, r.namaWajibPajak, r.alamatObjekPajak, r.pajakTerhutang, r.perubahanPajak, r.statusLunas ? 'Lunas' : 'Belum', r.tanggalBayar ? formatTanggal(r.tanggalBayar) : '', r.luasTanah, r.luasBangunan, r.dikelolaOleh]),
@@ -111,8 +133,8 @@ export default function ExportImportPage() {
       const ws = XLSX.utils.aoa_to_sheet(wsData);
       ws['!cols'] = [{ wch: 18 }, { wch: 8 }, { wch: 30 }, { wch: 20 }, { wch: 25 }, { wch: 25 }, { wch: 25 }];
       XLSX.utils.book_append_sheet(wb, ws, 'Riwayat Perubahan');
-      XLSX.writeFile(wb, `Riwayat_Perubahan_DHKP.xlsx`);
-      showToast(`Berhasil export ${entries.length} riwayat perubahan`, 'success');
+      XLSX.writeFile(wb, 'Riwayat_Perubahan_DHKP.xlsx');
+      showToast(`Berhasil export ${entries.length} riwayat`, 'success');
     } catch { showToast('Gagal export riwayat', 'danger'); }
     finally { setExportChangelogLoading(false); }
   }
@@ -146,118 +168,142 @@ export default function ExportImportPage() {
   }
 
   async function handleConfirmImport() {
-    if (lock.isLocked) { showToast('Data sedang dikunci. Import tidak dapat dilakukan.', 'danger'); return; }
+    if (lock.isLocked) { showToast('Data sedang dikunci.', 'danger'); return; }
     setImportLoading(true);
     const validRows = importRows.filter((r) => r.errors.length === 0);
+    setImportProgress({ done: 0, total: validRows.length });
     let sukses = 0; let gagal = 0;
     try {
-      for (const item of validRows) {
-        try { await addRecord(tahunImport, { ...item.row, tahun: tahunImport } as Omit<DHKPRecord, 'id'>); sukses++; }
-        catch { gagal++; }
+      for (let i = 0; i < validRows.length; i++) {
+        try {
+          await addRecord(tahunImport, { ...validRows[i].row, tahun: tahunImport } as Omit<DHKPRecord, 'id'>);
+          sukses++;
+        } catch { gagal++; }
+        setImportProgress({ done: i + 1, total: validRows.length });
       }
       showToast(`Import selesai: ${sukses} sukses${gagal > 0 ? `, ${gagal} gagal` : ''}`, gagal > 0 ? 'warning' : 'success');
       setPreviewOpen(false);
       setImportRows([]);
     } catch { showToast('Import gagal', 'danger'); }
-    finally { setImportLoading(false); }
+    finally { setImportLoading(false); setImportProgress(null); }
   }
 
   return (
     <AppShell pageTitle="Export & Import">
       <LockBanner lock={lock} />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
 
         {/* Export Data DHKP */}
-        <Card className="p-6">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
-            <div style={{ background: 'var(--color-primary)', borderRadius: '10px', padding: '0.5rem', display: 'flex' }}>
-              <FileSpreadsheet size={20} color="#fff" />
-            </div>
-            <div>
-              <h2 style={{ fontWeight: 700, color: 'var(--color-text-primary)', fontSize: '1rem' }}>Export Data DHKP</h2>
-              <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-secondary)' }}>Unduh semua data wajib pajak ke file Excel (.xlsx)</p>
-            </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <label style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--color-text-secondary)', whiteSpace: 'nowrap' }}>Tahun:</label>
-              <select className="input-field" value={tahunExport} onChange={(e) => setTahunExport(Number(e.target.value))} style={{ width: '110px' }}>
+        <SectionCard
+          icon={<FileSpreadsheet size={18} style={{ color: "var(--c-text-inv)" }} />}
+          iconBg="var(--c-navy)"
+          title="Export Data DHKP"
+          sub="Unduh semua data wajib pajak ke file Excel (.xlsx)"
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-4)', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
+              <span style={{ fontSize: 'var(--text-sm)', fontWeight: 500, color: 'var(--c-text-3)', whiteSpace: 'nowrap' }}>Tahun:</span>
+              <select className="input-field" value={tahunExport} onChange={(e) => setTahunExport(Number(e.target.value))} style={{ width: 110 }}>
                 {TAHUN_LIST.map((y) => <option key={y} value={y}>{y}</option>)}
               </select>
             </div>
-            <Button variant="primary" onClick={handleExportData} disabled={exportLoading}>
-              <Download size={16} />
+            <button
+              className="btn btn-primary"
+              onClick={handleExportData}
+              disabled={exportLoading}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-sm)' }}
+            >
+              <Download size={14} />
               {exportLoading ? 'Mengexport...' : `Export DHKP ${tahunExport}`}
-            </Button>
+            </button>
           </div>
-        </Card>
+        </SectionCard>
 
         {/* Export Riwayat */}
-        <Card className="p-6">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
-            <div style={{ background: 'var(--color-gold)', borderRadius: '10px', padding: '0.5rem', display: 'flex' }}>
-              <History size={20} color="#fff" />
-            </div>
-            <div>
-              <h2 style={{ fontWeight: 700, color: 'var(--color-text-primary)', fontSize: '1rem' }}>Export Riwayat Perubahan</h2>
-              <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-secondary)' }}>Unduh seluruh log perubahan data ke file Excel (.xlsx)</p>
-            </div>
-          </div>
-          <Button variant="secondary" onClick={handleExportChangelog} disabled={exportChangelogLoading}>
-            <Download size={16} />
+        <SectionCard
+          icon={<History size={18} style={{ color: "var(--c-text-inv)" }} />}
+          iconBg="var(--c-gold)"
+          title="Export Riwayat Perubahan"
+          sub="Unduh seluruh log perubahan data ke file Excel (.xlsx)"
+        >
+          <button
+            className="btn btn-secondary"
+            onClick={handleExportChangelog}
+            disabled={exportChangelogLoading}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-sm)' }}
+          >
+            <Download size={14} />
             {exportChangelogLoading ? 'Mengexport...' : 'Export Riwayat Perubahan'}
-          </Button>
-        </Card>
+          </button>
+        </SectionCard>
 
         {/* Import Data */}
-        <Card className="p-6">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
-            <div style={{ background: lock.isLocked ? 'var(--color-text-disabled)' : 'var(--color-success)', borderRadius: '10px', padding: '0.5rem', display: 'flex' }}>
-              <Upload size={20} color="#fff" />
-            </div>
-            <div>
-              <h2 style={{ fontWeight: 700, color: 'var(--color-text-primary)', fontSize: '1rem' }}>Import Data DHKP</h2>
-              <p style={{ fontSize: '0.8125rem', color: 'var(--color-text-secondary)' }}>Upload file Excel untuk batch import data wajib pajak</p>
-            </div>
-          </div>
-
+        <SectionCard
+          icon={<Upload size={18} style={{ color: "var(--c-text-inv)" }} />}
+          iconBg={lock.isLocked ? 'var(--c-text-4)' : 'var(--c-success)'}
+          title="Import Data DHKP"
+          sub="Upload file Excel untuk batch import data wajib pajak"
+        >
           {lock.isLocked ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.875rem 1rem', borderRadius: '10px', background: 'rgba(198,40,40,0.07)', border: '1px solid var(--color-danger)' }}>
-              <AlertTriangle size={18} style={{ color: 'var(--color-danger)', flexShrink: 0 }} />
-              <p style={{ fontSize: '0.875rem', color: 'var(--color-danger)', fontWeight: 500 }}>Data sedang dikunci. Import tidak dapat dilakukan saat ini.</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', padding: 'var(--sp-3) var(--sp-4)', borderRadius: 'var(--radius-md)', background: 'var(--c-danger-light)', border: '1px solid var(--c-danger)' }}>
+              <AlertTriangle size={16} style={{ color: 'var(--c-danger)', flexShrink: 0 }} />
+              <span style={{ fontSize: 'var(--text-sm)', color: 'var(--c-danger)', fontWeight: 500 }}>
+                Data sedang dikunci. Import tidak dapat dilakukan.
+              </span>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ padding: '0.875rem 1rem', borderRadius: '10px', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                  <CheckCircle size={15} style={{ color: 'var(--color-success)' }} />
-                  <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--color-text-secondary)' }}>Format kolom yang diterima:</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+              {/* Format info */}
+              <div style={{ padding: 'var(--sp-3) var(--sp-4)', borderRadius: 'var(--radius-md)', background: 'var(--c-bg)', border: '1px solid var(--c-border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 'var(--sp-2)' }}>
+                  <CheckCircle size={13} style={{ color: 'var(--c-success)' }} />
+                  <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--c-text-2)' }}>Format kolom yang diterima:</span>
                 </div>
-                <p style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', lineHeight: 1.7 }}>
-                  <code style={{ background: 'var(--color-surface)', padding: '2px 6px', borderRadius: 4, fontSize: '0.7rem' }}>
+                <p style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)', lineHeight: 1.7 }}>
+                  <code style={{ background: 'var(--c-surface)', padding: '2px 6px', borderRadius: 'var(--radius-sm)', fontSize: 11 }}>
                     No · NOP · Nomor Induk · Nama WP · Alamat Objek Pajak · Pajak Terhutang · Perubahan Pajak · Status Lunas · Tanggal Bayar · Luas Tanah · Luas Bangunan · Dikelola Oleh
                   </code>
                 </p>
-                <p style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '0.5rem' }}>
-                  Kolom <strong>NOP</strong> dan <strong>Nama WP</strong> wajib diisi. Status Lunas: <code>Lunas</code> / <code>Belum</code> / <code>true</code> / <code>false</code>.
+                <p style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)', marginTop: 'var(--sp-2)' }}>
+                  Kolom <strong>NOP</strong> dan <strong>Nama WP</strong> wajib diisi. Status Lunas: <code>Lunas</code> / <code>Belum</code>.
                 </p>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <label style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--color-text-secondary)', whiteSpace: 'nowrap' }}>Tahun:</label>
-                  <select className="input-field" value={tahunImport} onChange={(e) => setTahunImport(Number(e.target.value))} style={{ width: '110px' }}>
+
+              {/* Progress bar saat import */}
+              {importProgress && (
+                <div style={{ padding: 'var(--sp-3) var(--sp-4)', borderRadius: 'var(--radius-md)', background: 'var(--c-navy-light)', border: '1px solid var(--c-navy)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: 'var(--text-xs)', color: 'var(--c-navy)', fontWeight: 600 }}>
+                    <span>Mengimport data...</span>
+                    <span>{importProgress.done} dari {importProgress.total} berhasil diimpor</span>
+                  </div>
+                  <div style={{ background: 'var(--c-border)', borderRadius: 'var(--radius-full)', height: 8, overflow: 'hidden' }}>
+                    <div style={{ height: 8, background: 'var(--c-navy)', borderRadius: 'var(--radius-full)', transition: 'width 200ms ease', width: `${Math.round((importProgress.done / importProgress.total) * 100)}%` }} />
+                  </div>
+                </div>
+              )}
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-4)', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
+                  <span style={{ fontSize: 'var(--text-sm)', fontWeight: 500, color: 'var(--c-text-3)', whiteSpace: 'nowrap' }}>Tahun:</span>
+                  <select className="input-field" value={tahunImport} onChange={(e) => setTahunImport(Number(e.target.value))} style={{ width: 110 }}>
                     {TAHUN_LIST.map((y) => <option key={y} value={y}>{y}</option>)}
                   </select>
                 </div>
                 <input ref={fileInputRef} type="file" accept=".xlsx,.xls" style={{ display: 'none' }} onChange={handleFileChange} />
-                <Button variant="primary" onClick={() => fileInputRef.current?.click()} disabled={importLoading}>
-                  <Upload size={16} />
+                <button
+                  className="btn btn-primary"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={importLoading}
+                  style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-sm)' }}
+                >
+                  <Upload size={14} />
                   Pilih File XLSX
-                </Button>
+                </button>
               </div>
             </div>
           )}
-        </Card>
+        </SectionCard>
       </div>
 
       <ImportPreviewModal

@@ -8,65 +8,64 @@ import { Header } from './Header';
 
 interface AppShellProps {
   children: React.ReactNode;
-  pageTitle: string;
+  pageTitle?: string;
 }
 
-function SkeletonShell({ pageTitle }: { pageTitle: string }) {
+function SkeletonShell() {
   return (
-    <div className="min-h-screen" style={{ background: 'var(--color-bg)' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--c-bg)' }}>
       {/* Header skeleton */}
       <div
-        className="fixed top-0 left-0 right-0 z-20 flex items-center justify-between px-4"
+        className="fixed top-0 left-0 right-0 z-20 flex items-center justify-between"
         style={{
-          height: 'var(--header-height)',
-          background: 'var(--color-surface)',
-          borderBottom: '1px solid var(--color-border)',
+          height: 'var(--header-height-mobile)',
+          background: 'var(--c-surface)',
+          borderBottom: '1px solid var(--c-border)',
+          padding: '0 var(--sp-3)',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg skeleton" />
+        <div className="flex items-center" style={{ gap: 'var(--sp-3)' }}>
+          <div className="skeleton" style={{ width: 'var(--touch-min)', height: 'var(--touch-min)', borderRadius: 'var(--radius-md)' }} />
           <div>
-            <div className="w-40 h-3.5 rounded skeleton mb-1.5" />
-            <div className="w-24 h-2.5 rounded skeleton" />
+            <div className="skeleton" style={{ width: 60, height: 14, borderRadius: 'var(--radius-sm)', marginBottom: 6 }} />
+            <div className="skeleton" style={{ width: 100, height: 11, borderRadius: 'var(--radius-sm)' }} />
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-20 h-7 rounded-lg skeleton hidden sm:block" />
-          <div className="w-8 h-8 rounded-lg skeleton" />
-          <div className="w-24 h-8 rounded-lg skeleton hidden sm:block" />
+        <div className="flex items-center" style={{ gap: 'var(--sp-2)' }}>
+          <div className="skeleton" style={{ width: 72, height: 32, borderRadius: 'var(--radius-sm)' }} />
+          <div className="skeleton" style={{ width: 'var(--touch-min)', height: 'var(--touch-min)', borderRadius: 'var(--radius-md)' }} />
+          <div className="skeleton" style={{ width: 28, height: 28, borderRadius: 'var(--radius-full)' }} />
         </div>
       </div>
+
       {/* Content skeleton */}
-      <main className="pt-[var(--header-height)] min-h-screen">
-        <div className="p-4 md:p-6">
-          <div className="mb-6">
-            <div className="w-48 h-6 rounded skeleton mb-2" />
-            <div className="w-72 h-4 rounded skeleton" />
+      <main className="header-offset" style={{ minHeight: '100vh' }}>
+        <div style={{ padding: 'var(--content-pad-mobile)' }}>
+          {/* Page header skeleton */}
+          <div style={{ marginBottom: 'var(--sp-6)' }}>
+            <div className="skeleton" style={{ width: 200, height: 18, borderRadius: 'var(--radius-sm)', marginBottom: 'var(--sp-2)' }} />
+            <div className="skeleton" style={{ width: 280, height: 13, borderRadius: 'var(--radius-sm)' }} />
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="card p-4">
-                <div className="w-9 h-9 rounded-xl skeleton mb-3" />
-                <div className="w-16 h-6 rounded skeleton mb-1.5" />
-                <div className="w-24 h-3 rounded skeleton" />
+          {/* Cards skeleton */}
+          <div className="grid grid-cols-2 gap-3 mb-4" style={{ gridTemplateColumns: 'repeat(2, 1fr)' }}>
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="card" style={{ padding: '14px' }}>
+                <div className="skeleton" style={{ width: 36, height: 36, borderRadius: 'var(--radius-md)', marginBottom: 'var(--sp-3)' }} />
+                <div className="skeleton" style={{ width: '60%', height: 18, borderRadius: 'var(--radius-sm)', marginBottom: 6 }} />
+                <div className="skeleton" style={{ width: '80%', height: 12, borderRadius: 'var(--radius-sm)' }} />
               </div>
             ))}
           </div>
-          <div className="card p-4 mb-4">
-            <div className="w-full h-3 rounded-full skeleton" />
-          </div>
-          <div className="table-wrapper">
-            <div className="p-4">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="flex gap-4 mb-3">
-                  <div className="w-8 h-4 rounded skeleton flex-shrink-0" />
-                  <div className="w-28 h-4 rounded skeleton" />
-                  <div className="flex-1 h-4 rounded skeleton" />
-                  <div className="w-24 h-4 rounded skeleton" />
-                  <div className="w-20 h-4 rounded skeleton" />
-                </div>
-              ))}
-            </div>
+          {/* Table skeleton */}
+          <div className="table-wrapper" style={{ padding: 'var(--sp-4)' }}>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="flex" style={{ gap: 'var(--sp-4)', marginBottom: 'var(--sp-3)' }}>
+                <div className="skeleton" style={{ width: 24, height: 14, borderRadius: 'var(--radius-xs)', flexShrink: 0 }} />
+                <div className="skeleton" style={{ width: 120, height: 14, borderRadius: 'var(--radius-xs)' }} />
+                <div className="skeleton" style={{ flex: 1, height: 14, borderRadius: 'var(--radius-xs)' }} />
+                <div className="skeleton" style={{ width: 80, height: 14, borderRadius: 'var(--radius-xs)' }} />
+              </div>
+            ))}
           </div>
         </div>
       </main>
@@ -74,7 +73,7 @@ function SkeletonShell({ pageTitle }: { pageTitle: string }) {
   );
 }
 
-export function AppShell({ children, pageTitle }: AppShellProps) {
+export function AppShell({ children }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -86,16 +85,15 @@ export function AppShell({ children, pageTitle }: AppShellProps) {
   }, [loading, user, router]);
 
   if (loading || !user) {
-    return <SkeletonShell pageTitle={pageTitle} />;
+    return <SkeletonShell />;
   }
 
   const userName = user.displayName || user.email?.split('@')[0] || 'Pengguna';
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--color-bg)' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--c-bg)' }}>
       <Header
         onMenuClick={() => setSidebarOpen(true)}
-        pageTitle={pageTitle}
         userName={userName}
       />
       <Sidebar
@@ -104,14 +102,16 @@ export function AppShell({ children, pageTitle }: AppShellProps) {
         userName={userName}
       />
       <main
-        className="pt-[var(--header-height)] min-h-screen"
-        style={{ paddingLeft: 0 }}
+        className="header-offset"
+        style={{ minHeight: '100vh' }}
       >
-        <div className="p-4 md:p-6 animate-fade-in">
+        <div
+          className="animate-fade-in"
+          style={{ padding: 'var(--content-pad-mobile)' }}
+        >
           {children}
         </div>
       </main>
     </div>
   );
 }
-

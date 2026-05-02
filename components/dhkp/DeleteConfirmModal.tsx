@@ -24,18 +24,24 @@ export function DeleteConfirmModal({
       <div className="flex flex-col items-center gap-4 py-2 text-center">
         <div
           className="w-14 h-14 rounded-full flex items-center justify-center"
-          style={{ background: 'var(--color-danger-light)', color: 'var(--color-danger)' }}
+          style={{ background: 'var(--c-danger-light)', color: 'var(--c-danger)' }}
         >
           <Trash2 size={26} />
         </div>
         <div>
-          <p className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+          <p style={{ color: 'var(--c-text-2)', fontSize: 'var(--text-sm)' }}>
             Hapus record atas nama:
           </p>
-          <p className="text-base font-bold mt-1" style={{ color: 'var(--color-danger)' }}>
+          <p
+            className="font-bold mt-1"
+            style={{ color: 'var(--c-danger)', fontSize: 'var(--text-base)' }}
+          >
             {namaWajibPajak}
           </p>
-          <p className="text-xs mt-2" style={{ color: 'var(--color-text-secondary)' }}>
+          <p
+            className="mt-2"
+            style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}
+          >
             Tindakan ini tidak dapat dibatalkan.
           </p>
         </div>
@@ -43,7 +49,7 @@ export function DeleteConfirmModal({
           <Button variant="ghost" className="flex-1" onClick={onClose} disabled={loading}>
             <X size={15} /> Batal
           </Button>
-          <Button variant="danger" className="flex-1" onClick={onConfirm} disabled={loading}>
+          <Button variant="danger" className="flex-1" onClick={onConfirm} loading={loading}>
             <Trash2 size={15} /> {loading ? 'Menghapus...' : 'Hapus'}
           </Button>
         </div>

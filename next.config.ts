@@ -1,41 +1,37 @@
 import type { NextConfig } from 'next';
-import withPWAInit from '@ducanh2912/next-pwa';
+import fs from 'fs';
+import path from 'path';
 
-const withPWA = withPWAInit({
-  dest: 'public',
-  register: true,
-  workboxOptions: {
-    skipWaiting: true,
-    clientsClaim: true,
-    runtimeCaching: [
-      {
-        urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-        handler: 'CacheFirst',
-        options: { cacheName: 'google-fonts-cache', expiration: { maxEntries: 10, maxAgeSeconds: 31536000 } },
-      },
-      {
-        urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-        handler: 'CacheFirst',
-        options: { cacheName: 'gstatic-fonts-cache', expiration: { maxEntries: 10, maxAgeSeconds: 31536000 } },
-      },
-      {
-        urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/i,
-        handler: 'CacheFirst',
-        options: { cacheName: 'image-cache', expiration: { maxEntries: 50, maxAgeSeconds: 2592000 } },
-      },
-      {
-        urlPattern: /\.(?:js|css)$/i,
-        handler: 'StaleWhileRevalidate',
-        options: { cacheName: 'static-resources' },
-      },
-    ],
-  },
-  disable: process.env.NODE_ENV === 'development',
-});
+// Inject BUILD_HASH ke sw.js saat build
+const buildHash = Date.now().toString(36);
+const swPath = path.join(process.cwd(), 'public', 'sw.js');
+if (fs.existsSync(swPath)) {
+  const swContent = fs.readFileSync(swPath, 'utf8');
+  if (swContent.includes('__BUILD_HASH__')) {
+    fs.writeFileSync(swPath, swContent.replace(/__BUILD_HASH__/g, buildHash));
+  }
+}
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   turbopack: {},
+
+  // Headers: no-cache untuk sw.js dan manifest
+  async headers() {
+    return [
+      {
+        source: '/sw.js',
+        headers: [
+          { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
+          { key: 'Service-Worker-Allowed', value: '/' },
+        ],
+      },
+      {
+        source: '/manifest.json',
+        headers: [{ key: 'Cache-Control', value: 'no-cache' }],
+      },
+    ];
+  },
 };
 
-export default withPWA(nextConfig);
+export default nextConfig;

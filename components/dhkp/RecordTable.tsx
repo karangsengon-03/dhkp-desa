@@ -9,8 +9,8 @@ import { logChange } from '@/lib/changelog';
 import { useToast } from '@/components/ui/Toast';
 
 interface RecordTableProps {
-  records: DHKPRecord[];          // hanya record halaman ini
-  allRecords: DHKPRecord[];       // seluruh filtered (untuk total kumulatif)
+  records: DHKPRecord[];
+  allRecords: DHKPRecord[];
   tahun: number;
   lock: GlobalLock;
   currentUser: string;
@@ -18,8 +18,8 @@ interface RecordTableProps {
   onDelete: (record: DHKPRecord) => void;
   currentPage: number;
   pageSize: number;
-  totalPajakPage: number;         // total pajak halaman ini
-  totalPajakAll: number;          // total pajak s.d. halaman ini (akumulatif)
+  totalPajakPage: number;
+  totalPajakAll: number;
 }
 
 export function RecordTable({
@@ -48,7 +48,9 @@ export function RecordTable({
         await logChange(record.id, tahun, record.namaWajibPajak, currentUser, 'Tanggal Bayar', record.tanggalBayar ?? '', tanggalBayar);
       }
       showToast(
-        checked ? `${record.namaWajibPajak} ditandai lunas` : `${record.namaWajibPajak} ditandai belum lunas`,
+        checked
+          ? `${record.namaWajibPajak} ditandai lunas`
+          : `${record.namaWajibPajak} ditandai belum lunas`,
         'success'
       );
     } catch {
@@ -61,123 +63,139 @@ export function RecordTable({
       <div className="flex flex-col items-center justify-center py-20 gap-4">
         <div
           className="w-16 h-16 rounded-full flex items-center justify-center"
-          style={{ background: 'var(--color-primary-light)', color: 'var(--color-primary)' }}
+          style={{ background: 'var(--c-navy-light)', color: 'var(--c-navy)' }}
         >
-          <FileX size={30} />
+          <FileX size={28} />
         </div>
         <div className="text-center">
-          <p className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-            Belum ada data
+          <p className="font-semibold" style={{ color: 'var(--c-text-1)', fontSize: 'var(--text-base)' }}>
+            Tidak ada hasil
           </p>
-          <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
-            Belum ada data untuk tahun {tahun}. Tambah record atau ubah filter.
+          <p className="mt-1" style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-sm)' }}>
+            Coba ubah filter atau kata kunci pencarian.
           </p>
         </div>
       </div>
     );
   }
 
-  // Nomor urut dimulai dari offset halaman
+  // Nomor urut global (lintas halaman)
   const startIdx = (currentPage - 1) * pageSize;
+
+  // Hitung total pajak s.d. halaman ini (kumulatif dari allRecords[0...(safePage*pageSize)])
+  // allRecords sudah difilter, totalPajakAll dikirim dari parent
+  void allRecords; // suppress unused warning — allRecords dipakai parent untuk totalPajakAll
 
   return (
     <div className="table-wrapper">
       <table className="dhkp-table">
         <thead>
           <tr>
-            <th className="text-center" style={{ width: 40 }}>No</th>
+            <th className="col-sticky-left text-center" style={{ width: 44 }}>No</th>
             <th>NOP</th>
             <th>No. Induk</th>
             <th>Nama Wajib Pajak</th>
             <th>Alamat Objek</th>
-            <th className="text-right">Pajak Terhutang</th>
-            <th className="text-right">Perubahan</th>
+            <th className="col-number">Pajak Terhutang</th>
+            <th className="col-number">Perubahan</th>
             <th className="text-center">Lunas</th>
             <th>Tgl Bayar</th>
-            <th className="text-right">Luas Tanah</th>
-            <th className="text-right">Luas Bgn</th>
+            <th className="col-number">Luas Tanah</th>
+            <th className="col-number">Luas Bgn</th>
             <th>Dikelola</th>
-            <th className="text-center" style={{ width: 80 }}>Aksi</th>
+            <th className="col-sticky-right text-center" style={{ width: 76 }}>Aksi</th>
           </tr>
         </thead>
         <tbody>
           {records.map((record, idx) => (
-            <tr key={record.id} className={record.statusLunas ? 'lunas-row' : ''}>
-              {/* No urut global (lintas halaman) */}
-              <td className="text-center text-xs font-medium" style={{ color: 'var(--color-text-secondary)' }}>
+            <tr
+              key={record.id}
+              className={record.statusLunas ? 'row-lunas' : ''}
+            >
+              {/* No urut */}
+              <td className="col-sticky-left text-center font-medium" style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}>
                 {startIdx + idx + 1}
               </td>
 
-              <td className="font-mono text-xs">{record.nop || '-'}</td>
-              <td className="text-xs">{record.nomorInduk || '-'}</td>
+              <td className="font-mono" style={{ fontSize: 'var(--text-xs)' }}>
+                {record.nop || '-'}
+              </td>
+
+              <td style={{ fontSize: 'var(--text-xs)' }}>
+                {record.nomorInduk || '-'}
+              </td>
 
               <td>
-                <span className="font-semibold text-xs" style={{ color: 'var(--color-text-primary)' }}>
+                <span className="font-semibold" style={{ color: 'var(--c-text-1)', fontSize: 'var(--text-xs)' }}>
                   {record.namaWajibPajak}
                 </span>
               </td>
 
               <td>
                 <span
-                  className="text-xs block max-w-[160px] truncate"
+                  className="block max-w-[150px] truncate"
                   title={record.alamatObjekPajak}
-                  style={{ color: 'var(--color-text-secondary)' }}
+                  style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}
                 >
                   {record.alamatObjekPajak || '-'}
                 </span>
               </td>
 
-              <td className="text-right">
-                <span className="text-xs font-semibold" style={{ color: 'var(--color-primary)' }}>
+              <td className="col-number">
+                <span className="font-semibold" style={{ color: 'var(--c-navy)', fontSize: 'var(--text-xs)' }}>
                   {formatRupiah(record.pajakTerhutang)}
                 </span>
               </td>
 
-              <td className="text-right">
+              <td className="col-number">
                 <span
-                  className="text-xs font-medium"
                   style={{
+                    fontSize: 'var(--text-xs)',
+                    fontWeight: 500,
                     color: record.perubahanPajak > 0
-                      ? 'var(--color-success)'
+                      ? 'var(--c-success)'
                       : record.perubahanPajak < 0
-                      ? 'var(--color-danger)'
-                      : 'var(--color-text-secondary)',
+                      ? 'var(--c-danger)'
+                      : 'var(--c-text-3)',
                   }}
                 >
                   {record.perubahanPajak !== 0 ? formatRupiah(record.perubahanPajak) : '-'}
                 </span>
               </td>
 
-              {/* Toggle Lunas */}
               <td className="text-center">
                 <Toggle
                   checked={record.statusLunas}
-                  onChange={(v) => handleToggleLunas(record, v)}
+                  onChange={v => handleToggleLunas(record, v)}
                   disabled={isLocked}
-                  size="sm"
                 />
               </td>
 
-              <td className="text-xs" style={{ color: 'var(--color-text-secondary)', whiteSpace: 'nowrap' }}>
+              <td style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)', whiteSpace: 'nowrap' }}>
                 {formatTanggal(record.tanggalBayar)}
               </td>
 
-              <td className="text-right text-xs">{record.luasTanah ? `${record.luasTanah} m²` : '-'}</td>
-              <td className="text-right text-xs">{record.luasBangunan ? `${record.luasBangunan} m²` : '-'}</td>
+              <td className="col-number" style={{ fontSize: 'var(--text-xs)' }}>
+                {record.luasTanah ? `${record.luasTanah} m²` : '-'}
+              </td>
 
-              <td className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+              <td className="col-number" style={{ fontSize: 'var(--text-xs)' }}>
+                {record.luasBangunan ? `${record.luasBangunan} m²` : '-'}
+              </td>
+
+              <td style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}>
                 {record.dikelolaOleh || '-'}
               </td>
 
-              {/* Aksi */}
-              <td>
-                <div className="flex items-center justify-center gap-1.5">
+              {/* Aksi — sticky kanan */}
+              <td className="col-sticky-right">
+                <div className="flex items-center justify-center gap-1">
                   <button
                     onClick={() => onEdit(record)}
                     disabled={isLocked}
                     title="Edit"
-                    className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                    style={{ background: 'var(--color-primary-light)', color: 'var(--color-primary)' }}
+                    className="w-7 h-7 rounded-md flex items-center justify-center transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
+                    style={{ background: 'var(--c-navy-light)', color: 'var(--c-navy)' }}
                   >
                     <Pencil size={13} />
                   </button>
@@ -185,8 +203,8 @@ export function RecordTable({
                     onClick={() => onDelete(record)}
                     disabled={isLocked}
                     title="Hapus"
-                    className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                    style={{ background: 'var(--color-danger-light)', color: 'var(--color-danger)' }}
+                    className="w-7 h-7 rounded-md flex items-center justify-center transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
+                    style={{ background: 'var(--c-danger-light)', color: 'var(--c-danger)' }}
                   >
                     <Trash2 size={13} />
                   </button>
@@ -196,22 +214,36 @@ export function RecordTable({
           ))}
         </tbody>
 
-        {/* Footer mirip dokumen DHKP asli */}
+        {/* Footer totals */}
         <tfoot>
-          <tr style={{ background: 'var(--color-surface-2)', fontWeight: 600 }}>
-            <td colSpan={5} className="text-right text-xs py-2 px-3" style={{ color: 'var(--color-text-secondary)' }}>
+          <tr style={{ background: 'var(--c-surface-2)' }}>
+            <td
+              colSpan={5}
+              className="text-right py-2 px-3 font-semibold"
+              style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}
+            >
               Total Halaman Ini
             </td>
-            <td className="text-right text-xs font-bold py-2 px-3" style={{ color: 'var(--color-primary)' }}>
+            <td
+              className="col-number py-2 px-3 font-bold"
+              style={{ color: 'var(--c-navy)', fontSize: 'var(--text-xs)' }}
+            >
               {formatRupiah(totalPajakPage)}
             </td>
             <td colSpan={7} />
           </tr>
-          <tr style={{ background: 'var(--color-primary-light)', fontWeight: 700 }}>
-            <td colSpan={5} className="text-right text-xs py-2 px-3" style={{ color: 'var(--color-primary)' }}>
+          <tr style={{ background: 'var(--c-navy-light)' }}>
+            <td
+              colSpan={5}
+              className="text-right py-2 px-3 font-bold"
+              style={{ color: 'var(--c-navy)', fontSize: 'var(--text-xs)' }}
+            >
               Total Sampai Dengan Halaman Ini
             </td>
-            <td className="text-right text-xs font-bold py-2 px-3" style={{ color: 'var(--color-primary)' }}>
+            <td
+              className="col-number py-2 px-3 font-bold"
+              style={{ color: 'var(--c-navy)', fontSize: 'var(--text-xs)' }}
+            >
               {formatRupiah(totalPajakAll)}
             </td>
             <td colSpan={7} />

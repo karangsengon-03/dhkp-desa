@@ -10,11 +10,10 @@ import { useToast } from '@/components/ui/Toast';
 
 interface HeaderProps {
   onMenuClick: () => void;
-  pageTitle: string;
   userName: string;
 }
 
-export function Header({ onMenuClick, pageTitle, userName }: HeaderProps) {
+export function Header({ onMenuClick, userName }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
   const lock = useGlobalLock();
   const { user } = useAuth();
@@ -41,74 +40,106 @@ export function Header({ onMenuClick, pageTitle, userName }: HeaderProps) {
     <header
       className="fixed top-0 left-0 right-0 z-20 no-print"
       style={{
-        height: 'var(--header-height)',
-        background: 'var(--color-surface)',
-        borderBottom: '1px solid var(--color-border)',
+        height: 'var(--header-height-mobile)',
+        background: 'var(--c-surface)',
+        borderBottom: '1px solid var(--c-border)',
         boxShadow: 'var(--shadow-sm)',
       }}
     >
-      <div className="flex items-center h-full px-3 gap-2">
+      <style jsx>{`
+        @media (min-width: 640px) {
+          header { height: var(--header-height-desktop) !important; }
+        }
+        @media (min-width: 480px) {
+          .lock-label { display: inline !important; }
+        }
+      `}</style>
 
-        {/* Hamburger */}
+      <div className="flex items-center h-full" style={{ padding: '0 var(--sp-3)', gap: 'var(--sp-2)' }}>
+
+        {/* Hamburger — 44×44px touch target */}
         <button
           onClick={onMenuClick}
-          className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors"
-          style={{ color: 'var(--color-primary)' }}
-          onMouseOver={e => (e.currentTarget.style.background = 'var(--color-primary-light)')}
-          onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
           aria-label="Menu"
+          className="flex items-center justify-center rounded-md transition-colors flex-shrink-0"
+          style={{ width: 'var(--touch-min)', height: 'var(--touch-min)', color: 'var(--c-navy)' }}
+          onMouseOver={e => (e.currentTarget.style.background = 'var(--c-navy-light)')}
+          onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
         >
-          <Menu size={19} />
+          <Menu size={18} />
         </button>
 
-        {/* Brand + subtitle */}
+        {/* Brand */}
         <div className="flex-1 min-w-0 leading-tight">
-          <div className="text-sm font-bold truncate" style={{ color: 'var(--color-primary)' }}>
-            DHKP Karang Sengon
+          <div style={{ fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--c-navy)', lineHeight: 1.2 }}>
+            DHKP
           </div>
-          <div className="text-xs truncate" style={{ color: 'var(--color-text-secondary)' }}>
-            {pageTitle}
+          <div style={{ fontSize: 'var(--text-xs)', fontWeight: 500, color: 'var(--c-text-3)', lineHeight: 1.2 }}>
+            Desa Karang Sengon
           </div>
         </div>
 
         {/* Right controls */}
-        <div className="flex items-center gap-1 flex-shrink-0">
+        <div className="flex items-center flex-shrink-0" style={{ gap: 'var(--sp-1)' }}>
 
           {/* Kunci Global */}
           <button
             onClick={handleToggleLock}
             disabled={lockLoading}
-            title={lock.isLocked ? `Dikunci oleh ${lock.lockedBy} — klik untuk buka` : 'Data terbuka — klik untuk kunci'}
-            className="flex items-center gap-1 px-2 h-7 rounded-lg text-xs font-semibold transition-all disabled:opacity-50"
+            title={lock.isLocked
+              ? `Dikunci oleh ${lock.lockedBy} — klik untuk buka`
+              : 'Data terbuka — klik untuk kunci'}
+            className="flex items-center rounded-md font-semibold disabled:opacity-50"
             style={{
-              background: lock.isLocked ? 'var(--color-danger-light)' : 'var(--color-success-light)',
-              color:      lock.isLocked ? 'var(--color-danger)'       : 'var(--color-success)',
-              border:     `1px solid ${lock.isLocked ? 'var(--color-danger)' : 'var(--color-success)'}`,
+              gap: 'var(--sp-1)',
+              padding: '0 10px',
+              height: 32,
+              fontSize: 'var(--text-xs)',
+              fontWeight: 600,
+              background: lock.isLocked ? 'var(--c-danger-light)' : 'var(--c-success-light)',
+              color:      lock.isLocked ? 'var(--c-danger)'       : 'var(--c-success)',
+              border:     `1px solid ${lock.isLocked ? 'var(--c-danger)' : 'var(--c-success)'}`,
+              borderRadius: 'var(--radius-sm)',
+              transition: 'all 150ms ease',
             }}
           >
-            {lock.isLocked ? <Lock size={12} /> : <Unlock size={12} />}
-            <span className="hidden xs:inline">
-              {lock.isLocked ? 'Kunci' : 'Buka'}
+            {lock.isLocked
+              ? <Lock size={14} />
+              : <Unlock size={14} />
+            }
+            <span className="lock-label" style={{ display: 'none' }}>
+              {lock.isLocked ? 'Terkunci' : 'Terbuka'}
             </span>
           </button>
 
-          {/* Theme */}
+          {/* Theme toggle — 44×44px */}
           <button
             onClick={toggleTheme}
-            className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors"
-            style={{ color: theme === 'dark' ? 'var(--color-gold)' : 'var(--color-text-secondary)' }}
-            onMouseOver={e => (e.currentTarget.style.background = 'var(--color-primary-light)')}
-            onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
             aria-label="Toggle tema"
+            className="flex items-center justify-center rounded-md transition-colors"
+            style={{
+              width: 'var(--touch-min)',
+              height: 'var(--touch-min)',
+              color: theme === 'dark' ? 'var(--c-gold)' : 'var(--c-text-3)',
+            }}
+            onMouseOver={e => (e.currentTarget.style.background = 'var(--c-navy-light)')}
+            onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
           >
-            {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
 
           {/* Avatar */}
           <div
-            className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 select-none"
-            style={{ background: 'var(--color-primary)' }}
+            className="flex items-center justify-center rounded-full select-none flex-shrink-0"
             title={userName}
+            style={{
+              width: 28,
+              height: 28,
+              background: 'var(--c-navy)',
+              color: 'var(--c-text-inv)',
+              fontSize: 'var(--text-xs)',
+              fontWeight: 700,
+            }}
           >
             {initial}
           </div>

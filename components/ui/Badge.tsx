@@ -10,17 +10,17 @@ interface BadgeProps {
   className?: string;
 }
 
-const variantStyle: Record<BadgeVariant, string> = {
+const variantClass: Record<BadgeVariant, string> = {
   success: 'badge-success',
-  danger: 'badge-danger',
+  danger:  'badge-danger',
   warning: 'badge-warning',
-  info: 'badge-info',
+  info:    'badge-info',
   default: 'badge-default',
 };
 
 export function Badge({ variant = 'default', children, className = '' }: BadgeProps) {
   return (
-    <span className={`badge ${variantStyle[variant]} ${className}`}>
+    <span className={`badge ${variantClass[variant]} ${className}`}>
       {children}
     </span>
   );

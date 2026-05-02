@@ -10,17 +10,18 @@ interface ModalProps {
   children: React.ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
   hideClose?: boolean;
+  footer?: React.ReactNode;
 }
 
-const sizeClass = {
-  sm: 'max-w-sm',
-  md: 'max-w-md',
-  lg: 'max-w-lg',
-  xl: 'max-w-2xl',
-  full: 'max-w-4xl',
+const sizeMaxWidth: Record<string, string> = {
+  sm:   '384px',
+  md:   '480px',
+  lg:   '560px',
+  xl:   '672px',
+  full: '900px',
 };
 
-export function Modal({ open, onClose, title, children, size = 'md', hideClose = false }: ModalProps) {
+export function Modal({ open, onClose, title, children, size = 'md', hideClose = false, footer }: ModalProps) {
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
@@ -33,40 +34,80 @@ export function Modal({ open, onClose, title, children, size = 'md', hideClose =
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Overlay */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ padding: 'var(--sp-4)' }}>
+      {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0"
+        style={{ background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(2px)' }}
         onClick={onClose}
       />
+
       {/* Dialog */}
       <div
-        className={`relative w-full ${sizeClass[size]} card max-h-[90vh] flex flex-col`}
-        style={{ background: 'var(--color-surface)' }}
+        className="relative w-full flex flex-col animate-modal-in"
+        style={{
+          maxWidth: sizeMaxWidth[size],
+          maxHeight: '90vh',
+          background: 'var(--c-surface)',
+          borderRadius: 'var(--radius-lg)',
+          boxShadow: 'var(--shadow-lg)',
+        }}
       >
         {/* Header */}
         {(title || !hideClose) && (
-          <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
+          <div
+            className="flex items-center justify-between flex-shrink-0"
+            style={{
+              padding: 'var(--sp-4) var(--sp-6)',
+              borderBottom: '1px solid var(--c-border)',
+            }}
+          >
             {title && (
-              <h3 className="text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+              <h3 style={{ fontSize: 'var(--text-lg)', fontWeight: 700, color: 'var(--c-text-1)' }}>
                 {title}
               </h3>
             )}
             {!hideClose && (
               <button
                 onClick={onClose}
-                className="p-1 rounded-lg transition-colors hover:bg-[var(--color-primary-light)]"
                 aria-label="Tutup"
+                className="flex items-center justify-center rounded-md transition-colors"
+                style={{
+                  width: 'var(--touch-min)',
+                  height: 'var(--touch-min)',
+                  color: 'var(--c-text-3)',
+                  marginRight: 'calc(var(--sp-2) * -1)',
+                }}
+                onMouseOver={e => (e.currentTarget.style.background = 'var(--c-navy-light)')}
+                onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
               >
-                <X size={20} style={{ color: 'var(--color-text-secondary)' }} />
+                <X size={18} />
               </button>
             )}
           </div>
         )}
+
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4">
+        <div
+          className="flex-1 overflow-y-auto"
+          style={{ padding: 'var(--sp-4) var(--sp-6)' }}
+        >
           {children}
         </div>
+
+        {/* Footer */}
+        {footer && (
+          <div
+            className="flex items-center justify-end flex-shrink-0"
+            style={{
+              padding: 'var(--sp-4) var(--sp-6)',
+              borderTop: '1px solid var(--c-border)',
+              gap: 'var(--sp-2)',
+            }}
+          >
+            {footer}
+          </div>
+        )}
       </div>
     </div>
   );

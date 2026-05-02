@@ -7,18 +7,16 @@ interface ToggleProps {
   onChange: (checked: boolean) => void;
   disabled?: boolean;
   label?: string;
-  size?: 'sm' | 'md';
 }
 
-export function Toggle({ checked, onChange, disabled = false, label, size = 'md' }: ToggleProps) {
-  const trackW = size === 'sm' ? 'w-9' : 'w-11';
-  const trackH = size === 'sm' ? 'h-5' : 'h-6';
-  const thumbSize = size === 'sm' ? 'w-3.5 h-3.5' : 'w-4 h-4';
-  const thumbTranslate = size === 'sm' ? 'translate-x-4' : 'translate-x-5';
-
+export function Toggle({ checked, onChange, disabled = false, label }: ToggleProps) {
   return (
-    <label className={`flex items-center gap-2 ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
-      <div className="relative">
+    <label
+      className="flex items-center gap-2"
+      style={{ cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.45 : 1 }}
+    >
+      {/* Touch target wrapper — min 44×44px */}
+      <div className="relative flex items-center justify-center" style={{ width: 'var(--touch-min)', height: 'var(--touch-min)' }}>
         <input
           type="checkbox"
           className="sr-only"
@@ -26,20 +24,37 @@ export function Toggle({ checked, onChange, disabled = false, label, size = 'md'
           disabled={disabled}
           onChange={(e) => onChange(e.target.checked)}
         />
+        {/* Track */}
         <div
-          className={`${trackW} ${trackH} rounded-full transition-colors duration-200`}
           style={{
-            backgroundColor: checked
-              ? 'var(--color-success)'
-              : 'var(--color-text-disabled)',
+            width: 40,
+            height: 24,
+            borderRadius: 'var(--radius-full)',
+            backgroundColor: checked ? 'var(--c-navy)' : 'var(--c-border-strong)',
+            transition: 'background-color 200ms ease',
+            position: 'relative',
+            flexShrink: 0,
           }}
-        />
-        <div
-          className={`absolute top-0.5 left-0.5 ${thumbSize} bg-white rounded-full shadow transition-transform duration-200 ${checked ? thumbTranslate : 'translate-x-0'}`}
-        />
+        >
+          {/* Thumb */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 4,
+              left: 4,
+              width: 16,
+              height: 16,
+              borderRadius: 'var(--radius-full)',
+              background: 'var(--c-text-inv)',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+              transition: 'transform 200ms ease',
+              transform: checked ? 'translateX(16px)' : 'translateX(0)',
+            }}
+          />
+        </div>
       </div>
       {label && (
-        <span className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+        <span style={{ fontSize: 'var(--text-base)', fontWeight: 500, color: 'var(--c-text-2)' }}>
           {label}
         </span>
       )}

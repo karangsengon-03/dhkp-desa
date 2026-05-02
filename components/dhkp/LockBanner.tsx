@@ -12,16 +12,18 @@ export function LockBanner({ lock }: LockBannerProps) {
 
   return (
     <div
-      className="flex items-center gap-3 px-4 py-3 rounded-xl mb-5 border"
+      className="flex items-center gap-3 px-4 py-3 rounded-lg mb-5 border"
       style={{
-        background: 'var(--color-danger-light)',
-        borderColor: 'var(--color-danger)',
-        color: 'var(--color-danger)',
+        background: 'var(--c-danger-light)',
+        borderColor: 'var(--c-danger)',
+        color: 'var(--c-danger)',
       }}
     >
-      <Lock size={18} />
-      <span className="text-sm font-semibold">
-        Data dikunci oleh: <strong>{lock.lockedBy}</strong> — edit, tambah, dan hapus tidak tersedia.
+      <Lock size={16} style={{ flexShrink: 0 }} />
+      <span className="font-semibold" style={{ fontSize: 'var(--text-sm)' }}>
+        Data dikunci oleh:{' '}
+        <strong>{lock.lockedBy}</strong>
+        {' '}— edit, tambah, dan hapus tidak tersedia.
       </span>
     </div>
   );

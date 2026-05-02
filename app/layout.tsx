@@ -2,10 +2,11 @@ import type { Metadata, Viewport } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { ToastProvider } from '@/components/ui/Toast';
+import { UpdateBanner } from '@/components/ui/UpdateBanner';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
   variable: '--font-plus-jakarta',
 });
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'DHKP Desa',
+    title: 'DHKP Desa Karang Sengon',
   },
 };
 
@@ -41,15 +42,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        {/* Apply saved theme sebelum render untuk cegah flash putih */}
+        {/* Anti-flash: baca tema dari localStorage sebelum React hydrate */}
         <script
           dangerouslySetInnerHTML={{
             __html: `try{var t=localStorage.getItem('dhkp_theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}`,
           }}
         />
+        {/* Register service worker */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});})}`,
+          }}
+        />
       </head>
       <body className={plusJakartaSans.className}>
         <ToastProvider>
+          <UpdateBanner />
           {children}
         </ToastProvider>
       </body>

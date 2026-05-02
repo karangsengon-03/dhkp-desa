@@ -36,7 +36,6 @@ export default function LoginPage() {
     if (!loading && user) router.replace('/dashboard');
   }, [user, loading, router]);
 
-  // Prefill email + password dari localStorage
   useEffect(() => {
     const saved = getSavedUser();
     if (saved?.email) setEmail(saved.email);
@@ -72,15 +71,19 @@ export default function LoginPage() {
     return (
       <div
         className="min-h-screen flex items-center justify-center p-4"
-        style={{ background: 'var(--color-bg)' }}
+        style={{ background: 'var(--c-bg)' }}
       >
         <div className="w-full max-w-xs flex flex-col gap-3">
-          <div className="w-20 h-20 rounded-2xl skeleton mx-auto" />
-          <div className="w-40 h-4 rounded skeleton mx-auto" />
+          <div className="w-16 h-16 rounded-xl skeleton mx-auto" />
+          <div className="w-40 h-5 rounded skeleton mx-auto" />
           <div className="w-28 h-3 rounded skeleton mx-auto" />
-          <div className="card p-5 mt-2 flex flex-col gap-3">
+          <div className="h-1 w-full rounded skeleton" />
+          <div className="card p-5 flex flex-col gap-3">
+            <div className="w-24 h-3 rounded skeleton" />
             <div className="w-full h-10 rounded-lg skeleton" />
+            <div className="w-24 h-3 rounded skeleton" />
             <div className="w-full h-10 rounded-lg skeleton" />
+            <div className="w-36 h-4 rounded skeleton" />
             <div className="w-full h-10 rounded-lg skeleton" />
           </div>
         </div>
@@ -91,47 +94,63 @@ export default function LoginPage() {
   return (
     <div
       className="min-h-screen flex items-center justify-center p-4"
-      style={{ background: 'var(--color-bg)' }}
+      style={{ background: 'var(--c-bg)' }}
     >
       <div className="w-full max-w-xs">
 
-        {/* Brand header */}
+        {/* Brand header — navy bg */}
         <div
           className="rounded-t-2xl px-6 pt-8 pb-6 text-center"
-          style={{ background: 'var(--color-primary)' }}
+          style={{ background: 'var(--c-navy)' }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/icons/icon-128.png"
             alt="DHKP"
-            className="w-14 h-14 rounded-xl mx-auto mb-3 shadow-lg"
-            style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}
+            className="w-14 h-14 rounded-xl mx-auto mb-3"
+            style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.35)' }}
           />
-          <h1 className="text-white font-bold text-lg leading-tight">DHKP Desa</h1>
-          <p className="text-sm mt-0.5 font-medium" style={{ color: 'var(--color-gold)' }}>
-            Karang Sengon
+          <h1
+            className="font-bold leading-tight"
+            style={{ color: 'var(--c-text-inv)', fontSize: 'var(--text-xl)' }}
+          >
+            DHKP
+          </h1>
+          <p
+            className="mt-0.5 font-semibold"
+            style={{ color: 'var(--c-gold)', fontSize: 'var(--text-sm)' }}
+          >
+            Desa Karang Sengon
           </p>
         </div>
 
-        {/* Gold divider */}
-        <div className="h-1" style={{ background: `linear-gradient(90deg, var(--color-gold-dark), var(--color-gold), var(--color-gold-dark))` }} />
+        {/* Gold stripe */}
+        <div
+          className="h-1"
+          style={{
+            background: 'linear-gradient(90deg, var(--c-gold-dark), var(--c-gold), var(--c-gold-dark))',
+          }}
+        />
 
-        {/* Form */}
+        {/* Form card */}
         <div
           className="rounded-b-2xl px-6 py-6"
-          style={{ background: 'var(--color-surface)', boxShadow: 'var(--shadow-lg)' }}
+          style={{ background: 'var(--c-surface)', boxShadow: 'var(--shadow-lg)' }}
         >
-          <h2
-            className="text-sm font-semibold text-center mb-5"
-            style={{ color: 'var(--color-text-primary)' }}
+          <p
+            className="font-semibold text-center mb-5"
+            style={{ color: 'var(--c-text-1)', fontSize: 'var(--text-sm)' }}
           >
             Masuk ke Sistem
-          </h2>
+          </p>
 
           <form onSubmit={handleLogin} className="flex flex-col gap-3">
             {/* Email */}
             <div>
-              <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--color-text-secondary)' }}>
+              <label
+                className="block font-semibold mb-1.5"
+                style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}
+              >
                 Email
               </label>
               <input
@@ -147,7 +166,10 @@ export default function LoginPage() {
 
             {/* Password */}
             <div>
-              <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--color-text-secondary)' }}>
+              <label
+                className="block font-semibold mb-1.5"
+                style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}
+              >
                 Password
               </label>
               <div className="relative">
@@ -162,29 +184,30 @@ export default function LoginPage() {
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5"
+                  className="absolute right-0 top-0 bottom-0 w-11 flex items-center justify-center"
                   onClick={() => setShowPass(v => !v)}
                   tabIndex={-1}
-                  aria-label={showPass ? 'Sembunyikan' : 'Tampilkan'}
+                  aria-label={showPass ? 'Sembunyikan password' : 'Tampilkan password'}
                 >
                   {showPass
-                    ? <EyeOff size={15} style={{ color: 'var(--color-text-disabled)' }} />
-                    : <Eye size={15} style={{ color: 'var(--color-text-disabled)' }} />
+                    ? <EyeOff size={15} style={{ color: 'var(--c-text-4)' }} />
+                    : <Eye size={15} style={{ color: 'var(--c-text-4)' }} />
                   }
                 </button>
               </div>
             </div>
 
             {/* Ingat saya */}
-            <label className="flex items-center gap-2 cursor-pointer select-none mt-0.5">
+            <label className="flex items-center gap-2 cursor-pointer select-none mt-0.5 py-1">
               <input
                 type="checkbox"
                 checked={remember}
                 onChange={e => setRemember(e.target.checked)}
-                className="w-4 h-4 rounded accent-[var(--color-primary)]"
+                className="w-4 h-4 rounded"
+                style={{ accentColor: 'var(--c-navy)' }}
               />
-              <span className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
-                Ingat email & password
+              <span style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}>
+                Ingat email &amp; password
               </span>
             </label>
 
@@ -192,12 +215,14 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="btn btn-primary w-full mt-1"
-              style={{ padding: '11px 0', fontSize: '14px' }}
+              className="btn btn-primary btn-md w-full mt-1"
             >
               {submitting ? (
                 <>
-                  <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span
+                    className="inline-block w-4 h-4 border-2 rounded-full animate-spin"
+                    style={{ borderColor: 'rgba(255,255,255,0.4)', borderTopColor: 'var(--c-text-inv)' }}
+                  />
                   Masuk...
                 </>
               ) : (
@@ -209,7 +234,10 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="text-center text-xs mt-5" style={{ color: 'var(--color-text-disabled)' }}>
+          <p
+            className="text-center mt-5"
+            style={{ color: 'var(--c-text-4)', fontSize: 'var(--text-xs)' }}
+          >
             Desa Karang Sengon · PBB-P2
           </p>
         </div>
