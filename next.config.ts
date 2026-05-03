@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next';
 import fs from 'fs';
 import path from 'path';
+import { withSentryConfig } from '@sentry/nextjs';
 
 // Inject BUILD_HASH ke sw.js saat build
 const buildHash = Date.now().toString(36);
@@ -34,4 +35,15 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Ekspor dengan Sentry wrapper jika DSN tersedia
+// Jika tidak ada DSN, withSentryConfig tetap aman — tidak menambahkan overhead
+export default withSentryConfig(nextConfig, {
+  // Sembunyikan source maps dari bundle publik
+  hideSourceMaps: true,
+  // Upload source maps lebih luas (termasuk lazy-loaded chunks)
+  widenClientFileUpload: true,
+  // Matikan Sentry CLI output saat build
+  silent: true,
+  // Disable telemetry
+  telemetry: false,
+});

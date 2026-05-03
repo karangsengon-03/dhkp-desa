@@ -30,7 +30,7 @@ export function DeleteConfirmModal({
         </div>
         <div>
           <p style={{ color: 'var(--c-text-2)', fontSize: 'var(--text-sm)' }}>
-            Hapus record atas nama:
+            Hapus data atas nama:
           </p>
           <p
             className="font-bold mt-1"
@@ -50,7 +50,7 @@ export function DeleteConfirmModal({
             <X size={15} /> Batal
           </Button>
           <Button variant="danger" className="flex-1" onClick={onConfirm} loading={loading}>
-            <Trash2 size={15} /> {loading ? 'Menghapus...' : 'Hapus'}
+            <Trash2 size={15} /> {loading ? 'Menghapus...' : 'Ya, Hapus Data Ini'}
           </Button>
         </div>
       </div>

@@ -4,8 +4,16 @@ import {
   updatePassword,
   EmailAuthProvider,
   reauthenticateWithCredential,
+  browserLocalPersistence,
+  setPersistence,
 } from 'firebase/auth';
 import { auth } from './firebase';
+
+// Aktifkan Firebase Auth persistence — sesi login tetap aktif setelah browser ditutup.
+// Ini menggantikan kebutuhan menyimpan password secara manual di localStorage.
+setPersistence(auth, browserLocalPersistence).catch(() => {
+  // Gagal set persistence tidak fatal — Firebase tetap bisa login
+});
 
 export async function loginWithEmail(email: string, password: string) {
   return signInWithEmailAndPassword(auth, email, password);
@@ -29,7 +37,7 @@ export function getSavedUser(): { email: string; displayName: string } | null {
   const saved = localStorage.getItem('dhkp_saved_user');
   if (!saved) return null;
   try {
-    return JSON.parse(saved);
+    return JSON.parse(saved) as { email: string; displayName: string };
   } catch {
     return null;
   }

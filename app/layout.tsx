@@ -5,7 +5,7 @@ import { ToastProvider } from '@/components/ui/Toast';
 import { UpdateBanner } from '@/components/ui/UpdateBanner';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ['latin'],
+  subsets: ['latin', 'latin-ext'],
   weight: ['400', '500', '600', '700'],
   display: 'swap',
   variable: '--font-plus-jakarta',

@@ -41,7 +41,7 @@ export default function DashboardPage() {
     : 'var(--c-danger-light)';
 
   return (
-    <AppShell pageTitle="Dashboard">
+    <AppShell pageTitle="Beranda">
       {/* Page header */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div>
@@ -49,7 +49,7 @@ export default function DashboardPage() {
             className="font-bold"
             style={{ color: 'var(--c-text-1)', fontSize: 'var(--text-xl)' }}
           >
-            Dashboard
+            Beranda
           </h1>
           <p
             className="mt-0.5"

@@ -7,20 +7,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { loginWithEmail, getSavedUser, saveUser } from '@/lib/auth';
 import { useToast } from '@/components/ui/Toast';
 
-const SAVED_PWD_KEY = 'dhkp_saved_pwd';
-
-function getSavedPassword(): string {
-  if (typeof window === 'undefined') return '';
-  try { return localStorage.getItem(SAVED_PWD_KEY) || ''; } catch { return ''; }
-}
-function setSavedPassword(pwd: string) {
-  if (typeof window === 'undefined') return;
-  try {
-    if (pwd) localStorage.setItem(SAVED_PWD_KEY, pwd);
-    else localStorage.removeItem(SAVED_PWD_KEY);
-  } catch {}
-}
-
 export default function LoginPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -39,8 +25,7 @@ export default function LoginPage() {
   useEffect(() => {
     const saved = getSavedUser();
     if (saved?.email) setEmail(saved.email);
-    const savedPwd = getSavedPassword();
-    if (savedPwd) setPassword(savedPwd);
+    // Password TIDAK disimpan — Firebase Auth persistence menjaga sesi otomatis
   }, []);
 
   async function handleLogin(e: React.FormEvent) {
@@ -54,9 +39,6 @@ export default function LoginPage() {
       await loginWithEmail(email, password);
       if (remember) {
         saveUser(email, email.split('@')[0]);
-        setSavedPassword(password);
-      } else {
-        setSavedPassword('');
       }
       showToast('Login berhasil!', 'success');
       router.replace('/dashboard');
@@ -197,7 +179,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Ingat saya */}
+            {/* Ingat email */}
             <label className="flex items-center gap-2 cursor-pointer select-none mt-0.5 py-1">
               <input
                 type="checkbox"
@@ -207,7 +189,7 @@ export default function LoginPage() {
                 style={{ accentColor: 'var(--c-navy)' }}
               />
               <span style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}>
-                Ingat email &amp; password
+                Ingat email saya
               </span>
             </label>
 

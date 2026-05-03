@@ -7,6 +7,7 @@ import { LockBanner } from '@/components/dhkp/LockBanner';
 import { getChangelog } from '@/lib/changelog';
 import { ChangelogEntry } from '@/types';
 import { History, RefreshCw, Search, ChevronDown } from 'lucide-react';
+import { formatTimestamp } from '@/lib/format';
 
 const CURRENT_YEAR = new Date().getFullYear();
 const YEAR_OPTIONS = [0, ...Array.from({ length: 5 }, (_, i) => CURRENT_YEAR - i)];
@@ -36,14 +37,6 @@ function formatVal(field: string, val: unknown): string {
   return String(val);
 }
 
-function formatTimestamp(ts: { seconds: number } | null | undefined): string {
-  if (!ts?.seconds) return '—';
-  const d = new Date(ts.seconds * 1000);
-  return d.toLocaleString('id-ID', {
-    day: '2-digit', month: '2-digit', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
-  });
-}
 
 export default function RiwayatPage() {
   const lock = useGlobalLock();

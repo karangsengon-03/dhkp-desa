@@ -5,9 +5,20 @@
  * Template cetak dokumen DHKP mirip format pemda asli.
  * Landscape A4, font Courier New, 20 baris/halaman.
  * Dipanggil dari app/rekap/page.tsx saat mode cetak DHKP.
+ *
+ * Struktur komponen (tidak dipecah karena semua JSX adalah template cetak statis):
+ *   ├── [STYLES]       — blok <style> khusus @media print, semua class .dhkp-*
+ *   ├── [HELPERS]      — fmtAngka(), fmtPerubahan() (format angka untuk printer)
+ *   ├── [PAGE LOOP]    — map pages → .dhkp-page (header + tabel + ttd)
+ *   │   ├── [HEADER]   — nomor halaman + header lembaga + judul dokumen
+ *   │   ├── [INFO ROW] — info kecamatan/desa/propinsi
+ *   │   ├── [TABLE]    — tabel DHKP 20 baris/halaman
+ *   │   └── [TTD]      — tanda tangan (halaman terakhir saja)
+ *   └── [GRAND TOTAL]  — baris grand total di tfoot halaman terakhir
  */
 
 import { DHKPRecord, AppInfo } from '@/types';
+import { formatTanggalPendek } from '@/lib/format';
 
 const PAGE_SIZE = 20;
 
@@ -17,14 +28,6 @@ interface PrintDHKPProps {
   tahun: number;
 }
 
-function fmtTgl(isoStr: string) {
-  if (!isoStr) return '';
-  const d = new Date(isoStr);
-  const dd = String(d.getDate()).padStart(2, '0');
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const yy = String(d.getFullYear()).slice(2);
-  return `${dd}/${mm}/${yy}`;
-}
 
 function fmtAngka(n: number | undefined | null) {
   if (n === null || n === undefined || n === 0) return '0';
@@ -281,7 +284,7 @@ export function PrintDHKP({ records, appInfo, tahun }: PrintDHKPProps) {
                     <td style={{ fontSize: '6.5pt' }}>{r.alamatObjekPajak || '-'}</td>
                     <td className="num">{fmtAngka(r.pajakTerhutang)}</td>
                     <td className="num">{fmtPerubahan(r.perubahanPajak)}</td>
-                    <td className="ctr" style={{ fontSize: '6.5pt' }}>{fmtTgl(r.tanggalBayar)}</td>
+                    <td className="ctr" style={{ fontSize: '6.5pt' }}>{formatTanggalPendek(r.tanggalBayar)}</td>
                     <td className="num">{fmtAngka(r.luasTanah)}</td>
                     <td className="num">{fmtAngka(r.luasBangunan)}</td>
                     <td style={{ fontSize: '6.5pt' }}>{r.dikelolaOleh || '-'}</td>

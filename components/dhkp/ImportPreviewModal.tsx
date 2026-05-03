@@ -2,6 +2,7 @@
 
 import { CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import { ImportRow } from '@/app/export-import/page';
+import { maskNOP } from '@/lib/masking';
 
 interface ImportPreviewModalProps {
   open: boolean;
@@ -82,7 +83,7 @@ export function ImportPreviewModal({ open, onClose, onConfirm, rows, loading }: 
                       {item.row.namaWajibPajak || '—'}
                     </td>
                     <td style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)' }}>
-                      {item.row.nop || '—'}
+                      {maskNOP(item.row.nop)}
                     </td>
                     <td style={{ fontSize: 'var(--text-xs)', textAlign: 'right' }}>
                       {item.row.pajakTerhutang ? item.row.pajakTerhutang.toLocaleString('id-ID') : '0'}

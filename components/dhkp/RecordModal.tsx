@@ -5,26 +5,13 @@ import { Save, X } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { DHKPRecord } from '@/types';
+import { recordFormSchema, RecordFormData } from '@/types/dhkp.schema';
+import { RecordFormFields } from '@/components/dhkp/RecordFormFields';
 import { addRecord, updateRecord } from '@/lib/firestore';
 import { logChange } from '@/lib/changelog';
 import { useToast } from '@/components/ui/Toast';
 
-type FormData = {
-  nomor: string;
-  nop: string;
-  nomorInduk: string;
-  namaWajibPajak: string;
-  alamatObjekPajak: string;
-  pajakTerhutang: string;
-  perubahanPajak: string;
-  statusLunas: boolean;
-  tanggalBayar: string;
-  luasTanah: string;
-  luasBangunan: string;
-  dikelolaOleh: string;
-};
-
-const EMPTY_FORM: FormData = {
+const EMPTY_FORM: RecordFormData = {
   nomor: '',
   nop: '',
   nomorInduk: '',
@@ -59,8 +46,8 @@ export function RecordModal({
   onSaved,
 }: RecordModalProps) {
   const { showToast } = useToast();
-  const [form, setForm] = useState<FormData>(EMPTY_FORM);
-  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
+  const [form, setForm] = useState<RecordFormData>(EMPTY_FORM);
+  const [errors, setErrors] = useState<Partial<Record<keyof RecordFormData, string>>>({});
   const [loading, setLoading] = useState(false);
 
   const isEdit = editRecord !== null;
@@ -89,39 +76,41 @@ export function RecordModal({
     }
   }, [open, editRecord, maxNomor]);
 
-  function set(field: keyof FormData, value: string | boolean) {
-    setForm(f => ({ ...f, [field]: value }));
-    setErrors(e => ({ ...e, [field]: undefined }));
-  }
-
-  function validate(): boolean {
-    const errs: Partial<Record<keyof FormData, string>> = {};
-    if (!form.namaWajibPajak.trim()) errs.namaWajibPajak = 'Nama wajib diisi';
-    if (!form.nop.trim()) errs.nop = 'NOP wajib diisi';
-    if (!form.pajakTerhutang || isNaN(Number(form.pajakTerhutang))) {
-      errs.pajakTerhutang = 'Pajak terhutang harus berupa angka';
-    }
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
+  function handleChange(field: keyof RecordFormData, value: string | boolean) {
+    setForm((f) => ({ ...f, [field]: value }));
+    setErrors((e) => ({ ...e, [field]: undefined }));
   }
 
   async function handleSubmit() {
-    if (!validate()) return;
+    const result = recordFormSchema.safeParse(form);
+    if (!result.success) {
+      const fieldErrors: Partial<Record<keyof RecordFormData, string>> = {};
+      for (const issue of result.error.issues) {
+        const key = issue.path[0] as keyof RecordFormData;
+        if (key && !fieldErrors[key]) {
+          fieldErrors[key] = issue.message;
+        }
+      }
+      setErrors(fieldErrors);
+      return;
+    }
+
     setLoading(true);
     try {
+      const data = result.data;
       const payload = {
-        nomor: Number(form.nomor) || maxNomor + 1,
-        nop: form.nop.trim(),
-        nomorInduk: form.nomorInduk.trim(),
-        namaWajibPajak: form.namaWajibPajak.trim(),
-        alamatObjekPajak: form.alamatObjekPajak.trim(),
-        pajakTerhutang: Number(form.pajakTerhutang) || 0,
-        perubahanPajak: Number(form.perubahanPajak) || 0,
-        statusLunas: form.statusLunas,
-        tanggalBayar: form.tanggalBayar,
-        luasTanah: Number(form.luasTanah) || 0,
-        luasBangunan: Number(form.luasBangunan) || 0,
-        dikelolaOleh: form.dikelolaOleh.trim(),
+        nomor: Number(data.nomor) || maxNomor + 1,
+        nop: data.nop,
+        nomorInduk: data.nomorInduk ?? '',
+        namaWajibPajak: data.namaWajibPajak,
+        alamatObjekPajak: data.alamatObjekPajak ?? '',
+        pajakTerhutang: Number(data.pajakTerhutang) || 0,
+        perubahanPajak: Number(data.perubahanPajak) || 0,
+        statusLunas: data.statusLunas,
+        tanggalBayar: data.tanggalBayar ?? '',
+        luasTanah: Number(data.luasTanah) || 0,
+        luasBangunan: Number(data.luasBangunan) || 0,
+        dikelolaOleh: data.dikelolaOleh ?? '',
         tahun,
       };
 
@@ -147,10 +136,10 @@ export function RecordModal({
             await logChange(editRecord.id, tahun, editRecord.namaWajibPajak, currentUser, label, oldVal, newVal);
           }
         }
-        showToast('Record berhasil diperbarui', 'success');
+        showToast('Data berhasil diperbarui', 'success');
       } else {
         await addRecord(tahun, payload);
-        showToast('Record berhasil ditambahkan', 'success');
+        showToast('Data berhasil ditambahkan', 'success');
       }
       onSaved();
       onClose();
@@ -165,155 +154,10 @@ export function RecordModal({
     <Modal
       open={open}
       onClose={onClose}
-      title={isEdit ? `Edit — ${editRecord?.namaWajibPajak}` : 'Tambah Record Baru'}
+      title={isEdit ? `Edit — ${editRecord?.namaWajibPajak}` : 'Tambah Data Baru'}
       size="xl"
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-        <Field label="Nomor Urut">
-          <input
-            className="input-field"
-            type="number"
-            value={form.nomor}
-            onChange={e => set('nomor', e.target.value)}
-            placeholder="Otomatis"
-          />
-        </Field>
-
-        <Field label="NOP *" error={errors.nop}>
-          <input
-            className={`input-field${errors.nop ? ' input-error' : ''}`}
-            value={form.nop}
-            onChange={e => set('nop', e.target.value)}
-            placeholder="Nomor Objek Pajak"
-          />
-        </Field>
-
-        <Field label="Nomor Induk">
-          <input
-            className="input-field"
-            value={form.nomorInduk}
-            onChange={e => set('nomorInduk', e.target.value)}
-            placeholder="Nomor Induk"
-          />
-        </Field>
-
-        <Field label="Nama Wajib Pajak *" error={errors.namaWajibPajak}>
-          <input
-            className={`input-field${errors.namaWajibPajak ? ' input-error' : ''}`}
-            value={form.namaWajibPajak}
-            onChange={e => set('namaWajibPajak', e.target.value)}
-            placeholder="Nama lengkap"
-          />
-        </Field>
-
-        <Field label="Alamat Objek Pajak" className="md:col-span-2">
-          <input
-            className="input-field"
-            value={form.alamatObjekPajak}
-            onChange={e => set('alamatObjekPajak', e.target.value)}
-            placeholder="Alamat objek pajak"
-          />
-        </Field>
-
-        <Field label="Pajak Terhutang (Rp) *" error={errors.pajakTerhutang}>
-          <input
-            className={`input-field${errors.pajakTerhutang ? ' input-error' : ''}`}
-            type="number"
-            value={form.pajakTerhutang}
-            onChange={e => set('pajakTerhutang', e.target.value)}
-            placeholder="0"
-          />
-        </Field>
-
-        <Field label="Perubahan Pajak (Rp)">
-          <input
-            className="input-field"
-            type="number"
-            value={form.perubahanPajak}
-            onChange={e => set('perubahanPajak', e.target.value)}
-            placeholder="0"
-          />
-        </Field>
-
-        <Field label="Luas Tanah (m²)">
-          <input
-            className="input-field"
-            type="number"
-            value={form.luasTanah}
-            onChange={e => set('luasTanah', e.target.value)}
-            placeholder="0"
-          />
-        </Field>
-
-        <Field label="Luas Bangunan (m²)">
-          <input
-            className="input-field"
-            type="number"
-            value={form.luasBangunan}
-            onChange={e => set('luasBangunan', e.target.value)}
-            placeholder="0"
-          />
-        </Field>
-
-        <Field label="Dikelola Oleh">
-          <input
-            className="input-field"
-            value={form.dikelolaOleh}
-            onChange={e => set('dikelolaOleh', e.target.value)}
-            placeholder="Nama petugas"
-          />
-        </Field>
-
-        <Field label="Tanggal Bayar">
-          <input
-            className="input-field"
-            type="date"
-            value={form.tanggalBayar}
-            onChange={e => set('tanggalBayar', e.target.value)}
-          />
-        </Field>
-
-        {/* Status Lunas — full width */}
-        <div className="md:col-span-2">
-          <label
-            className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border transition-colors"
-            style={{
-              borderColor: form.statusLunas ? 'var(--c-success)' : 'var(--c-border)',
-              background: form.statusLunas ? 'var(--c-success-light)' : 'var(--c-surface-2)',
-            }}
-          >
-            {/* Toggle visual */}
-            <div className="relative flex-shrink-0">
-              <input
-                type="checkbox"
-                className="sr-only"
-                checked={form.statusLunas}
-                onChange={e => set('statusLunas', e.target.checked)}
-              />
-              <div
-                className="w-11 h-6 rounded-full transition-colors duration-200"
-                style={{ background: form.statusLunas ? 'var(--c-success)' : 'var(--c-text-4)' }}
-              />
-              <div
-                className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"
-                style={{ transform: form.statusLunas ? 'translateX(20px)' : 'translateX(0)' }}
-              />
-            </div>
-            <div>
-              <div
-                className="font-semibold"
-                style={{ color: 'var(--c-text-1)', fontSize: 'var(--text-sm)' }}
-              >
-                Status Lunas
-              </div>
-              <div style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}>
-                {form.statusLunas ? 'Sudah lunas' : 'Belum lunas'}
-              </div>
-            </div>
-          </label>
-        </div>
-      </div>
+      <RecordFormFields form={form} errors={errors} onChange={handleChange} />
 
       {/* Actions */}
       <div
@@ -324,32 +168,9 @@ export function RecordModal({
           <X size={15} /> Batal
         </Button>
         <Button variant="primary" onClick={handleSubmit} loading={loading} className="flex-1">
-          <Save size={15} /> {isEdit ? 'Simpan Perubahan' : 'Tambah Record'}
+          <Save size={15} /> {isEdit ? 'Simpan Perubahan' : 'Tambah Data'}
         </Button>
       </div>
     </Modal>
-  );
-}
-
-function Field({
-  label, children, error, className = '',
-}: {
-  label: string; children: React.ReactNode; error?: string; className?: string;
-}) {
-  return (
-    <div className={className}>
-      <label
-        className="block font-semibold mb-1.5"
-        style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}
-      >
-        {label}
-      </label>
-      {children}
-      {error && (
-        <p className="mt-1" style={{ color: 'var(--c-danger)', fontSize: 'var(--text-xs)' }}>
-          {error}
-        </p>
-      )}
-    </div>
   );
 }

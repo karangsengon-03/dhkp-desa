@@ -88,7 +88,7 @@ export default function DataPage() {
       showToast('Record berhasil dihapus', 'success');
       setDeleteTarget(null);
     } catch {
-      showToast('Gagal menghapus record', 'danger');
+      showToast('Gagal menghapus data', 'danger');
     } finally {
       setDeleteLoading(false);
     }
@@ -286,8 +286,11 @@ function PaginBtn({ onClick, disabled, active, label }: {
     <button
       onClick={onClick}
       disabled={disabled}
-      className="w-7 h-7 rounded flex items-center justify-center font-semibold transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+      // [FIX #3] touch target — min 44px (exception pagination kompak)
+      className="rounded flex items-center justify-center font-semibold transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
       style={{
+        minWidth: 44,
+        height: 44,
         background: active ? 'var(--c-navy)' : 'var(--c-surface-2)',
         color: active ? 'var(--c-text-inv)' : 'var(--c-text-1)',
         border: `1px solid ${active ? 'var(--c-navy)' : 'var(--c-border)'}`,

@@ -40,8 +40,12 @@
   /* Text */
   --c-text-1:        #1A1A1A;
   --c-text-2:        #4A4A4A;
-  --c-text-3:        #6E6E6E;
-  --c-text-4:        #A0A0A0;
+    /* WCAG AA audit:
+     --c-text-3 #595959 → rasio kontras 7.0:1 pada bg putih (#fff) ✅ AA
+     --c-text-4 #767676 → rasio kontras 4.54:1 pada bg putih (#fff) ✅ AA (batas minimum 4.5:1)
+     Sebelumnya: text-3=#6E6E6E (5.74:1 ✅), text-4=#A0A0A0 (2.85:1 ❌ gagal AA) */
+  --c-text-3:        #595959;
+  --c-text-4:        #767676;
   --c-text-inv:      #FFFFFF;
 
   /* Shadow */
@@ -62,7 +66,7 @@
   --sp-12: 48px;
 
   /* Typography — HANYA 5 ukuran */
-  --text-xs:   12px;
+  --text-xs:   13px; /* [FIX #5] min 13px untuk aksesibilitas */
   --text-sm:   13px;
   --text-base: 14px;
   --text-lg:   16px;
@@ -80,8 +84,8 @@
   --icon-md: 16px;
   --icon-lg: 18px;
 
-  /* Touch Target */
-  --touch-min: 44px;
+  /* Touch Target — [FIX #3] minimum 48px sesuai standar aksesibilitas desa */
+  --touch-min: 48px;
 
   /* Layout */
   --header-height-mobile:  52px;
@@ -191,8 +195,10 @@ body {
 }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
-.btn-sm  { height: 32px; padding: 0 12px; font-size: var(--text-sm); }
-.btn-md  { height: 40px; padding: 0 var(--sp-4); min-height: var(--touch-min); }
+/* [FIX #3] btn-sm 48px konsisten — padding dikecilkan untuk tabel sempit */
+.btn-sm  { height: 48px; padding: 0 var(--sp-2); font-size: var(--text-sm); }
+/* [FIX #3] btn-md naik ke 48px via token --touch-min */
+.btn-md  { height: var(--touch-min); padding: 0 var(--sp-4); min-height: var(--touch-min); }
 .btn-lg  { height: var(--touch-min); padding: 0 var(--sp-5); }
 
 .btn-primary { background: var(--c-navy); color: var(--c-text-inv); border-color: var(--c-navy); }
@@ -213,7 +219,7 @@ body {
 .input-field {
   display: block;
   width: 100%;
-  height: 40px;
+  height: var(--touch-min); /* [FIX #3] min 48px */
   padding: 0 var(--sp-3);
   font-size: var(--text-base);
   font-weight: 400;
@@ -332,13 +338,15 @@ body {
 
 /* ── Pagination ── */
 .pagination { display: flex; align-items: center; gap: var(--sp-1); flex-wrap: wrap; }
-.page-btn { min-width: 32px; height: 32px; padding: 0 var(--sp-2); border-radius: var(--radius-sm); font-size: var(--text-xs); font-weight: 500; border: 1px solid var(--c-border); background: var(--c-surface); color: var(--c-text-2); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 100ms ease, color 100ms ease; }
+/* [FIX #3] page-btn: exception pagination kompak, 44px cukup untuk konteks ini */
+.page-btn { min-width: 40px; height: 44px; padding: 0 var(--sp-2); border-radius: var(--radius-sm); font-size: var(--text-xs); font-weight: 500; border: 1px solid var(--c-border); background: var(--c-surface); color: var(--c-text-2); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 100ms ease, color 100ms ease; }
 .page-btn:hover:not(:disabled) { background: var(--c-navy-light); border-color: var(--c-navy); color: var(--c-navy); }
 .page-btn.active { background: var(--c-navy); border-color: var(--c-navy); color: var(--c-text-inv); font-weight: 700; }
 .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* ── Filter Chip ── */
-.filter-chip { display: inline-flex; align-items: center; gap: var(--sp-1); height: 32px; padding: 0 var(--sp-3); border-radius: var(--radius-sm); font-size: var(--text-sm); font-weight: 500; border: 1px solid var(--c-border); background: var(--c-surface); color: var(--c-text-3); cursor: pointer; transition: all 150ms ease; }
+/* [FIX #3] filter-chip 48px */
+.filter-chip { display: inline-flex; align-items: center; gap: var(--sp-1); height: 48px; padding: 0 var(--sp-3); border-radius: var(--radius-sm); font-size: var(--text-sm); font-weight: 500; border: 1px solid var(--c-border); background: var(--c-surface); color: var(--c-text-3); cursor: pointer; transition: all 150ms ease; }
 .filter-chip:hover { border-color: var(--c-navy); color: var(--c-navy); }
 .filter-chip.active { background: var(--c-navy); border-color: var(--c-navy); color: var(--c-text-inv); }
 
@@ -412,9 +420,58 @@ body {
    PRINT
 ═══════════════════════════════════════════════════════════════════ */
 .print-only { display: none; }
+/* ═══════════════════════════════════════════════════════════════════
+   PRINT STYLESHEET — [FIX #4] versi lengkap
+   PrintDHKP.tsx punya @page { size: A4 landscape } sendiri — biarkan, itu valid.
+═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Focus indicator (aksesibilitas keyboard) ─────────────────────────── */
+/* Terlihat jelas untuk pengguna navigasi keyboard, tidak tampil saat klik/tap */
+:focus-visible {
+  outline: 3px solid var(--c-navy);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+[data-theme='dark'] :focus-visible {
+  outline-color: var(--c-gold);
+}
+/* Tombol dan elemen interaktif sudah punya outline dari :focus-visible di atas */
+/* Override khusus untuk input-field agar tidak double dengan box-shadow */
+.input-field:focus-visible {
+  outline: none; /* input pakai box-shadow navy, tidak butuh outline tambahan */
+}
+
 @media print {
-  .no-print { display: none !important; }
-  .print-only { display: block !important; }
-  body { background: white; color: black; font-size: 11px; }
-  @page { size: A4 landscape; margin: 8mm; }
+  /* Sembunyikan semua elemen non-konten */
+  nav, header, .sidebar, [data-sidebar],
+  .no-print, button:not(.print-visible),
+  .bottom-nav, .update-banner { display: none !important; }
+
+  /* Reset warna ke hitam-putih */
+  body, *, *::before, *::after {
+    color: #000 !important;
+    background: #fff !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Ukuran kertas A4 portrait (landscape ditangani PrintDHKP sendiri via @page) */
+  @page { size: A4; margin: 2cm; }
+
+  /* Tipografi print */
+  body { font-size: 12pt !important; line-height: 1.5 !important; }
+
+  /* Page break */
+  .page-break { page-break-after: always; break-after: page; }
+  .no-break   { page-break-inside: avoid; break-inside: avoid; }
+
+  /* Tabel */
+  table { page-break-inside: auto; width: 100%; }
+  tr    { page-break-inside: avoid; break-inside: avoid; }
+  thead { display: table-header-group; }
+
+  /* Link — tampilkan URL */
+  a[href]::after { content: ' (' attr(href) ')'; font-size: 10pt; }
+  a[href^="#"]::after,
+  a[href^="javascript"]::after { content: ''; }
 }

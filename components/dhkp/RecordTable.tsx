@@ -1,9 +1,11 @@
 'use client';
 
-import { Pencil, Trash2, FileX } from 'lucide-react';
+import { useState } from 'react';
+import { Pencil, Trash2, FileX, Eye, EyeOff } from 'lucide-react';
 import { DHKPRecord, GlobalLock } from '@/types';
 import { Toggle } from '@/components/ui/Toggle';
 import { formatRupiah, formatTanggal, todayISO } from '@/lib/format';
+import { maskNOP, maskNomorInduk } from '@/lib/masking';
 import { updateRecord } from '@/lib/firestore';
 import { logChange } from '@/lib/changelog';
 import { useToast } from '@/components/ui/Toast';
@@ -37,6 +39,18 @@ export function RecordTable({
 }: RecordTableProps) {
   const { showToast } = useToast();
   const isLocked = lock.isLocked;
+
+  // Set berisi id record yang sedang dalam mode "reveal" (tampil penuh)
+  const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
+
+  function toggleReveal(id: string) {
+    setRevealedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
 
   async function handleToggleLunas(record: DHKPRecord, checked: boolean) {
     if (isLocked) return;
@@ -82,9 +96,8 @@ export function RecordTable({
   // Nomor urut global (lintas halaman)
   const startIdx = (currentPage - 1) * pageSize;
 
-  // Hitung total pajak s.d. halaman ini (kumulatif dari allRecords[0...(safePage*pageSize)])
-  // allRecords sudah difilter, totalPajakAll dikirim dari parent
-  void allRecords; // suppress unused warning — allRecords dipakai parent untuk totalPajakAll
+  // allRecords dipakai parent untuk totalPajakAll
+  void allRecords;
 
   return (
     <div className="table-wrapper">
@@ -103,115 +116,136 @@ export function RecordTable({
             <th className="col-number">Luas Tanah</th>
             <th className="col-number">Luas Bgn</th>
             <th>Dikelola</th>
-            <th className="col-sticky-right text-center" style={{ width: 76 }}>Aksi</th>
+            <th className="col-sticky-right text-center" style={{ width: 96 }}>Aksi</th>
           </tr>
         </thead>
         <tbody>
-          {records.map((record, idx) => (
-            <tr
-              key={record.id}
-              className={record.statusLunas ? 'row-lunas' : ''}
-            >
-              {/* No urut */}
-              <td className="col-sticky-left text-center font-medium" style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}>
-                {startIdx + idx + 1}
-              </td>
+          {records.map((record, idx) => {
+            const isRevealed = revealedIds.has(record.id);
+            return (
+              <tr
+                key={record.id}
+                className={record.statusLunas ? 'row-lunas' : ''}
+              >
+                {/* No urut */}
+                <td className="col-sticky-left text-center font-medium" style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}>
+                  {startIdx + idx + 1}
+                </td>
 
-              <td className="font-mono" style={{ fontSize: 'var(--text-xs)' }}>
-                {record.nop || '-'}
-              </td>
+                {/* NOP — masked kecuali reveal aktif */}
+                <td className="font-mono" style={{ fontSize: 'var(--text-xs)' }}>
+                  <div className="flex items-center gap-1">
+                    <span>{isRevealed ? (record.nop || '-') : maskNOP(record.nop)}</span>
+                    {record.nop && (
+                      <button
+                        type="button"
+                        onClick={() => toggleReveal(record.id)}
+                        aria-label={isRevealed ? 'Sembunyikan NOP' : 'Tampilkan NOP lengkap'}
+                        title={isRevealed ? 'Sembunyikan NOP' : 'Tampilkan NOP lengkap'}
+                        className="flex-shrink-0 flex items-center justify-center rounded transition-opacity hover:opacity-70"
+                        style={{ width: 20, height: 20, color: 'var(--c-text-4)' }}
+                      >
+                        {isRevealed ? <EyeOff size={14} /> : <Eye size={14} />}
+                      </button>
+                    )}
+                  </div>
+                </td>
 
-              <td style={{ fontSize: 'var(--text-xs)' }}>
-                {record.nomorInduk || '-'}
-              </td>
+                {/* Nomor Induk — masked */}
+                <td style={{ fontSize: 'var(--text-xs)' }}>
+                  {isRevealed ? (record.nomorInduk || '-') : maskNomorInduk(record.nomorInduk)}
+                </td>
 
-              <td>
-                <span className="font-semibold" style={{ color: 'var(--c-text-1)', fontSize: 'var(--text-xs)' }}>
-                  {record.namaWajibPajak}
-                </span>
-              </td>
+                <td>
+                  <span className="font-semibold" style={{ color: 'var(--c-text-1)', fontSize: 'var(--text-xs)' }}>
+                    {record.namaWajibPajak}
+                  </span>
+                </td>
 
-              <td>
-                <span
-                  className="block max-w-[150px] truncate"
-                  title={record.alamatObjekPajak}
-                  style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}
-                >
-                  {record.alamatObjekPajak || '-'}
-                </span>
-              </td>
-
-              <td className="col-number">
-                <span className="font-semibold" style={{ color: 'var(--c-navy)', fontSize: 'var(--text-xs)' }}>
-                  {formatRupiah(record.pajakTerhutang)}
-                </span>
-              </td>
-
-              <td className="col-number">
-                <span
-                  style={{
-                    fontSize: 'var(--text-xs)',
-                    fontWeight: 500,
-                    color: record.perubahanPajak > 0
-                      ? 'var(--c-success)'
-                      : record.perubahanPajak < 0
-                      ? 'var(--c-danger)'
-                      : 'var(--c-text-3)',
-                  }}
-                >
-                  {record.perubahanPajak !== 0 ? formatRupiah(record.perubahanPajak) : '-'}
-                </span>
-              </td>
-
-              <td className="text-center">
-                <Toggle
-                  checked={record.statusLunas}
-                  onChange={v => handleToggleLunas(record, v)}
-                  disabled={isLocked}
-                />
-              </td>
-
-              <td style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)', whiteSpace: 'nowrap' }}>
-                {formatTanggal(record.tanggalBayar)}
-              </td>
-
-              <td className="col-number" style={{ fontSize: 'var(--text-xs)' }}>
-                {record.luasTanah ? `${record.luasTanah} m²` : '-'}
-              </td>
-
-              <td className="col-number" style={{ fontSize: 'var(--text-xs)' }}>
-                {record.luasBangunan ? `${record.luasBangunan} m²` : '-'}
-              </td>
-
-              <td style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}>
-                {record.dikelolaOleh || '-'}
-              </td>
-
-              {/* Aksi — sticky kanan */}
-              <td className="col-sticky-right">
-                <div className="flex items-center justify-center gap-1">
-                  <button
-                    onClick={() => onEdit(record)}
-                    disabled={isLocked}
-                    title="Edit"
-                    className="w-7 h-7 rounded-md flex items-center justify-center transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
-                    style={{ background: 'var(--c-navy-light)', color: 'var(--c-navy)' }}
+                <td>
+                  <span
+                    className="block max-w-[150px] truncate"
+                    title={record.alamatObjekPajak}
+                    style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}
                   >
-                    <Pencil size={13} />
-                  </button>
-                  <button
-                    onClick={() => onDelete(record)}
-                    disabled={isLocked}
-                    title="Hapus"
-                    className="w-7 h-7 rounded-md flex items-center justify-center transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
-                    style={{ background: 'var(--c-danger-light)', color: 'var(--c-danger)' }}
+                    {record.alamatObjekPajak || '-'}
+                  </span>
+                </td>
+
+                <td className="col-number">
+                  <span className="font-semibold" style={{ color: 'var(--c-navy)', fontSize: 'var(--text-xs)' }}>
+                    {formatRupiah(record.pajakTerhutang)}
+                  </span>
+                </td>
+
+                <td className="col-number">
+                  <span
+                    style={{
+                      fontSize: 'var(--text-xs)',
+                      fontWeight: 500,
+                      color: record.perubahanPajak > 0
+                        ? 'var(--c-success)'
+                        : record.perubahanPajak < 0
+                        ? 'var(--c-danger)'
+                        : 'var(--c-text-3)',
+                    }}
                   >
-                    <Trash2 size={13} />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
+                    {record.perubahanPajak !== 0 ? formatRupiah(record.perubahanPajak) : '-'}
+                  </span>
+                </td>
+
+                <td className="text-center">
+                  <Toggle
+                    checked={record.statusLunas}
+                    onChange={v => handleToggleLunas(record, v)}
+                    disabled={isLocked}
+                  />
+                </td>
+
+                <td style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)', whiteSpace: 'nowrap' }}>
+                  {formatTanggal(record.tanggalBayar)}
+                </td>
+
+                <td className="col-number" style={{ fontSize: 'var(--text-xs)' }}>
+                  {record.luasTanah ? `${record.luasTanah} m²` : '-'}
+                </td>
+
+                <td className="col-number" style={{ fontSize: 'var(--text-xs)' }}>
+                  {record.luasBangunan ? `${record.luasBangunan} m²` : '-'}
+                </td>
+
+                <td style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}>
+                  {record.dikelolaOleh || '-'}
+                </td>
+
+                {/* Aksi — sticky kanan [FIX #18] gap-2 = 8px minimum */}
+                <td className="col-sticky-right">
+                  <div className="flex items-center justify-center gap-2">
+                    <button
+                      onClick={() => onEdit(record)}
+                      disabled={isLocked}
+                      title="Edit"
+                      aria-label="Edit data"
+                      className="w-8 h-8 rounded-md flex items-center justify-center transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
+                      style={{ background: 'var(--c-navy-light)', color: 'var(--c-navy)' }}
+                    >
+                      <Pencil size={13} />
+                    </button>
+                    <button
+                      onClick={() => onDelete(record)}
+                      disabled={isLocked}
+                      title="Hapus"
+                      aria-label="Hapus data"
+                      className="w-8 h-8 rounded-md flex items-center justify-center transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
+                      style={{ background: 'var(--c-danger-light)', color: 'var(--c-danger)' }}
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
 
         {/* Footer totals */}

@@ -7,6 +7,7 @@ const STATIC_CACHE  = `${CACHE_VERSION}-static`;
 const PAGES_CACHE   = `${CACHE_VERSION}-pages`;
 
 const STATIC_ASSETS = [
+  '/offline',
   '/manifest.json',
   '/favicon-32x32.png',
   '/apple-touch-icon.png',
@@ -75,7 +76,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Halaman → network-first, fallback ke cache
+  // Halaman → network-first, fallback ke cache lalu /offline
   event.respondWith(
     fetch(request)
       .then(response => {
@@ -84,6 +85,15 @@ self.addEventListener('fetch', (event) => {
         }
         return response;
       })
-      .catch(() => caches.match(request))
+      .catch(async () => {
+        const cached = await caches.match(request);
+        if (cached) return cached;
+        // Fallback ke halaman offline untuk navigasi HTML
+        if (request.headers.get('Accept')?.includes('text/html')) {
+          const offlineCached = await caches.match('/offline');
+          if (offlineCached) return offlineCached;
+        }
+        return new Response('Tidak ada koneksi internet.', { status: 503, statusText: 'Offline' });
+      })
   );
 });

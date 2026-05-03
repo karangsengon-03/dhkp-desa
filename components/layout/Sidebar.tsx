@@ -16,7 +16,7 @@ interface SidebarProps {
 }
 
 const navItems = [
-  { href: '/dashboard',     label: 'Dashboard',          icon: LayoutDashboard },
+  { href: '/dashboard',     label: 'Beranda',          icon: LayoutDashboard },
   { href: '/data',          label: 'Data DHKP',          icon: ClipboardList   },
   { href: '/rekap',         label: 'Rekap Lunas',        icon: CheckSquare     },
   { href: '/riwayat',       label: 'Riwayat Perubahan',  icon: History         },
