@@ -3,7 +3,6 @@
 import { useEffect } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import Link from 'next/link';
-import * as Sentry from '@sentry/nextjs';
 
 export default function ErrorPage({
   error,
@@ -13,10 +12,11 @@ export default function ErrorPage({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error('[DHKP Error]', error);
-    // Kirim error ke Sentry jika DSN dikonfigurasi
-    Sentry.captureException(error);
-  }, [error]);
+  console.error('[DHKP Error]', error);
+  import('@sentry/nextjs')
+    .then(({ captureException }) => captureException(error))
+    .catch(() => {});
+}, [error]);
 
   return (
     <div
