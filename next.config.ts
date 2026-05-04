@@ -1,17 +1,7 @@
 import type { NextConfig } from 'next';
-import fs from 'fs';
-import path from 'path';
 import { withSentryConfig } from '@sentry/nextjs';
 
-// Inject BUILD_HASH ke sw.js saat build
-const buildHash = Date.now().toString(36);
-const swPath = path.join(process.cwd(), 'public', 'sw.js');
-if (fs.existsSync(swPath)) {
-  const swContent = fs.readFileSync(swPath, 'utf8');
-  if (swContent.includes('__BUILD_HASH__')) {
-    fs.writeFileSync(swPath, swContent.replace(/__BUILD_HASH__/g, buildHash));
-  }
-}
+// BUILD_HASH di-inject via scripts/inject-sw-hash.js (prebuild)
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,

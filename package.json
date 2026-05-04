@@ -9,7 +9,8 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "prebuild": "node scripts/inject-sw-hash.js"
   },
   "dependencies": {
     "@sentry/nextjs": "^10.51.0",
