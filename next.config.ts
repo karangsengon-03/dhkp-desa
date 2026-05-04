@@ -38,8 +38,10 @@ const nextConfig: NextConfig = {
 // Ekspor dengan Sentry wrapper jika DSN tersedia
 // Jika tidak ada DSN, withSentryConfig tetap aman — tidak menambahkan overhead
 export default withSentryConfig(nextConfig, {
-  // Sembunyikan source maps dari bundle publik
-  hideSourceMaps: true,
+  // Hapus source map dari bundle publik setelah upload ke Sentry
+  sourcemaps: {
+    filesToDeleteAfterUpload: ['.next/static/**/*.map'],
+  },
   // Upload source maps lebih luas (termasuk lazy-loaded chunks)
   widenClientFileUpload: true,
   // Matikan Sentry CLI output saat build
