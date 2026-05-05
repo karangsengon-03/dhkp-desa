@@ -56,7 +56,7 @@ export function SeksiInfoDesa({ appInfo, saving, onSaving, onChange }: SeksiInfo
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 'var(--sp-4)', marginBottom: 'var(--sp-5)' }}>
         {(([
-          ['propinsi', 'Propinsi', 'Contoh: Jawa Timur'],
+          ['propinsi', 'Provinsi', 'Contoh: Jawa Timur'],
           ['kotaKab', 'Kota / Kabupaten', 'Contoh: Kabupaten Bondowoso'],
           ['kecamatan', 'Kecamatan', 'Contoh: Klabang'],
           ['desaKelurahan', 'Desa / Kelurahan', 'Contoh: Karang Sengon'],

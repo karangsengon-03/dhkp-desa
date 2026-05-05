@@ -65,12 +65,12 @@
   --sp-10: 40px;
   --sp-12: 48px;
 
-  /* Typography — HANYA 5 ukuran */
-  --text-xs:   13px; /* [FIX #5] min 13px untuk aksesibilitas */
-  --text-sm:   13px;
-  --text-base: 14px;
-  --text-lg:   16px;
-  --text-xl:   18px;
+  /* Typography — sesuai prompt desa: lebih besar, lebih longgar */
+  --text-xs:   13px;
+  --text-sm:   15px;
+  --text-base: 17px;
+  --text-lg:   19px;
+  --text-xl:   22px;
 
   /* Border Radius — HANYA 5 nilai */
   --radius-xs:   2px;
@@ -88,12 +88,12 @@
   --touch-min: 48px;
 
   /* Layout */
-  --header-height-mobile:  52px;
-  --header-height-desktop: 56px;
-  --sidebar-width:         260px;
+  --header-height-mobile:  60px;
+  --header-height-desktop: 64px;
+  --sidebar-width:         280px;
   --content-pad-mobile:    16px;
-  --content-pad-tablet:    20px;
-  --content-pad-desktop:   24px;
+  --content-pad-tablet:    24px;
+  --content-pad-desktop:   32px;
   --content-max-width:     1280px;
 }
 
@@ -195,11 +195,10 @@ body {
 }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
-/* [FIX #3] btn-sm 48px konsisten — padding dikecilkan untuk tabel sempit */
-.btn-sm  { height: 48px; padding: 0 var(--sp-2); font-size: var(--text-sm); }
-/* [FIX #3] btn-md naik ke 48px via token --touch-min */
-.btn-md  { height: var(--touch-min); padding: 0 var(--sp-4); min-height: var(--touch-min); }
-.btn-lg  { height: var(--touch-min); padding: 0 var(--sp-5); }
+/* Touch target minimum 48px sesuai standar aksesibilitas desa */
+.btn-sm  { height: 40px; padding: 0 var(--sp-4); font-size: var(--text-sm); min-height: 40px; }
+.btn-md  { height: var(--touch-min); padding: 0 var(--sp-5); min-height: var(--touch-min); }
+.btn-lg  { height: var(--touch-min); padding: 0 var(--sp-6); font-size: var(--text-base); }
 
 .btn-primary { background: var(--c-navy); color: var(--c-text-inv); border-color: var(--c-navy); }
 .btn-primary:not(:disabled):hover { background: var(--c-navy-dark); border-color: var(--c-navy-dark); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
@@ -252,13 +251,13 @@ body {
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  height: var(--touch-min);
+  gap: 12px;
+  height: 52px;
   padding: 0 var(--sp-4);
   font-size: var(--text-base);
   font-weight: 500;
-  color: rgba(255,255,255,0.75);
-  border-radius: var(--radius-sm);
+  color: rgba(255,255,255,0.80);
+  border-radius: var(--radius-md);
   border-left: 3px solid transparent;
   text-decoration: none;
   transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
@@ -270,8 +269,8 @@ body {
   width: 100%;
   text-align: left;
 }
-.nav-item:hover { background: rgba(255,255,255,0.08); color: #ffffff; font-weight: 600; }
-.nav-item.active { border-left-color: var(--c-gold); background: rgba(255,255,255,0.12); color: #ffffff; font-weight: 700; }
+.nav-item:hover { background: rgba(255,255,255,0.10); color: #ffffff; }
+.nav-item.active { border-left-color: var(--c-gold); background: rgba(255,255,255,0.14); color: #ffffff; font-weight: 700; }
 .nav-item.active svg { color: var(--c-gold); }
 
 /* ── Table ── */
@@ -305,7 +304,7 @@ body {
 .dhkp-table tbody tr:hover           { background: var(--c-navy-light); }
 .dhkp-table tbody tr.row-lunas       { background: var(--c-success-light); }
 .dhkp-table tbody tr.row-lunas:hover { background: #d4edda; }
-.dhkp-table tbody td { height: var(--touch-min); padding: 0 var(--sp-3); color: var(--c-text-2); font-size: var(--text-sm); white-space: nowrap; }
+.dhkp-table tbody td { height: 52px; padding: 0 var(--sp-3); color: var(--c-text-2); font-size: var(--text-sm); white-space: nowrap; }
 .dhkp-table .col-number { font-variant-numeric: tabular-nums; text-align: right; }
 .dhkp-table .col-sticky-left  { position: sticky; left: 0;  z-index: 2; background: inherit; }
 .dhkp-table .col-sticky-right { position: sticky; right: 0; z-index: 2; background: inherit; }
@@ -327,11 +326,11 @@ body {
 .page-subtitle { font-size: var(--text-sm); color: var(--c-text-3); margin-top: var(--sp-1); }
 
 /* ── Stat Card ── */
-.stat-card { background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--radius-md); box-shadow: var(--shadow-xs); padding: 14px; transition: box-shadow 150ms ease, transform 150ms ease; }
+.stat-card { background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-xs); padding: 18px; transition: box-shadow 150ms ease, transform 150ms ease; }
 .stat-card:hover { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
-.stat-icon  { width: 36px; height: 36px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: var(--sp-3); }
-.stat-value { font-size: var(--text-xl); font-weight: 700; color: var(--c-text-1); line-height: 1; margin-bottom: 4px; }
-.stat-label { font-size: var(--text-xs); font-weight: 500; color: var(--c-text-3); }
+.stat-icon  { width: 44px; height: 44px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: var(--sp-3); }
+.stat-value { font-size: var(--text-xl); font-weight: 700; color: var(--c-text-1); line-height: 1.1; margin-bottom: 4px; }
+.stat-label { font-size: var(--text-sm); font-weight: 500; color: var(--c-text-3); }
 
 /* ── Lock Banner ── */
 .lock-banner { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); background: var(--c-danger-light); border: 1px solid var(--c-danger); border-radius: var(--radius-md); margin-bottom: var(--sp-4); font-size: var(--text-sm); color: var(--c-danger); font-weight: 500; }

@@ -141,33 +141,33 @@ export default function DashboardPage() {
           {/* 6 stat cards */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
             <StatCard
-              icon={<Users size={18} />}
+              icon={<Users size={22} />}
               color="var(--c-navy)" bg="var(--c-navy-light)"
               label="Total Objek" value={total}
             />
             <StatCard
-              icon={<CheckCircle size={18} />}
+              icon={<CheckCircle size={22} />}
               color="var(--c-success)" bg="var(--c-success-light)"
               label="Sudah Lunas" value={lunas} sub={`${persen}%`}
             />
             <StatCard
-              icon={<XCircle size={18} />}
+              icon={<XCircle size={22} />}
               color="var(--c-danger)" bg="var(--c-danger-light)"
               label="Belum Lunas" value={belumLunas}
             />
             <StatCard
-              icon={<TrendingUp size={18} />}
-              color="var(--c-gold)" bg="var(--c-gold-light)"
+              icon={<TrendingUp size={22} />}
+              color="var(--c-warning)" bg="var(--c-warning-light)"
               label="Persentase" value={`${persen}%`}
             />
             <StatCard
-              icon={<LayoutGrid size={18} />}
+              icon={<LayoutGrid size={22} />}
               color="var(--c-navy)" bg="var(--c-navy-light)"
               label="Luas Tanah" value={luasTanah.toLocaleString('id-ID')} sub="m²"
             />
             <StatCard
-              icon={<Building2 size={18} />}
-              color="var(--c-gold)" bg="var(--c-gold-light)"
+              icon={<Building2 size={22} />}
+              color="var(--c-navy)" bg="var(--c-navy-light)"
               label="Luas Bangunan" value={luasBgn.toLocaleString('id-ID')} sub="m²"
             />
           </div>
@@ -175,22 +175,22 @@ export default function DashboardPage() {
           {/* Finance cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
             <FinCard
-              icon={<Banknote size={17} />}
+              icon={<Banknote size={20} />}
               color="var(--c-navy)" bg="var(--c-navy-light)"
               label="Total Pajak Terhutang"
-              value={`Rp ${formatRupiah(totalPajak)}`}
+              value={formatRupiah(totalPajak)}
             />
             <FinCard
-              icon={<CheckCircle size={17} />}
+              icon={<CheckCircle size={20} />}
               color="var(--c-success)" bg="var(--c-success-light)"
               label="Total Sudah Dibayar"
-              value={`Rp ${formatRupiah(totalDibayar)}`}
+              value={formatRupiah(totalDibayar)}
             />
             <FinCard
-              icon={<XCircle size={17} />}
+              icon={<XCircle size={20} />}
               color="var(--c-danger)" bg="var(--c-danger-light)"
               label="Total Tunggakan"
-              value={`Rp ${formatRupiah(tunggakan)}`}
+              value={formatRupiah(tunggakan)}
             />
           </div>
 

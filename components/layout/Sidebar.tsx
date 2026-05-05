@@ -76,8 +76,8 @@ export function Sidebar({ open, onClose, userName }: SidebarProps) {
             <div style={{ fontSize: 'var(--text-lg)', fontWeight: 700, color: '#ffffff', lineHeight: 1.2 }}>
               DHKP
             </div>
-            <div style={{ fontSize: 'var(--text-xs)', fontWeight: 400, color: 'rgba(255,255,255,0.6)', lineHeight: 1.4 }}>
-              Desa
+            <div style={{ fontSize: 'var(--text-sm)', fontWeight: 400, color: 'rgba(255,255,255,0.65)', lineHeight: 1.4 }}>
+              Desa Karang Sengon
             </div>
           </div>
           {/* Tombol X — 44×44px */}

@@ -129,7 +129,7 @@ export default function DataPage() {
             </select>
           </div>
           <Button variant="primary" size="sm" onClick={handleOpenAdd} disabled={isLocked}>
-            <Plus size={15} /> Tambah Record
+            <Plus size={15} /> Tambah Data
           </Button>
         </div>
       </div>
@@ -141,19 +141,19 @@ export default function DataPage() {
       <div className="flex flex-wrap gap-2 mb-4">
         <FilterBadge
           label="Semua" value={total}
-          icon={<Users size={13} />}
+          icon={<Users size={15} />}
           color="var(--c-navy)" bg="var(--c-navy-light)"
           active={filterStatus === 'semua'} onClick={() => handleFilterChange('semua')}
         />
         <FilterBadge
           label="Lunas" value={jumlahLunas}
-          icon={<CheckCircle size={13} />}
+          icon={<CheckCircle size={15} />}
           color="var(--c-success)" bg="var(--c-success-light)"
           active={filterStatus === 'lunas'} onClick={() => handleFilterChange('lunas')}
         />
         <FilterBadge
           label="Belum Lunas" value={jumlahBelum}
-          icon={<XCircle size={13} />}
+          icon={<XCircle size={15} />}
           color="var(--c-danger)" bg="var(--c-danger-light)"
           active={filterStatus === 'belum'} onClick={() => handleFilterChange('belum')}
         />
@@ -265,16 +265,16 @@ function FilterBadge({ label, value, icon, color, bg, active, onClick }: {
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-semibold border transition-all"
+      className="flex items-center gap-2 px-4 rounded-full font-semibold border transition-all"
       style={{
         background: active ? color : bg,
         color: active ? 'var(--c-text-inv)' : color,
         borderColor: color,
-        fontSize: 'var(--text-xs)',
-        minHeight: 32,
+        fontSize: 'var(--text-sm)',
+        height: 40,
       }}
     >
-      {icon}{label}: {value}
+      {icon}{label}: <strong>{value}</strong>
     </button>
   );
 }
@@ -354,7 +354,7 @@ function EmptyState({ tahun, isLocked, onAdd }: {
       </div>
       {!isLocked && (
         <Button variant="primary" size="sm" onClick={onAdd}>
-          <Plus size={15} /> Tambah Record Pertama
+          <Plus size={15} /> Tambah Data Pertama
         </Button>
       )}
     </div>
