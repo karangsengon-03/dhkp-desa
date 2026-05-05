@@ -102,7 +102,7 @@ export default function RiwayatPage() {
       </div>
 
       {/* Filter Bar */}
-      <div className="flex flex-wrap gap-3 mb-4">
+      <div className="flex flex-wrap gap-4 mb-6">
         <div style={{ position: 'relative', flex: '1 1 220px', minWidth: 180 }}>
           <Search size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--c-t4)', pointerEvents: 'none' }} />
           <input

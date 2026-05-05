@@ -125,18 +125,15 @@ export function Sidebar({ open, onClose, userName }: SidebarProps) {
         >
           {lock.isLocked ? (
             <>
-              <Lock size={13} style={{ color: 'var(--c-err-soft)', flexShrink: 0 }} />
-              <span
-                className="truncate"
-                style={{ fontSize: 'var(--t-xs)', color: 'var(--c-err-soft)' }}
-              >
+              <Lock size={13} style={{ color: '#FFCDD2', flexShrink: 0 }} />
+              <span className="truncate" style={{ fontSize: 'var(--t-xs)', color: '#FFCDD2' }}>
                 Terkunci oleh {lock.lockedBy}
               </span>
             </>
           ) : (
             <>
-              <Unlock size={13} style={{ color: 'var(--c-ok-soft)', flexShrink: 0 }} />
-              <span style={{ fontSize: 'var(--t-xs)', color: 'var(--c-ok-soft)' }}>
+              <Unlock size={13} style={{ color: 'rgba(255,255,255,0.65)', flexShrink: 0 }} />
+              <span style={{ fontSize: 'var(--t-xs)', color: 'rgba(255,255,255,0.65)' }}>
                 Data terbuka
               </span>
             </>
@@ -146,14 +143,14 @@ export function Sidebar({ open, onClose, userName }: SidebarProps) {
         {/* Footer — nama user + logout */}
         <div
           className="flex-shrink-0"
-          style={{ padding: '0 var(--s3) var(--s4)' }}
+          style={{ padding: '0 var(--s3) var(--s5)' }}
         >
           <div
             className="truncate"
             style={{
               fontSize: 'var(--t-xs)',
               fontWeight: 500,
-              color: 'rgba(255,255,255,0.5)',
+              color: 'rgba(255,255,255,0.45)',
               padding: '0 var(--s4)',
               marginBottom: 'var(--s1)',
             }}
@@ -163,7 +160,7 @@ export function Sidebar({ open, onClose, userName }: SidebarProps) {
           <button
             onClick={handleLogout}
             className="nav-item w-full"
-            style={{ color: 'var(--c-err-soft)' }}
+            style={{ color: 'rgba(255,200,200,0.85)' }}
           >
             <LogOut size={18} />
             <span>Keluar</span>

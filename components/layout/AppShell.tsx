@@ -47,7 +47,7 @@ function SkeletonShell() {
             <div className="skeleton" style={{ width: 280, height: 13, borderRadius: 'var(--r-sm)' }} />
           </div>
           {/* Cards skeleton */}
-          <div className="grid grid-cols-2 gap-3 mb-4" style={{ gridTemplateColumns: 'repeat(2, 1fr)' }}>
+          <div className="grid grid-cols-2 gap-4 mb-6" style={{ gridTemplateColumns: 'repeat(2, 1fr)' }}>
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="card" style={{ padding: '14px' }}>
                 <div className="skeleton" style={{ width: 36, height: 36, borderRadius: 'var(--r-md)', marginBottom: 'var(--s3)' }} />
@@ -92,22 +92,12 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--c-bg)' }}>
-      <Header
-        onMenuClick={() => setSidebarOpen(true)}
-        userName={userName}
-      />
-      <Sidebar
-        open={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        userName={userName}
-      />
-      <main
-        className="header-offset"
-        style={{ minHeight: '100vh' }}
-      >
+      <Header onMenuClick={() => setSidebarOpen(true)} userName={userName} />
+      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} userName={userName} />
+      <main className="header-offset" style={{ minHeight: '100vh' }}>
         <div
           className="animate-fade-in"
-          style={{ padding: 'var(--pad-page)' }}
+          style={{ padding: '24px 20px', maxWidth: 1280, margin: '0 auto' }}
         >
           {children}
         </div>

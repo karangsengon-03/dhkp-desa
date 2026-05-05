@@ -43,7 +43,7 @@ export default function DashboardPage() {
   return (
     <AppShell pageTitle="Beranda">
       {/* Page header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
           <h1
             className="font-bold"
@@ -95,7 +95,7 @@ export default function DashboardPage() {
       {loading ? (
         <>
           {/* Skeleton stat cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="stat-card">
                 <div className="w-9 h-9 rounded-lg skeleton mb-3" />
@@ -105,9 +105,9 @@ export default function DashboardPage() {
             ))}
           </div>
           {/* Skeleton finance cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="card p-4 flex items-center gap-3">
+              <div key={i} className="card p-5 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg skeleton flex-shrink-0" />
                 <div className="flex-1">
                   <div className="w-28 h-3 rounded skeleton mb-2" />
@@ -117,7 +117,7 @@ export default function DashboardPage() {
             ))}
           </div>
           {/* Skeleton progress */}
-          <div className="card p-4 mb-3">
+          <div className="card p-5 mb-3">
             <div className="flex justify-between mb-3">
               <div className="w-40 h-4 rounded skeleton" />
               <div className="w-10 h-4 rounded skeleton" />
@@ -125,7 +125,7 @@ export default function DashboardPage() {
             <div className="w-full h-2.5 rounded-full skeleton" />
           </div>
           {/* Skeleton lock status */}
-          <div className="card p-4">
+          <div className="card p-5">
             <div className="flex items-center gap-3">
               <div className="w-5 h-5 rounded skeleton flex-shrink-0" />
               <div className="flex-1">
@@ -139,7 +139,7 @@ export default function DashboardPage() {
       ) : (
         <>
           {/* 6 stat cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
             <StatCard icon={<Users size={22} />}
               iconBg="var(--c-navy-soft)" iconColor="var(--c-navy)"
               label="Total Objek" value={total} />
@@ -161,7 +161,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Finance cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
             <FinCard icon={<Banknote size={20} />}
               iconBg="var(--c-navy-soft)" iconColor="var(--c-navy)"
               label="Total Pajak Terhutang" value={formatRupiah(totalPajak)} valueColor="var(--c-navy)" />
@@ -174,7 +174,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Progress bar */}
-          <div className="card p-4 mb-3">
+          <div className="card p-5 mb-3">
             <div className="flex items-center justify-between mb-2">
               <span
                 className="font-semibold"
@@ -212,7 +212,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Status kunci */}
-          <div className="card p-4">
+          <div className="card p-5">
             <div className="flex items-center gap-3">
               {lock.isLocked
                 ? <Lock size={16} style={{ color: 'var(--c-err)', flexShrink: 0 }} />
@@ -272,7 +272,7 @@ function FinCard({ icon, iconBg, iconColor, label, value, valueColor }: {
   label: string; value: string; valueColor: string;
 }) {
   return (
-    <div className="card p-4 flex items-center gap-3">
+    <div className="card p-5 flex items-center gap-3">
       <div style={{
         width: 44, height: 44, borderRadius: 'var(--r-sm)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',

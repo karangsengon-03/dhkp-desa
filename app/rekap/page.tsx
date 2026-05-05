@@ -172,7 +172,7 @@ export default function RekapPage() {
           ) : (
             <>
               {/* Stat Cards */}
-              <div className="grid gap-3 mb-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))' }}>
+              <div className="grid gap-4 mb-6" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))' }}>
                 {[
                   { icon: <Users size={20} />, label: 'Total Wajib Pajak', value: stats.total, sub: `Tahun ${tahun}`, color: 'var(--c-navy)', bg: 'var(--c-navy-soft)' },
                   { icon: <CheckCircle size={20} />, label: 'Sudah Lunas', value: stats.lunas, sub: `${stats.persen}% dari total`, color: 'var(--c-ok)', bg: 'var(--c-ok-soft)' },
@@ -206,7 +206,7 @@ export default function RekapPage() {
               </div>
 
               {/* Finance Cards */}
-              <div className="grid gap-3 mb-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+              <div className="grid gap-4 mb-6" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
                 {[
                   { icon: <Banknote size={18} />, label: 'Total Pajak Terhutang', value: formatRupiah(stats.totalPajak), color: 'var(--c-navy)', bg: 'var(--c-navy-soft)' },
                   { icon: <CheckCircle size={18} />, label: 'Total Sudah Dibayar', value: formatRupiah(stats.totalBayar), color: 'var(--c-ok)', bg: 'var(--c-ok-soft)' },

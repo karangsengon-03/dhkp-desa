@@ -138,7 +138,7 @@ export default function DataPage() {
       <LockBanner lock={lock} />
 
       {/* Badge filter */}
-      <div className="flex flex-wrap gap-2 mb-4">
+      <div className="flex flex-wrap gap-3 mb-6">
         <FilterBadge
           label="Semua" value={total}
           icon={<Users size={15} />}
