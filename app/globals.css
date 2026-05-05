@@ -76,23 +76,24 @@
   --pad-page:    16px;
 }
 
-/* Dark mode — disederhanakan, tetap elegan */
+/* Dark mode — nav navy TETAP gelap, hanya accent yang lebih terang */
 [data-theme="dark"] {
-  --c-navy:        #4D8AC0;
-  --c-navy-dark:   #3A6E9E;
-  --c-navy-mid:    #5A9AD0;
-  --c-navy-soft:   #0F1E30;
+  /* Navy untuk NAV/HEADER tetap gelap — tidak berubah */
+  --c-navy:        #1E3A5F;   /* SAMA dengan light — header/sidebar selalu gelap */
+  --c-navy-dark:   #152A45;
+  --c-navy-mid:    #2D5080;
+  --c-navy-soft:   #1A2E44;   /* bg icon di dark — cukup terang untuk terbaca */
 
   --c-gold:        #D4AF37;
   --c-gold-dark:   #B8982E;
-  --c-gold-soft:   #221A00;
+  --c-gold-soft:   #2A1F00;
 
   --c-ok:          #4CAF50;
-  --c-ok-soft:     #0A1F0C;
+  --c-ok-soft:     #0D2B0F;
   --c-err:         #EF5350;
-  --c-err-soft:    #1F0A0A;
+  --c-err-soft:    #2B0D0D;
   --c-warn:        #FF9800;
-  --c-warn-soft:   #1F1000;
+  --c-warn-soft:   #2B1A00;
 
   --c-bg:          #0D1117;
   --c-surface:     #161B22;
@@ -101,10 +102,10 @@
   --c-border-md:   #3D444D;
 
   --c-t1:          #E6EDF3;
-  --c-t2:          #B0BAC4;
-  --c-t3:          #7A8592;
-  --c-t4:          #4D5562;
-  --c-inv:         #0D1117;
+  --c-t2:          #C9D1D9;
+  --c-t3:          #8B949E;
+  --c-t4:          #484F58;
+  --c-inv:         #FFFFFF;
 
   --sh-xs: 0 1px 2px rgba(0,0,0,0.4);
   --sh-sm: 0 1px 4px rgba(0,0,0,0.5);

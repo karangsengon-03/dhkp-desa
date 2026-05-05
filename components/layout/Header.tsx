@@ -37,100 +37,99 @@ export function Header({ onMenuClick, userName }: HeaderProps) {
   const initial = userName ? userName.charAt(0).toUpperCase() : 'A';
 
   return (
-    <header
-      className="fixed top-0 left-0 right-0 z-20 no-print"
-      style={{
-        height: 'var(--header-h)',
-        background: 'var(--c-navy)',
-        borderBottom: '1px solid rgba(255,255,255,0.1)',
-        boxShadow: 'var(--sh-md)',
-      }}
-    >
-      <style jsx>{`
-        @media (min-width: 640px) {
-          header { height: var(--header-h) !important; }
+    <header className="no-print" style={{
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 20,
+      height: 'var(--header-h)',
+      background: '#1E3A5F',  /* hardcode — selalu navy gelap di light & dark */
+      borderBottom: '1px solid rgba(255,255,255,0.08)',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+    }}>
+      <style>{`
+        .hdr-btn {
+          display: flex; align-items: center; justify-content: center;
+          background: transparent; border: none; cursor: pointer;
+          border-radius: 8px; color: #ffffff;
+          transition: background 150ms ease;
+          flex-shrink: 0;
         }
+        .hdr-btn:hover { background: rgba(255,255,255,0.12) !important; }
+        .hdr-btn:active { background: rgba(255,255,255,0.20) !important; }
       `}</style>
 
-      <div className="flex items-center h-full" style={{ padding: '0 var(--s4)', gap: 'var(--s3)' }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', height: '100%',
+        padding: '0 16px', gap: '12px',
+      }}>
 
         {/* Hamburger */}
         <button
+          className="hdr-btn"
           onClick={onMenuClick}
-          aria-label="Menu navigasi"
-          className="flex items-center justify-center rounded-lg transition-colors flex-shrink-0"
-          style={{ width: 'var(--touch)', height: 'var(--touch)', color: '#ffffff' }}
-          onMouseOver={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.12)')}
-          onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
+          aria-label="Buka menu navigasi"
+          style={{ width: 48, height: 48 }}
         >
           <Menu size={22} />
         </button>
 
         {/* Brand */}
-        <div className="flex-1 min-w-0 leading-tight">
-          <div style={{ fontSize: 'var(--t-lg)', fontWeight: 700, color: '#ffffff', lineHeight: 1.2, whiteSpace: 'nowrap' }}>
+        <div style={{ flex: 1, minWidth: 0, lineHeight: 1 }}>
+          <div style={{ fontSize: 19, fontWeight: 700, color: '#ffffff', whiteSpace: 'nowrap' }}>
             DHKP
           </div>
-          <div style={{ fontSize: 'var(--t-xs)', fontWeight: 400, color: 'rgba(255,255,255,0.65)', lineHeight: 1.3, whiteSpace: 'nowrap' }}>
+          <div style={{ fontSize: 12, fontWeight: 400, color: 'rgba(255,255,255,0.60)', whiteSpace: 'nowrap', marginTop: 2 }}>
             Desa Karang Sengon
           </div>
         </div>
 
-        {/* Right controls */}
-        <div className="flex items-center flex-shrink-0" style={{ gap: 'var(--s2)' }}>
+        {/* Controls kanan */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
 
-          {/* Kunci Global */}
+          {/* Status kunci */}
           <button
+            className="hdr-btn"
             onClick={handleToggleLock}
             disabled={lockLoading}
-            title={lock.isLocked
-              ? `Dikunci oleh ${lock.lockedBy} — klik untuk buka`
-              : 'Data terbuka — klik untuk kunci'}
-            className="flex items-center rounded-lg font-semibold disabled:opacity-50 flex-shrink-0"
+            title={lock.isLocked ? `Dikunci oleh ${lock.lockedBy}` : 'Data terbuka — klik untuk kunci'}
             style={{
-              gap: 6,
-              padding: '0 10px',
-              height: 36,
-              fontSize: 'var(--t-xs)',
-              fontWeight: 600,
-              background: lock.isLocked ? 'rgba(183,28,28,0.25)' : 'rgba(27,107,47,0.25)',
-              color: lock.isLocked ? '#FFCDD2' : '#C8E6C9',
-              border: `1px solid ${lock.isLocked ? 'rgba(183,28,28,0.5)' : 'rgba(27,107,47,0.5)'}`,
-              transition: 'all 150ms ease',
-              whiteSpace: 'nowrap',
+              gap: 6, padding: '0 10px', height: 36,
+              fontSize: 12, fontWeight: 600,
+              background: lock.isLocked
+                ? 'rgba(239,68,68,0.25)'
+                : 'rgba(34,197,94,0.20)',
+              color: lock.isLocked ? '#FCA5A5' : '#86EFAC',
+              border: `1px solid ${lock.isLocked ? 'rgba(239,68,68,0.40)' : 'rgba(34,197,94,0.35)'}`,
+              borderRadius: 8, whiteSpace: 'nowrap',
+              opacity: lockLoading ? 0.5 : 1,
+              cursor: lockLoading ? 'not-allowed' : 'pointer',
+              width: 'auto',
             }}
           >
             {lock.isLocked ? <Lock size={13} /> : <Unlock size={13} />}
-            <span>{lock.isLocked ? 'Terkunci' : 'Terbuka'}</span>
+            <span style={{ marginLeft: 4 }}>{lock.isLocked ? 'Terkunci' : 'Terbuka'}</span>
           </button>
 
-          {/* Theme toggle */}
+          {/* Dark/Light toggle */}
           <button
+            className="hdr-btn"
             onClick={toggleTheme}
-            aria-label="Ganti tema"
-            className="flex items-center justify-center rounded-lg transition-colors"
-            style={{
-              width: 'var(--touch)',
-              height: 'var(--touch)',
-              color: theme === 'dark' ? '#FFD54F' : 'rgba(255,255,255,0.75)',
-            }}
-            onMouseOver={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.12)')}
-            onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
+            aria-label={theme === 'dark' ? 'Ganti ke mode terang' : 'Ganti ke mode gelap'}
+            style={{ width: 48, height: 48 }}
           >
-            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+            {theme === 'dark'
+              ? <Sun size={20} color="#FFD54F" />
+              : <Moon size={20} color="rgba(255,255,255,0.80)" />
+            }
           </button>
 
           {/* Avatar */}
           <div
-            className="flex items-center justify-center rounded-full select-none flex-shrink-0 font-bold"
             title={userName}
             style={{
-              width: 36,
-              height: 36,
-              background: 'var(--c-gold)',
-              color: '#1A1A1A',
-              fontSize: 'var(--t-sm)',
-              fontWeight: 700,
+              width: 36, height: 36, borderRadius: '50%',
+              background: '#C9A227', color: '#1A1000',
+              fontSize: 14, fontWeight: 800,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0, userSelect: 'none',
             }}
           >
             {initial}

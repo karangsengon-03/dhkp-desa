@@ -14,6 +14,7 @@ import { RecordTable } from '@/components/dhkp/RecordTable';
 import { RecordModal } from '@/components/dhkp/RecordModal';
 import { DeleteConfirmModal } from '@/components/dhkp/DeleteConfirmModal';
 import { useToast } from '@/components/ui/Toast';
+import { ColumnToggle, useVisibleCols } from '@/components/dhkp/ColumnToggle';
 
 const CURRENT_YEAR = new Date().getFullYear();
 const TAHUN_LIST = Array.from({ length: 5 }, (_, i) => CURRENT_YEAR - i);
@@ -29,6 +30,7 @@ export default function DataPage() {
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('semua');
   const [currentPage, setCurrentPage] = useState(1);
+  const { visible, toggle: toggleCol, showAll: showAllCols } = useVisibleCols();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editRecord, setEditRecord] = useState<DHKPRecord | null>(null);
@@ -131,6 +133,7 @@ export default function DataPage() {
           <Button variant="primary" size="sm" onClick={handleOpenAdd} disabled={isLocked}>
             <Plus size={15} /> Tambah Data
           </Button>
+          <ColumnToggle visible={visible} onToggle={toggleCol} onShowAll={showAllCols} />
         </div>
       </div>
 
@@ -192,6 +195,7 @@ export default function DataPage() {
           pageSize={PAGE_SIZE}
           totalPajakPage={totalPajakPage}
           totalPajakAll={totalPajakAll}
+          visible={visible}
         />
       )}
 
