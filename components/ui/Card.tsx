@@ -14,7 +14,7 @@ export function Card({ children, className = '', padding = true, interactive = f
   return (
     <div
       className={`${interactive ? 'card-interactive' : 'card'} ${padding ? '' : ''} ${className}`}
-      style={padding ? { padding: 'var(--sp-4)' } : undefined}
+      style={padding ? { padding: 'var(--s4)' } : undefined}
       onClick={onClick}
     >
       {children}

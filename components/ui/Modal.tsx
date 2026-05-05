@@ -34,7 +34,7 @@ export function Modal({ open, onClose, title, children, size = 'md', hideClose =
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ padding: 'var(--sp-4)' }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ padding: 'var(--s4)' }}>
       {/* Backdrop */}
       <div
         className="absolute inset-0"
@@ -49,8 +49,8 @@ export function Modal({ open, onClose, title, children, size = 'md', hideClose =
           maxWidth: sizeMaxWidth[size],
           maxHeight: '90vh',
           background: 'var(--c-surface)',
-          borderRadius: 'var(--radius-lg)',
-          boxShadow: 'var(--shadow-lg)',
+          borderRadius: 'var(--r-lg)',
+          boxShadow: 'var(--sh-lg)',
         }}
       >
         {/* Header */}
@@ -58,12 +58,12 @@ export function Modal({ open, onClose, title, children, size = 'md', hideClose =
           <div
             className="flex items-center justify-between flex-shrink-0"
             style={{
-              padding: 'var(--sp-4) var(--sp-6)',
+              padding: 'var(--s4) var(--s6)',
               borderBottom: '1px solid var(--c-border)',
             }}
           >
             {title && (
-              <h3 style={{ fontSize: 'var(--text-lg)', fontWeight: 700, color: 'var(--c-text-1)' }}>
+              <h3 style={{ fontSize: 'var(--t-lg)', fontWeight: 700, color: 'var(--c-t1)' }}>
                 {title}
               </h3>
             )}
@@ -73,12 +73,12 @@ export function Modal({ open, onClose, title, children, size = 'md', hideClose =
                 aria-label="Tutup"
                 className="flex items-center justify-center rounded-md transition-colors"
                 style={{
-                  width: 'var(--touch-min)',
-                  height: 'var(--touch-min)',
-                  color: 'var(--c-text-3)',
-                  marginRight: 'calc(var(--sp-2) * -1)',
+                  width: 'var(--touch)',
+                  height: 'var(--touch)',
+                  color: 'var(--c-t3)',
+                  marginRight: 'calc(var(--s2) * -1)',
                 }}
-                onMouseOver={e => (e.currentTarget.style.background = 'var(--c-navy-light)')}
+                onMouseOver={e => (e.currentTarget.style.background = 'var(--c-navy-soft)')}
                 onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
               >
                 <X size={18} />
@@ -90,7 +90,7 @@ export function Modal({ open, onClose, title, children, size = 'md', hideClose =
         {/* Content */}
         <div
           className="flex-1 overflow-y-auto"
-          style={{ padding: 'var(--sp-4) var(--sp-6)' }}
+          style={{ padding: 'var(--s4) var(--s6)' }}
         >
           {children}
         </div>
@@ -100,9 +100,9 @@ export function Modal({ open, onClose, title, children, size = 'md', hideClose =
           <div
             className="flex items-center justify-end flex-shrink-0"
             style={{
-              padding: 'var(--sp-4) var(--sp-6)',
+              padding: 'var(--s4) var(--s6)',
               borderTop: '1px solid var(--c-border)',
-              gap: 'var(--sp-2)',
+              gap: 'var(--s2)',
             }}
           >
             {footer}

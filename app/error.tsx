@@ -26,9 +26,9 @@ export default function ErrorPage({
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 'var(--sp-6)',
+        padding: 'var(--s6)',
         background: 'var(--c-bg)',
-        gap: 'var(--sp-5)',
+        gap: 'var(--s5)',
         textAlign: 'center',
       }}
     >
@@ -37,39 +37,39 @@ export default function ErrorPage({
           width: 72,
           height: 72,
           borderRadius: 'var(--radius-xl)',
-          background: 'var(--c-danger-light)',
+          background: 'var(--c-err-soft)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
-        <AlertTriangle size={36} style={{ color: 'var(--c-danger)' }} />
+        <AlertTriangle size={36} style={{ color: 'var(--c-err)' }} />
       </div>
 
       <div>
         <h1
           style={{
-            fontSize: 'var(--text-xl)',
+            fontSize: 'var(--t-xl)',
             fontWeight: 700,
-            color: 'var(--c-text-1)',
-            marginBottom: 'var(--sp-2)',
+            color: 'var(--c-t1)',
+            marginBottom: 'var(--s2)',
           }}
         >
           Terjadi Kesalahan
         </h1>
-        <p style={{ fontSize: 'var(--text-sm)', color: 'var(--c-text-3)', maxWidth: 360 }}>
+        <p style={{ fontSize: 'var(--t-sm)', color: 'var(--c-t3)', maxWidth: 360 }}>
           Halaman ini mengalami masalah. Silakan muat ulang atau kembali ke beranda.
         </p>
         {process.env.NODE_ENV === 'development' && error?.message && (
           <p
             style={{
-              marginTop: 'var(--sp-3)',
-              fontSize: 'var(--text-xs)',
-              color: 'var(--c-danger)',
+              marginTop: 'var(--s3)',
+              fontSize: 'var(--t-xs)',
+              color: 'var(--c-err)',
               fontFamily: 'monospace',
-              background: 'var(--c-danger-light)',
-              padding: 'var(--sp-2) var(--sp-3)',
-              borderRadius: 'var(--radius-sm)',
+              background: 'var(--c-err-soft)',
+              padding: 'var(--s2) var(--s3)',
+              borderRadius: 'var(--r-sm)',
               maxWidth: 420,
               wordBreak: 'break-all',
             }}
@@ -79,7 +79,7 @@ export default function ErrorPage({
         )}
       </div>
 
-      <div style={{ display: 'flex', gap: 'var(--sp-3)', flexWrap: 'wrap', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', gap: 'var(--s3)', flexWrap: 'wrap', justifyContent: 'center' }}>
         <button
           className="btn btn-primary"
           onClick={reset}

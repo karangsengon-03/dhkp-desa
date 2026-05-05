@@ -24,23 +24,23 @@ export function DeleteConfirmModal({
       <div className="flex flex-col items-center gap-4 py-2 text-center">
         <div
           className="w-14 h-14 rounded-full flex items-center justify-center"
-          style={{ background: 'var(--c-danger-light)', color: 'var(--c-danger)' }}
+          style={{ background: 'var(--c-err-soft)', color: 'var(--c-err)' }}
         >
           <Trash2 size={26} />
         </div>
         <div>
-          <p style={{ color: 'var(--c-text-2)', fontSize: 'var(--text-sm)' }}>
+          <p style={{ color: 'var(--c-t2)', fontSize: 'var(--t-sm)' }}>
             Hapus data atas nama:
           </p>
           <p
             className="font-bold mt-1"
-            style={{ color: 'var(--c-danger)', fontSize: 'var(--text-base)' }}
+            style={{ color: 'var(--c-err)', fontSize: 'var(--t-base)' }}
           >
             {namaWajibPajak}
           </p>
           <p
             className="mt-2"
-            style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}
+            style={{ color: 'var(--c-t3)', fontSize: 'var(--t-xs)' }}
           >
             Tindakan ini tidak dapat dibatalkan.
           </p>

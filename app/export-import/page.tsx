@@ -20,7 +20,7 @@ export default function ExportImportPage() {
     <AppShell pageTitle="Export & Import">
       <LockBanner lock={lock} />
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s4)' }}>
         <SeksiExport />
         <SeksiImport isLocked={lock.isLocked} />
       </div>

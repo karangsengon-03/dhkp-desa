@@ -21,8 +21,8 @@ const BACKUP_YEARS = Array.from({ length: 5 }, (_, i) => CURRENT_YEAR - i);
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      <span style={{ fontSize: 'var(--text-xs)', fontWeight: 500, color: 'var(--c-text-3)' }}>{label}</span>
-      <span style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--c-text-1)' }}>{value}</span>
+      <span style={{ fontSize: 'var(--t-xs)', fontWeight: 500, color: 'var(--c-t3)' }}>{label}</span>
+      <span style={{ fontSize: 'var(--t-sm)', fontWeight: 600, color: 'var(--c-t1)' }}>{value}</span>
     </div>
   );
 }
@@ -79,9 +79,9 @@ export default function PengaturanPage() {
   if (loading) {
     return (
       <AppShell pageTitle="Pengaturan">
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 'var(--sp-12) 0', gap: 'var(--sp-3)' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 'var(--s12) 0', gap: 'var(--s3)' }}>
           <RefreshCw size={20} className="animate-spin" style={{ color: 'var(--c-navy)' }} />
-          <span style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-sm)' }}>Memuat pengaturan...</span>
+          <span style={{ color: 'var(--c-t3)', fontSize: 'var(--t-sm)' }}>Memuat pengaturan...</span>
         </div>
       </AppShell>
     );
@@ -91,7 +91,7 @@ export default function PengaturanPage() {
     <AppShell pageTitle="Pengaturan">
       <LockBanner lock={lock} />
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s4)' }}>
 
         {/* Akun & Keamanan */}
         <SeksiAkun
@@ -111,27 +111,27 @@ export default function PengaturanPage() {
         <SeksiKunci lock={lock} userEmail={user?.email ?? null} />
 
         {/* Cadangan Data */}
-        <div className="card" style={{ padding: 'var(--sp-5)' }}>
+        <div className="card" style={{ padding: 'var(--s5)' }}>
           <div className="section-header">
-            <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-md)', background: 'var(--c-navy)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Download size={18} style={{ color: 'var(--c-text-inv)' }} />
+            <div style={{ width: 36, height: 36, borderRadius: 'var(--r-md)', background: 'var(--c-navy)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Download size={18} style={{ color: 'var(--c-inv)' }} />
             </div>
             <div>
-              <div style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: 'var(--c-text-1)' }}>Cadangan Data</div>
-              <div style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)', marginTop: 2 }}>Unduh semua data DHKP ke file Excel (.xlsx)</div>
+              <div style={{ fontWeight: 700, fontSize: 'var(--t-base)', color: 'var(--c-t1)' }}>Cadangan Data</div>
+              <div style={{ fontSize: 'var(--t-xs)', color: 'var(--c-t3)', marginTop: 2 }}>Unduh semua data DHKP ke file Excel (.xlsx)</div>
             </div>
           </div>
 
-          <div style={{ padding: 'var(--sp-4)', borderRadius: 'var(--radius-md)', background: 'var(--c-bg)', border: '1px solid var(--c-border)', marginBottom: 'var(--sp-4)' }}>
-            <div style={{ fontWeight: 600, fontSize: 'var(--text-sm)', color: 'var(--c-text-1)', marginBottom: 4 }}>Cadangan Semua Tahun</div>
-            <div style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)', marginBottom: 'var(--sp-3)' }}>
+          <div style={{ padding: 'var(--s4)', borderRadius: 'var(--r-md)', background: 'var(--c-bg)', border: '1px solid var(--c-border)', marginBottom: 'var(--s4)' }}>
+            <div style={{ fontWeight: 600, fontSize: 'var(--t-sm)', color: 'var(--c-t1)', marginBottom: 4 }}>Cadangan Semua Tahun</div>
+            <div style={{ fontSize: 'var(--t-xs)', color: 'var(--c-t3)', marginBottom: 'var(--s3)' }}>
               Mengunduh data {BACKUP_YEARS.join(', ')} dalam satu file Excel. Setiap tahun menjadi satu sheet.
             </div>
             <button
               className="btn btn-secondary btn-sm"
               onClick={handleBackupAll}
               disabled={backupLoading}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-xs)' }}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--t-xs)' }}
             >
               <Download size={13} />
               {backupLoading ? 'Memproses...' : 'Unduh Cadangan Semua Tahun'}
@@ -140,18 +140,18 @@ export default function PengaturanPage() {
         </div>
 
         {/* Info Aplikasi */}
-        <div className="card" style={{ padding: 'var(--sp-5)' }}>
+        <div className="card" style={{ padding: 'var(--s5)' }}>
           <div className="section-header">
-            <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-md)', background: 'var(--c-text-3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Info size={18} style={{ color: 'var(--c-text-inv)' }} />
+            <div style={{ width: 36, height: 36, borderRadius: 'var(--r-md)', background: 'var(--c-t3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Info size={18} style={{ color: 'var(--c-inv)' }} />
             </div>
             <div>
-              <div style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: 'var(--c-text-1)' }}>Informasi Aplikasi</div>
-              <div style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)', marginTop: 2 }}>Versi dan detail teknis</div>
+              <div style={{ fontWeight: 700, fontSize: 'var(--t-base)', color: 'var(--c-t1)' }}>Informasi Aplikasi</div>
+              <div style={{ fontSize: 'var(--t-xs)', color: 'var(--c-t3)', marginTop: 2 }}>Versi dan detail teknis</div>
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 'var(--sp-4)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 'var(--s4)' }}>
             <InfoRow label="Nama Aplikasi" value="DHKP Desa Karang Sengon" />
             <InfoRow label="Versi" value={APP_VERSION} />
             <InfoRow label="Platform" value="Next.js + Firebase" />

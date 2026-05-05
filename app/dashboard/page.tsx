@@ -29,16 +29,16 @@ export default function DashboardPage() {
   const luasBgn      = records.reduce((s, r) => s + (r.luasBangunan || 0), 0);
 
   const progressColor = persen >= 80
-    ? 'var(--c-success)'
+    ? 'var(--c-ok)'
     : persen >= 50
-    ? 'var(--c-warning)'
-    : 'var(--c-danger)';
+    ? 'var(--c-warn)'
+    : 'var(--c-err)';
 
   const progressBg = persen >= 80
-    ? 'var(--c-success-light)'
+    ? 'var(--c-ok-soft)'
     : persen >= 50
-    ? 'var(--c-warning-light)'
-    : 'var(--c-danger-light)';
+    ? 'var(--c-warn-soft)'
+    : 'var(--c-err-soft)';
 
   return (
     <AppShell pageTitle="Beranda">
@@ -47,13 +47,13 @@ export default function DashboardPage() {
         <div>
           <h1
             className="font-bold"
-            style={{ color: 'var(--c-text-1)', fontSize: 'var(--text-xl)' }}
+            style={{ color: 'var(--c-t1)', fontSize: 'var(--t-xl)' }}
           >
             Beranda
           </h1>
           <p
             className="mt-0.5"
-            style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-sm)' }}
+            style={{ color: 'var(--c-t3)', fontSize: 'var(--t-sm)' }}
           >
             Ringkasan data DHKP Desa Karang Sengon
           </p>
@@ -61,7 +61,7 @@ export default function DashboardPage() {
         <div className="flex items-center gap-2">
           <span
             className="font-medium"
-            style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-sm)' }}
+            style={{ color: 'var(--c-t3)', fontSize: 'var(--t-sm)' }}
           >
             Tahun:
           </span>
@@ -81,10 +81,10 @@ export default function DashboardPage() {
         <div
           className="flex items-center gap-2 px-4 py-2.5 rounded-lg mb-4 font-medium border"
           style={{
-            background: 'var(--c-danger-light)',
-            color: 'var(--c-danger)',
-            borderColor: 'var(--c-danger)',
-            fontSize: 'var(--text-sm)',
+            background: 'var(--c-err-soft)',
+            color: 'var(--c-err)',
+            borderColor: 'var(--c-err)',
+            fontSize: 'var(--t-sm)',
           }}
         >
           <Lock size={15} />
@@ -140,58 +140,37 @@ export default function DashboardPage() {
         <>
           {/* 6 stat cards */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
-            <StatCard
-              icon={<Users size={22} />}
-              color="var(--c-navy)" bg="var(--c-navy-light)"
-              label="Total Objek" value={total}
-            />
-            <StatCard
-              icon={<CheckCircle size={22} />}
-              color="var(--c-success)" bg="var(--c-success-light)"
-              label="Sudah Lunas" value={lunas} sub={`${persen}%`}
-            />
-            <StatCard
-              icon={<XCircle size={22} />}
-              color="var(--c-danger)" bg="var(--c-danger-light)"
-              label="Belum Lunas" value={belumLunas}
-            />
-            <StatCard
-              icon={<TrendingUp size={22} />}
-              color="var(--c-warning)" bg="var(--c-warning-light)"
-              label="Persentase" value={`${persen}%`}
-            />
-            <StatCard
-              icon={<LayoutGrid size={22} />}
-              color="var(--c-navy)" bg="var(--c-navy-light)"
-              label="Luas Tanah" value={luasTanah.toLocaleString('id-ID')} sub="m²"
-            />
-            <StatCard
-              icon={<Building2 size={22} />}
-              color="var(--c-navy)" bg="var(--c-navy-light)"
-              label="Luas Bangunan" value={luasBgn.toLocaleString('id-ID')} sub="m²"
-            />
+            <StatCard icon={<Users size={22} />}
+              iconBg="var(--c-navy-soft)" iconColor="var(--c-navy)"
+              label="Total Objek" value={total} />
+            <StatCard icon={<CheckCircle size={22} />}
+              iconBg="var(--c-ok-soft)" iconColor="var(--c-ok)"
+              label="Sudah Lunas" value={lunas} sub={`${persen}%`} subColor="var(--c-ok)" />
+            <StatCard icon={<XCircle size={22} />}
+              iconBg="var(--c-err-soft)" iconColor="var(--c-err)"
+              label="Belum Lunas" value={belumLunas} />
+            <StatCard icon={<TrendingUp size={22} />}
+              iconBg="var(--c-navy-soft)" iconColor="var(--c-navy)"
+              label="Persentase" value={`${persen}%`} />
+            <StatCard icon={<LayoutGrid size={22} />}
+              iconBg="var(--c-navy-soft)" iconColor="var(--c-navy)"
+              label="Luas Tanah" value={luasTanah.toLocaleString('id-ID')} sub="m²" />
+            <StatCard icon={<Building2 size={22} />}
+              iconBg="var(--c-navy-soft)" iconColor="var(--c-navy)"
+              label="Luas Bangunan" value={luasBgn.toLocaleString('id-ID')} sub="m²" />
           </div>
 
           {/* Finance cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-            <FinCard
-              icon={<Banknote size={20} />}
-              color="var(--c-navy)" bg="var(--c-navy-light)"
-              label="Total Pajak Terhutang"
-              value={formatRupiah(totalPajak)}
-            />
-            <FinCard
-              icon={<CheckCircle size={20} />}
-              color="var(--c-success)" bg="var(--c-success-light)"
-              label="Total Sudah Dibayar"
-              value={formatRupiah(totalDibayar)}
-            />
-            <FinCard
-              icon={<XCircle size={20} />}
-              color="var(--c-danger)" bg="var(--c-danger-light)"
-              label="Total Tunggakan"
-              value={formatRupiah(tunggakan)}
-            />
+            <FinCard icon={<Banknote size={20} />}
+              iconBg="var(--c-navy-soft)" iconColor="var(--c-navy)"
+              label="Total Pajak Terhutang" value={formatRupiah(totalPajak)} valueColor="var(--c-navy)" />
+            <FinCard icon={<CheckCircle size={20} />}
+              iconBg="var(--c-ok-soft)" iconColor="var(--c-ok)"
+              label="Total Sudah Dibayar" value={formatRupiah(totalDibayar)} valueColor="var(--c-ok)" />
+            <FinCard icon={<XCircle size={20} />}
+              iconBg="var(--c-err-soft)" iconColor="var(--c-err)"
+              label="Total Tunggakan" value={formatRupiah(tunggakan)} valueColor="var(--c-err)" />
           </div>
 
           {/* Progress bar */}
@@ -199,7 +178,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between mb-2">
               <span
                 className="font-semibold"
-                style={{ color: 'var(--c-text-1)', fontSize: 'var(--text-sm)' }}
+                style={{ color: 'var(--c-t1)', fontSize: 'var(--t-sm)' }}
               >
                 Progres Pembayaran {tahun}
               </span>
@@ -208,7 +187,7 @@ export default function DashboardPage() {
                 style={{
                   background: progressBg,
                   color: progressColor,
-                  fontSize: 'var(--text-xs)',
+                  fontSize: 'var(--t-xs)',
                 }}
               >
                 {persen}%
@@ -225,7 +204,7 @@ export default function DashboardPage() {
             </div>
             <div
               className="flex justify-between mt-1.5"
-              style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}
+              style={{ color: 'var(--c-t3)', fontSize: 'var(--t-xs)' }}
             >
               <span>{lunas} lunas</span>
               <span>{belumLunas} belum lunas</span>
@@ -236,19 +215,19 @@ export default function DashboardPage() {
           <div className="card p-4">
             <div className="flex items-center gap-3">
               {lock.isLocked
-                ? <Lock size={16} style={{ color: 'var(--c-danger)', flexShrink: 0 }} />
-                : <Unlock size={16} style={{ color: 'var(--c-success)', flexShrink: 0 }} />
+                ? <Lock size={16} style={{ color: 'var(--c-err)', flexShrink: 0 }} />
+                : <Unlock size={16} style={{ color: 'var(--c-ok)', flexShrink: 0 }} />
               }
               <div className="flex-1 min-w-0">
                 <p
                   className="font-semibold"
-                  style={{ color: 'var(--c-text-1)', fontSize: 'var(--text-sm)' }}
+                  style={{ color: 'var(--c-t1)', fontSize: 'var(--t-sm)' }}
                 >
                   Status Kunci Data
                 </p>
                 <p
                   className="mt-0.5"
-                  style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}
+                  style={{ color: 'var(--c-t3)', fontSize: 'var(--t-xs)' }}
                 >
                   {lock.isLocked ? `Dikunci oleh ${lock.lockedBy}` : 'Data terbuka untuk diedit'}
                 </p>
@@ -256,8 +235,8 @@ export default function DashboardPage() {
               <span
                 className="badge"
                 style={{
-                  background: lock.isLocked ? 'var(--c-danger-light)' : 'var(--c-success-light)',
-                  color:      lock.isLocked ? 'var(--c-danger)'       : 'var(--c-success)',
+                  background: lock.isLocked ? 'var(--c-err-soft)' : 'var(--c-ok-soft)',
+                  color:      lock.isLocked ? 'var(--c-err)'       : 'var(--c-ok)',
                 }}
               >
                 {lock.isLocked ? 'Terkunci' : 'Terbuka'}
@@ -270,19 +249,16 @@ export default function DashboardPage() {
   );
 }
 
-function StatCard({ icon, color, bg, label, value, sub }: {
-  icon: React.ReactNode; color: string; bg: string;
-  label: string; value: string | number; sub?: string;
+function StatCard({ icon, iconBg, iconColor, label, value, sub, subColor }: {
+  icon: React.ReactNode; iconBg: string; iconColor: string;
+  label: string; value: string | number; sub?: string; subColor?: string;
 }) {
   return (
     <div className="stat-card">
-      <div className="stat-icon" style={{ background: bg, color }}>{icon}</div>
+      <div className="stat-icon" style={{ background: iconBg, color: iconColor }}>{icon}</div>
       <div className="stat-value">{value}</div>
       {sub && (
-        <div
-          className="font-semibold mb-0.5"
-          style={{ color, fontSize: 'var(--text-xs)' }}
-        >
+        <div style={{ fontSize: 'var(--t-sm)', fontWeight: 600, color: subColor || 'var(--c-t3)', marginBottom: 2 }}>
           {sub}
         </div>
       )}
@@ -291,27 +267,22 @@ function StatCard({ icon, color, bg, label, value, sub }: {
   );
 }
 
-function FinCard({ icon, color, bg, label, value }: {
-  icon: React.ReactNode; color: string; bg: string; label: string; value: string;
+function FinCard({ icon, iconBg, iconColor, label, value, valueColor }: {
+  icon: React.ReactNode; iconBg: string; iconColor: string;
+  label: string; value: string; valueColor: string;
 }) {
   return (
     <div className="card p-4 flex items-center gap-3">
-      <div
-        className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-        style={{ background: bg, color }}
-      >
+      <div style={{
+        width: 44, height: 44, borderRadius: 'var(--r-sm)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: iconBg, color: iconColor, flexShrink: 0,
+      }}>
         {icon}
       </div>
       <div className="min-w-0">
-        <div style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }} className="mb-0.5">
-          {label}
-        </div>
-        <div
-          className="font-bold truncate"
-          style={{ color, fontSize: 'var(--text-sm)' }}
-        >
-          {value}
-        </div>
+        <div style={{ color: 'var(--c-t3)', fontSize: 'var(--t-sm)', marginBottom: 2 }}>{label}</div>
+        <div style={{ color: valueColor, fontSize: 'var(--t-base)', fontWeight: 700 }}>{value}</div>
       </div>
     </div>
   );

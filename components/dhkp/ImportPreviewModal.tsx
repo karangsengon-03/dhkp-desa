@@ -27,35 +27,35 @@ export function ImportPreviewModal({ open, onClose, onConfirm, rows, loading }: 
       />
 
       {/* Modal */}
-      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: 760, maxHeight: '88vh', display: 'flex', flexDirection: 'column', background: 'var(--c-surface)', borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0', boxShadow: 'var(--shadow-lg)' }}>
+      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: 760, maxHeight: '88vh', display: 'flex', flexDirection: 'column', background: 'var(--c-surface)', borderRadius: 'var(--r-lg) var(--r-lg) 0 0', boxShadow: 'var(--sh-lg)' }}>
 
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'var(--sp-4) var(--sp-5)', borderBottom: '1px solid var(--c-border)', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'var(--s4) var(--s5)', borderBottom: '1px solid var(--c-border)', flexShrink: 0 }}>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 'var(--text-lg)', color: 'var(--c-text-1)' }}>Preview Import</div>
-            <div style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)', marginTop: 2 }}>
+            <div style={{ fontWeight: 700, fontSize: 'var(--t-lg)', color: 'var(--c-t1)' }}>Preview Import</div>
+            <div style={{ fontSize: 'var(--t-xs)', color: 'var(--c-t3)', marginTop: 2 }}>
               {rows.length} baris terbaca dari file
             </div>
           </div>
           <button
             onClick={onClose}
             disabled={loading}
-            style={{ width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--c-text-3)', borderRadius: 'var(--radius-md)' }}
+            style={{ width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--c-t3)', borderRadius: 'var(--r-md)' }}
           >
             <XCircle size={20} />
           </button>
         </div>
 
         {/* Stat Summary */}
-        <div style={{ display: 'flex', gap: 'var(--sp-3)', padding: 'var(--sp-4) var(--sp-5)', borderBottom: '1px solid var(--c-border)', flexShrink: 0, flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', padding: 'var(--sp-2) var(--sp-3)', borderRadius: 'var(--radius-md)', background: 'var(--c-success-light)', border: '1px solid var(--c-success)' }}>
-            <CheckCircle size={14} style={{ color: 'var(--c-success)' }} />
-            <span style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--c-success)' }}>{valid.length} valid</span>
+        <div style={{ display: 'flex', gap: 'var(--s3)', padding: 'var(--s4) var(--s5)', borderBottom: '1px solid var(--c-border)', flexShrink: 0, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--s2)', padding: 'var(--s2) var(--s3)', borderRadius: 'var(--r-md)', background: 'var(--c-ok-soft)', border: '1px solid var(--c-ok)' }}>
+            <CheckCircle size={14} style={{ color: 'var(--c-ok)' }} />
+            <span style={{ fontSize: 'var(--t-sm)', fontWeight: 700, color: 'var(--c-ok)' }}>{valid.length} valid</span>
           </div>
           {invalid.length > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', padding: 'var(--sp-2) var(--sp-3)', borderRadius: 'var(--radius-md)', background: 'var(--c-danger-light)', border: '1px solid var(--c-danger)' }}>
-              <AlertTriangle size={14} style={{ color: 'var(--c-danger)' }} />
-              <span style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--c-danger)' }}>{invalid.length} error</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--s2)', padding: 'var(--s2) var(--s3)', borderRadius: 'var(--r-md)', background: 'var(--c-err-soft)', border: '1px solid var(--c-err)' }}>
+              <AlertTriangle size={14} style={{ color: 'var(--c-err)' }} />
+              <span style={{ fontSize: 'var(--t-sm)', fontWeight: 700, color: 'var(--c-err)' }}>{invalid.length} error</span>
             </div>
           )}
         </div>
@@ -77,24 +77,24 @@ export function ImportPreviewModal({ open, onClose, onConfirm, rows, loading }: 
               {rows.map((item, i) => {
                 const ok = item.errors.length === 0;
                 return (
-                  <tr key={i} style={{ background: ok ? undefined : 'var(--c-danger-light)' }}>
-                    <td style={{ textAlign: 'center', color: 'var(--c-text-4)' }}>{i + 1}</td>
-                    <td style={{ fontWeight: ok ? 400 : 600, color: ok ? 'var(--c-text-2)' : 'var(--c-danger)' }}>
+                  <tr key={i} style={{ background: ok ? undefined : 'var(--c-err-soft)' }}>
+                    <td style={{ textAlign: 'center', color: 'var(--c-t4)' }}>{i + 1}</td>
+                    <td style={{ fontWeight: ok ? 400 : 600, color: ok ? 'var(--c-t2)' : 'var(--c-err)' }}>
                       {item.row.namaWajibPajak || '—'}
                     </td>
-                    <td style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)' }}>
+                    <td style={{ fontSize: 'var(--t-xs)', color: 'var(--c-t3)' }}>
                       {maskNOP(item.row.nop)}
                     </td>
-                    <td style={{ fontSize: 'var(--text-xs)', textAlign: 'right' }}>
+                    <td style={{ fontSize: 'var(--t-xs)', textAlign: 'right' }}>
                       {item.row.pajakTerhutang ? item.row.pajakTerhutang.toLocaleString('id-ID') : '0'}
                     </td>
                     <td>
                       {item.row.statusLunas
-                        ? <span className="badge badge-success">Lunas</span>
+                        ? <span className="badge badge-ok">Lunas</span>
                         : <span className="badge badge-default">Belum</span>
                       }
                     </td>
-                    <td style={{ fontSize: 'var(--text-xs)', color: ok ? 'var(--c-success)' : 'var(--c-danger)' }}>
+                    <td style={{ fontSize: 'var(--t-xs)', color: ok ? 'var(--c-ok)' : 'var(--c-err)' }}>
                       {ok
                         ? <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><CheckCircle size={12} /> Siap diimport</span>
                         : item.errors.join(' · ')
@@ -108,12 +108,12 @@ export function ImportPreviewModal({ open, onClose, onConfirm, rows, loading }: 
         </div>
 
         {/* Footer */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 'var(--sp-2)', padding: 'var(--sp-4) var(--sp-5)', borderTop: '1px solid var(--c-border)', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 'var(--s2)', padding: 'var(--s4) var(--s5)', borderTop: '1px solid var(--c-border)', flexShrink: 0 }}>
           <button
             className="btn btn-ghost"
             onClick={onClose}
             disabled={loading}
-            style={{ fontSize: 'var(--text-sm)' }}
+            style={{ fontSize: 'var(--t-sm)' }}
           >
             Batal
           </button>
@@ -121,7 +121,7 @@ export function ImportPreviewModal({ open, onClose, onConfirm, rows, loading }: 
             className="btn btn-primary"
             onClick={onConfirm}
             disabled={loading || valid.length === 0}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-sm)' }}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--t-sm)' }}
           >
             <CheckCircle size={14} />
             {loading ? 'Mengimport...' : `Import ${valid.length} Data`}

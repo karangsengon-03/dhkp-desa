@@ -40,26 +40,26 @@ export function Header({ onMenuClick, userName }: HeaderProps) {
     <header
       className="fixed top-0 left-0 right-0 z-20 no-print"
       style={{
-        height: 'var(--header-height-mobile)',
+        height: 'var(--header-h)',
         background: 'var(--c-navy)',
         borderBottom: '1px solid rgba(255,255,255,0.1)',
-        boxShadow: 'var(--shadow-md)',
+        boxShadow: 'var(--sh-md)',
       }}
     >
       <style jsx>{`
         @media (min-width: 640px) {
-          header { height: var(--header-height-desktop) !important; }
+          header { height: var(--header-h) !important; }
         }
       `}</style>
 
-      <div className="flex items-center h-full" style={{ padding: '0 var(--sp-4)', gap: 'var(--sp-3)' }}>
+      <div className="flex items-center h-full" style={{ padding: '0 var(--s4)', gap: 'var(--s3)' }}>
 
         {/* Hamburger */}
         <button
           onClick={onMenuClick}
           aria-label="Menu navigasi"
           className="flex items-center justify-center rounded-lg transition-colors flex-shrink-0"
-          style={{ width: 'var(--touch-min)', height: 'var(--touch-min)', color: '#ffffff' }}
+          style={{ width: 'var(--touch)', height: 'var(--touch)', color: '#ffffff' }}
           onMouseOver={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.12)')}
           onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
         >
@@ -68,16 +68,16 @@ export function Header({ onMenuClick, userName }: HeaderProps) {
 
         {/* Brand */}
         <div className="flex-1 min-w-0 leading-tight">
-          <div style={{ fontSize: 'var(--text-lg)', fontWeight: 700, color: '#ffffff', lineHeight: 1.2 }}>
+          <div style={{ fontSize: 'var(--t-lg)', fontWeight: 700, color: '#ffffff', lineHeight: 1.2, whiteSpace: 'nowrap' }}>
             DHKP
           </div>
-          <div style={{ fontSize: 'var(--text-xs)', fontWeight: 400, color: 'rgba(255,255,255,0.65)', lineHeight: 1.3 }}>
+          <div style={{ fontSize: 'var(--t-xs)', fontWeight: 400, color: 'rgba(255,255,255,0.65)', lineHeight: 1.3, whiteSpace: 'nowrap' }}>
             Desa Karang Sengon
           </div>
         </div>
 
         {/* Right controls */}
-        <div className="flex items-center flex-shrink-0" style={{ gap: 'var(--sp-2)' }}>
+        <div className="flex items-center flex-shrink-0" style={{ gap: 'var(--s2)' }}>
 
           {/* Kunci Global */}
           <button
@@ -86,21 +86,21 @@ export function Header({ onMenuClick, userName }: HeaderProps) {
             title={lock.isLocked
               ? `Dikunci oleh ${lock.lockedBy} — klik untuk buka`
               : 'Data terbuka — klik untuk kunci'}
-            className="flex items-center rounded-lg font-semibold disabled:opacity-50"
+            className="flex items-center rounded-lg font-semibold disabled:opacity-50 flex-shrink-0"
             style={{
-              gap: 'var(--sp-2)',
-              padding: '0 var(--sp-3)',
-              height: 40,
-              fontSize: 'var(--text-sm)',
+              gap: 6,
+              padding: '0 10px',
+              height: 36,
+              fontSize: 'var(--t-xs)',
               fontWeight: 600,
-              background: lock.isLocked ? 'rgba(239,83,80,0.2)' : 'rgba(76,175,80,0.2)',
+              background: lock.isLocked ? 'rgba(183,28,28,0.25)' : 'rgba(27,107,47,0.25)',
               color: lock.isLocked ? '#FFCDD2' : '#C8E6C9',
-              border: `1px solid ${lock.isLocked ? 'rgba(239,83,80,0.4)' : 'rgba(76,175,80,0.4)'}`,
+              border: `1px solid ${lock.isLocked ? 'rgba(183,28,28,0.5)' : 'rgba(27,107,47,0.5)'}`,
               transition: 'all 150ms ease',
               whiteSpace: 'nowrap',
             }}
           >
-            {lock.isLocked ? <Lock size={15} /> : <Unlock size={15} />}
+            {lock.isLocked ? <Lock size={13} /> : <Unlock size={13} />}
             <span>{lock.isLocked ? 'Terkunci' : 'Terbuka'}</span>
           </button>
 
@@ -110,8 +110,8 @@ export function Header({ onMenuClick, userName }: HeaderProps) {
             aria-label="Ganti tema"
             className="flex items-center justify-center rounded-lg transition-colors"
             style={{
-              width: 'var(--touch-min)',
-              height: 'var(--touch-min)',
+              width: 'var(--touch)',
+              height: 'var(--touch)',
               color: theme === 'dark' ? '#FFD54F' : 'rgba(255,255,255,0.75)',
             }}
             onMouseOver={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.12)')}
@@ -129,7 +129,7 @@ export function Header({ onMenuClick, userName }: HeaderProps) {
               height: 36,
               background: 'var(--c-gold)',
               color: '#1A1A1A',
-              fontSize: 'var(--text-sm)',
+              fontSize: 'var(--t-sm)',
               fontWeight: 700,
             }}
           >

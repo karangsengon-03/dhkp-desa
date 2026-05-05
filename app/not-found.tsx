@@ -10,9 +10,9 @@ export default function NotFound() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 'var(--sp-6)',
+        padding: 'var(--s6)',
         background: 'var(--c-bg)',
-        gap: 'var(--sp-5)',
+        gap: 'var(--s5)',
         textAlign: 'center',
       }}
     >
@@ -21,7 +21,7 @@ export default function NotFound() {
           width: 72,
           height: 72,
           borderRadius: 'var(--radius-xl)',
-          background: 'var(--c-navy-light)',
+          background: 'var(--c-navy-soft)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -37,22 +37,22 @@ export default function NotFound() {
             fontWeight: 800,
             color: 'var(--c-navy)',
             lineHeight: 1,
-            marginBottom: 'var(--sp-2)',
+            marginBottom: 'var(--s2)',
           }}
         >
           404
         </p>
         <h1
           style={{
-            fontSize: 'var(--text-xl)',
+            fontSize: 'var(--t-xl)',
             fontWeight: 700,
-            color: 'var(--c-text-1)',
-            marginBottom: 'var(--sp-2)',
+            color: 'var(--c-t1)',
+            marginBottom: 'var(--s2)',
           }}
         >
           Halaman Tidak Ditemukan
         </h1>
-        <p style={{ fontSize: 'var(--text-sm)', color: 'var(--c-text-3)', maxWidth: 360 }}>
+        <p style={{ fontSize: 'var(--t-sm)', color: 'var(--c-t3)', maxWidth: 360 }}>
           Halaman yang Anda cari tidak ada atau telah dipindahkan.
         </p>
       </div>

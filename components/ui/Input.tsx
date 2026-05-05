@@ -23,7 +23,7 @@ export function Input({ label, error, wrapperClass = '', className = '', id, ...
         {...props}
       />
       {error && (
-        <span style={{ fontSize: 'var(--text-xs)', color: 'var(--c-danger)' }}>
+        <span style={{ fontSize: 'var(--t-xs)', color: 'var(--c-err)' }}>
           {error}
         </span>
       )}
@@ -49,12 +49,12 @@ export function Textarea({ label, error, wrapperClass = '', className = '', id, 
       <textarea
         id={inputId}
         className={`input-field resize-none ${error ? 'input-error' : ''} ${className}`}
-        style={{ height: 'auto', paddingTop: 'var(--sp-2)', paddingBottom: 'var(--sp-2)' }}
+        style={{ height: 'auto', paddingTop: 'var(--s2)', paddingBottom: 'var(--s2)' }}
         rows={3}
         {...props}
       />
       {error && (
-        <span style={{ fontSize: 'var(--text-xs)', color: 'var(--c-danger)' }}>
+        <span style={{ fontSize: 'var(--t-xs)', color: 'var(--c-err)' }}>
           {error}
         </span>
       )}

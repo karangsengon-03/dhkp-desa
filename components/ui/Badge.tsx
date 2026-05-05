@@ -11,10 +11,10 @@ interface BadgeProps {
 }
 
 const variantClass: Record<BadgeVariant, string> = {
-  success: 'badge-success',
-  danger:  'badge-danger',
-  warning: 'badge-warning',
-  info:    'badge-info',
+  success: 'badge-ok',
+  danger:  'badge-err',
+  warning: 'badge-warn',
+  info:    'badge-navy',
   default: 'badge-default',
 };
 

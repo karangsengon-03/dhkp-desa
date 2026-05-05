@@ -25,7 +25,6 @@ export default function LoginPage() {
   useEffect(() => {
     const saved = getSavedUser();
     if (saved?.email) setEmail(saved.email);
-    // Password TIDAK disimpan — Firebase Auth persistence menjaga sesi otomatis
   }, []);
 
   async function handleLogin(e: React.FormEvent) {
@@ -37,9 +36,7 @@ export default function LoginPage() {
     setSubmitting(true);
     try {
       await loginWithEmail(email, password);
-      if (remember) {
-        saveUser(email, email.split('@')[0]);
-      }
+      if (remember) saveUser(email, email.split('@')[0]);
       showToast('Login berhasil!', 'success');
       router.replace('/dashboard');
     } catch {
@@ -49,146 +46,161 @@ export default function LoginPage() {
     }
   }
 
-  if (loading) {
-    return (
-      <div
-        className="min-h-screen flex items-center justify-center p-4"
-        style={{ background: 'var(--c-bg)' }}
-      >
-        <div className="w-full max-w-xs flex flex-col gap-3">
-          <div className="w-16 h-16 rounded-xl skeleton mx-auto" />
-          <div className="w-40 h-5 rounded skeleton mx-auto" />
-          <div className="w-28 h-3 rounded skeleton mx-auto" />
-          <div className="h-1 w-full rounded skeleton" />
-          <div className="card p-5 flex flex-col gap-3">
-            <div className="w-24 h-3 rounded skeleton" />
-            <div className="w-full h-10 rounded-lg skeleton" />
-            <div className="w-24 h-3 rounded skeleton" />
-            <div className="w-full h-10 rounded-lg skeleton" />
-            <div className="w-36 h-4 rounded skeleton" />
-            <div className="w-full h-10 rounded-lg skeleton" />
-          </div>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return null;
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center p-4"
-      style={{ background: 'var(--c-bg)' }}
-    >
-      <div className="w-full max-w-xs">
+    <div style={{
+      minHeight: '100dvh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'var(--c-navy)',
+      padding: '24px 16px',
+    }}>
+      <div style={{ width: '100%', maxWidth: 360 }}>
 
-        {/* Brand header — navy bg */}
-        <div
-          className="rounded-t-2xl px-6 pt-8 pb-6 text-center"
-          style={{ background: 'var(--c-navy)' }}
-        >
+        {/* Logo & Brand */}
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/icons/icon-128.png"
             alt="DHKP"
-            className="w-14 h-14 rounded-xl mx-auto mb-3"
-            style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.35)' }}
+            style={{
+              width: 72, height: 72,
+              borderRadius: 16,
+              margin: '0 auto 16px',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+              display: 'block',
+            }}
           />
-          <h1
-            className="font-bold leading-tight"
-            style={{ color: 'var(--c-text-inv)', fontSize: 'var(--text-xl)' }}
-          >
+          <h1 style={{
+            fontSize: 28, fontWeight: 800,
+            color: '#ffffff', letterSpacing: '-0.5px',
+            marginBottom: 4,
+          }}>
             DHKP
           </h1>
-          <p
-            className="mt-0.5 font-semibold"
-            style={{ color: 'var(--c-gold)', fontSize: 'var(--text-sm)' }}
-          >
+          <p style={{ fontSize: 15, fontWeight: 500, color: 'var(--c-gold)' }}>
             Desa Karang Sengon
           </p>
         </div>
 
-        {/* Gold stripe */}
-        <div
-          className="h-1"
-          style={{
-            background: 'linear-gradient(90deg, var(--c-gold-dark), var(--c-gold), var(--c-gold-dark))',
-          }}
-        />
-
-        {/* Form card */}
-        <div
-          className="rounded-b-2xl px-6 py-6"
-          style={{ background: 'var(--c-surface)', boxShadow: 'var(--shadow-lg)' }}
-        >
-          <p
-            className="font-semibold text-center mb-5"
-            style={{ color: 'var(--c-text-1)', fontSize: 'var(--text-sm)' }}
-          >
+        {/* Card */}
+        <div style={{
+          background: '#ffffff',
+          borderRadius: 16,
+          padding: '32px 28px',
+          boxShadow: '0 24px 64px rgba(0,0,0,0.4)',
+        }}>
+          <p style={{
+            fontSize: 15, fontWeight: 600,
+            color: '#1A1A1A', textAlign: 'center',
+            marginBottom: 24,
+          }}>
             Masuk ke Sistem
           </p>
 
-          <form onSubmit={handleLogin} className="flex flex-col gap-3">
+          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
             {/* Email */}
             <div>
-              <label
-                className="block font-semibold mb-1.5"
-                style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}
-              >
+              <label style={{
+                display: 'block', fontSize: 13,
+                fontWeight: 600, color: '#595959',
+                marginBottom: 8,
+              }}>
                 Email
               </label>
               <input
                 type="email"
-                className="input-field"
                 placeholder="nama@desa.go.id"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 autoComplete="email"
                 required
+                style={{
+                  display: 'block', width: '100%',
+                  height: 48, padding: '0 14px',
+                  fontSize: 15, fontFamily: 'inherit',
+                  color: '#1A1A1A',
+                  background: '#F8F9FA',
+                  border: '1.5px solid #DDD8CE',
+                  borderRadius: 8,
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
+                onFocus={e => { e.target.style.borderColor = '#1E3A5F'; e.target.style.background = '#fff'; }}
+                onBlur={e => { e.target.style.borderColor = '#DDD8CE'; e.target.style.background = '#F8F9FA'; }}
               />
             </div>
 
             {/* Password */}
             <div>
-              <label
-                className="block font-semibold mb-1.5"
-                style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}
-              >
+              <label style={{
+                display: 'block', fontSize: 13,
+                fontWeight: 600, color: '#595959',
+                marginBottom: 8,
+              }}>
                 Password
               </label>
-              <div className="relative">
+              <div style={{ position: 'relative' }}>
                 <input
                   type={showPass ? 'text' : 'password'}
-                  className="input-field pr-10"
                   placeholder="••••••••"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   autoComplete="current-password"
                   required
+                  style={{
+                    display: 'block', width: '100%',
+                    height: 48, padding: '0 48px 0 14px',
+                    fontSize: 15, fontFamily: 'inherit',
+                    color: '#1A1A1A',
+                    background: '#F8F9FA',
+                    border: '1.5px solid #DDD8CE',
+                    borderRadius: 8,
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                  onFocus={e => { e.target.style.borderColor = '#1E3A5F'; e.target.style.background = '#fff'; }}
+                  onBlur={e => { e.target.style.borderColor = '#DDD8CE'; e.target.style.background = '#F8F9FA'; }}
                 />
                 <button
                   type="button"
-                  className="absolute right-0 top-0 bottom-0 w-11 flex items-center justify-center"
                   onClick={() => setShowPass(v => !v)}
                   tabIndex={-1}
                   aria-label={showPass ? 'Sembunyikan password' : 'Tampilkan password'}
+                  style={{
+                    position: 'absolute', right: 0, top: 0,
+                    width: 48, height: 48,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    background: 'transparent', border: 'none',
+                    cursor: 'pointer', color: '#767676',
+                    borderRadius: '0 8px 8px 0',
+                  }}
                 >
-                  {showPass
-                    ? <EyeOff size={15} style={{ color: 'var(--c-text-4)' }} />
-                    : <Eye size={15} style={{ color: 'var(--c-text-4)' }} />
-                  }
+                  {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
 
-            {/* Ingat email */}
-            <label className="flex items-center gap-2 cursor-pointer select-none mt-0.5 py-1">
+            {/* Ingat email — baris sendiri, jelas */}
+            <label style={{
+              display: 'flex', alignItems: 'center',
+              gap: 10, cursor: 'pointer',
+              padding: '4px 0',
+            }}>
               <input
                 type="checkbox"
                 checked={remember}
                 onChange={e => setRemember(e.target.checked)}
-                className="w-4 h-4 rounded"
-                style={{ accentColor: 'var(--c-navy)' }}
+                style={{
+                  width: 18, height: 18,
+                  flexShrink: 0, cursor: 'pointer',
+                  accentColor: '#1E3A5F',
+                }}
               />
-              <span style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}>
+              <span style={{ fontSize: 14, color: '#595959', userSelect: 'none' }}>
                 Ingat email saya
               </span>
             </label>
@@ -197,32 +209,50 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="btn btn-primary btn-md w-full mt-1"
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                gap: 8, width: '100%', height: 52,
+                background: submitting ? '#4A6A8F' : '#1E3A5F',
+                color: '#ffffff', border: 'none',
+                borderRadius: 8, fontSize: 16,
+                fontWeight: 700, fontFamily: 'inherit',
+                cursor: submitting ? 'not-allowed' : 'pointer',
+                marginTop: 4,
+                transition: 'background 150ms ease',
+              }}
             >
               {submitting ? (
                 <>
-                  <span
-                    className="inline-block w-4 h-4 border-2 rounded-full animate-spin"
-                    style={{ borderColor: 'rgba(255,255,255,0.4)', borderTopColor: 'var(--c-text-inv)' }}
-                  />
+                  <span style={{
+                    width: 18, height: 18,
+                    border: '2px solid rgba(255,255,255,0.35)',
+                    borderTopColor: '#fff',
+                    borderRadius: '50%',
+                    display: 'inline-block',
+                    animation: 'spin 0.7s linear infinite',
+                  }} />
                   Masuk...
                 </>
               ) : (
                 <>
-                  <LogIn size={16} />
+                  <LogIn size={18} />
                   Masuk
                 </>
               )}
             </button>
           </form>
 
-          <p
-            className="text-center mt-5"
-            style={{ color: 'var(--c-text-4)', fontSize: 'var(--text-xs)' }}
-          >
+          <p style={{
+            textAlign: 'center', marginTop: 20,
+            fontSize: 12, color: '#A0A0A0',
+          }}>
             Desa Karang Sengon · PBB-P2
           </p>
         </div>
+
+        <style>{`
+          @keyframes spin { to { transform: rotate(360deg); } }
+        `}</style>
       </div>
     </div>
   );

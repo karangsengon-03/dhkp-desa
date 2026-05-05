@@ -101,13 +101,13 @@ export default function DataPage() {
         <div>
           <h1
             className="font-bold"
-            style={{ color: 'var(--c-text-1)', fontSize: 'var(--text-xl)' }}
+            style={{ color: 'var(--c-t1)', fontSize: 'var(--t-xl)' }}
           >
             Data DHKP
           </h1>
           <p
             className="mt-0.5"
-            style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-sm)' }}
+            style={{ color: 'var(--c-t3)', fontSize: 'var(--t-sm)' }}
           >
             Daftar Himpunan Ketetapan Pajak &amp; Pembayaran — Tahun {tahun}
           </p>
@@ -116,7 +116,7 @@ export default function DataPage() {
           <div className="flex items-center gap-2">
             <label
               className="font-medium"
-              style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-sm)' }}
+              style={{ color: 'var(--c-t3)', fontSize: 'var(--t-sm)' }}
             >
               Tahun:
             </label>
@@ -142,19 +142,19 @@ export default function DataPage() {
         <FilterBadge
           label="Semua" value={total}
           icon={<Users size={15} />}
-          color="var(--c-navy)" bg="var(--c-navy-light)"
+          color="var(--c-navy)" bg="var(--c-navy-soft)"
           active={filterStatus === 'semua'} onClick={() => handleFilterChange('semua')}
         />
         <FilterBadge
           label="Lunas" value={jumlahLunas}
           icon={<CheckCircle size={15} />}
-          color="var(--c-success)" bg="var(--c-success-light)"
+          color="var(--c-ok)" bg="var(--c-ok-soft)"
           active={filterStatus === 'lunas'} onClick={() => handleFilterChange('lunas')}
         />
         <FilterBadge
           label="Belum Lunas" value={jumlahBelum}
           icon={<XCircle size={15} />}
-          color="var(--c-danger)" bg="var(--c-danger-light)"
+          color="var(--c-err)" bg="var(--c-err-soft)"
           active={filterStatus === 'belum'} onClick={() => handleFilterChange('belum')}
         />
       </div>
@@ -164,7 +164,7 @@ export default function DataPage() {
         <Search
           size={15}
           className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-          style={{ color: 'var(--c-text-4)' }}
+          style={{ color: 'var(--c-t4)' }}
         />
         <input
           className="input-field pl-9"
@@ -198,7 +198,7 @@ export default function DataPage() {
       {/* Pagination */}
       {!loading && totalPages > 1 && (
         <div className="flex items-center justify-between mt-4 flex-wrap gap-2">
-          <p style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}>
+          <p style={{ color: 'var(--c-t3)', fontSize: 'var(--t-xs)' }}>
             Halaman {safePage} dari {totalPages} &bull; {filtered.length} record
           </p>
           <div className="flex items-center gap-1 flex-wrap">
@@ -213,7 +213,7 @@ export default function DataPage() {
               }, [])
               .map((p, i) =>
                 p === '...' ? (
-                  <span key={`e${i}`} className="px-2" style={{ color: 'var(--c-text-4)', fontSize: 'var(--text-xs)' }}>…</span>
+                  <span key={`e${i}`} className="px-2" style={{ color: 'var(--c-t4)', fontSize: 'var(--t-xs)' }}>…</span>
                 ) : (
                   <PaginBtn
                     key={p}
@@ -230,7 +230,7 @@ export default function DataPage() {
       )}
 
       {!loading && totalPages <= 1 && filtered.length > 0 && (
-        <p className="mt-3 text-right" style={{ color: 'var(--c-text-4)', fontSize: 'var(--text-xs)' }}>
+        <p className="mt-3 text-right" style={{ color: 'var(--c-t4)', fontSize: 'var(--t-xs)' }}>
           {filtered.length} record
         </p>
       )}
@@ -268,9 +268,9 @@ function FilterBadge({ label, value, icon, color, bg, active, onClick }: {
       className="flex items-center gap-2 px-4 rounded-full font-semibold border transition-all"
       style={{
         background: active ? color : bg,
-        color: active ? 'var(--c-text-inv)' : color,
+        color: active ? 'var(--c-inv)' : color,
         borderColor: color,
-        fontSize: 'var(--text-sm)',
+        fontSize: 'var(--t-sm)',
         height: 40,
       }}
     >
@@ -292,9 +292,9 @@ function PaginBtn({ onClick, disabled, active, label }: {
         minWidth: 44,
         height: 44,
         background: active ? 'var(--c-navy)' : 'var(--c-surface-2)',
-        color: active ? 'var(--c-text-inv)' : 'var(--c-text-1)',
+        color: active ? 'var(--c-inv)' : 'var(--c-t1)',
         border: `1px solid ${active ? 'var(--c-navy)' : 'var(--c-border)'}`,
-        fontSize: 'var(--text-xs)',
+        fontSize: 'var(--t-xs)',
       }}
     >
       {label}
@@ -340,15 +340,15 @@ function EmptyState({ tahun, isLocked, onAdd }: {
     <div className="flex flex-col items-center justify-center py-20 gap-4">
       <div
         className="w-16 h-16 rounded-full flex items-center justify-center"
-        style={{ background: 'var(--c-navy-light)', color: 'var(--c-navy)' }}
+        style={{ background: 'var(--c-navy-soft)', color: 'var(--c-navy)' }}
       >
         <Users size={28} />
       </div>
       <div className="text-center">
-        <p className="font-semibold" style={{ color: 'var(--c-text-1)', fontSize: 'var(--text-base)' }}>
+        <p className="font-semibold" style={{ color: 'var(--c-t1)', fontSize: 'var(--t-base)' }}>
           Belum ada data
         </p>
-        <p className="mt-1" style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-sm)' }}>
+        <p className="mt-1" style={{ color: 'var(--c-t3)', fontSize: 'var(--t-sm)' }}>
           Belum ada data DHKP untuk tahun {tahun}.
         </p>
       </div>

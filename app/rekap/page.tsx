@@ -26,7 +26,7 @@ interface PetugasRekap {
 }
 
 function ProgressBar({ persen }: { persen: number }) {
-  const color = persen >= 75 ? 'var(--c-success)' : persen >= 40 ? 'var(--c-warning)' : 'var(--c-danger)';
+  const color = persen >= 75 ? 'var(--c-ok)' : persen >= 40 ? 'var(--c-warn)' : 'var(--c-err)';
   return (
     <div className="w-full rounded-full overflow-hidden" style={{ height: 8, background: 'var(--c-border)' }}>
       <div
@@ -93,7 +93,7 @@ export default function RekapPage() {
       .sort((a, b) => b.total - a.total);
   }, [records]);
 
-  const pColor = stats.persen >= 75 ? 'var(--c-success)' : stats.persen >= 40 ? 'var(--c-warning)' : 'var(--c-danger)';
+  const pColor = stats.persen >= 75 ? 'var(--c-ok)' : stats.persen >= 40 ? 'var(--c-warn)' : 'var(--c-err)';
 
   const isDhkpPrint = printMode === 'dhkp';
 
@@ -118,15 +118,15 @@ export default function RekapPage() {
           {/* Toolbar */}
           <div className="no-print flex items-center justify-between gap-4 mb-5 flex-wrap">
             <div>
-              <h1 className="font-bold" style={{ fontSize: 'var(--text-xl)', color: 'var(--c-text-1)' }}>
+              <h1 className="font-bold" style={{ fontSize: 'var(--t-xl)', color: 'var(--c-t1)' }}>
                 Rekap Lunas
               </h1>
-              <p style={{ fontSize: 'var(--text-sm)', color: 'var(--c-text-3)', marginTop: 2 }}>
+              <p style={{ fontSize: 'var(--t-sm)', color: 'var(--c-t3)', marginTop: 2 }}>
                 Statistik pembayaran PBB per tahun
               </p>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
-              <span style={{ fontSize: 'var(--text-sm)', color: 'var(--c-text-3)', fontWeight: 500 }}>Tahun:</span>
+              <span style={{ fontSize: 'var(--t-sm)', color: 'var(--c-t3)', fontWeight: 500 }}>Tahun:</span>
               <select
                 className="input-field"
                 style={{ width: 110 }}
@@ -138,7 +138,7 @@ export default function RekapPage() {
               {loading && <RefreshCw size={16} className="animate-spin" style={{ color: 'var(--c-navy)' }} />}
               <button
                 className="btn btn-secondary"
-                style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-sm)' }}
+                style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--t-sm)' }}
                 onClick={() => setPrintMode('rekap')}
                 disabled={loading || records.length === 0}
               >
@@ -146,7 +146,7 @@ export default function RekapPage() {
               </button>
               <button
                 className="btn btn-primary"
-                style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-sm)' }}
+                style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--t-sm)' }}
                 onClick={() => setPrintMode('dhkp')}
                 disabled={loading || records.length === 0}
               >
@@ -159,13 +159,13 @@ export default function RekapPage() {
           <PrintRekapHeader appInfo={appInfo} tahun={tahun} />
 
           {loading ? (
-            <div className="flex justify-center items-center" style={{ padding: 'var(--sp-12) 0' }}>
+            <div className="flex justify-center items-center" style={{ padding: 'var(--s12) 0' }}>
               <RefreshCw size={28} className="animate-spin" style={{ color: 'var(--c-navy)' }} />
             </div>
           ) : records.length === 0 ? (
-            <div className="card flex flex-col items-center gap-3 text-center" style={{ padding: 'var(--sp-12)' }}>
-              <Users size={40} style={{ color: 'var(--c-text-4)' }} />
-              <p style={{ fontWeight: 600, color: 'var(--c-text-3)', fontSize: 'var(--text-base)' }}>
+            <div className="card flex flex-col items-center gap-3 text-center" style={{ padding: 'var(--s12)' }}>
+              <Users size={40} style={{ color: 'var(--c-t4)' }} />
+              <p style={{ fontWeight: 600, color: 'var(--c-t3)', fontSize: 'var(--t-base)' }}>
                 Tidak ada data untuk tahun {tahun}
               </p>
             </div>
@@ -174,32 +174,32 @@ export default function RekapPage() {
               {/* Stat Cards */}
               <div className="grid gap-3 mb-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))' }}>
                 {[
-                  { icon: <Users size={20} />, label: 'Total Wajib Pajak', value: stats.total, sub: `Tahun ${tahun}`, color: 'var(--c-navy)', bg: 'var(--c-navy-light)' },
-                  { icon: <CheckCircle size={20} />, label: 'Sudah Lunas', value: stats.lunas, sub: `${stats.persen}% dari total`, color: 'var(--c-success)', bg: 'var(--c-success-light)' },
-                  { icon: <XCircle size={20} />, label: 'Belum Lunas', value: stats.belum, sub: `${100 - stats.persen}% dari total`, color: 'var(--c-danger)', bg: 'var(--c-danger-light)' },
-                  { icon: <TrendingUp size={20} />, label: 'Persentase Lunas', value: `${stats.persen}%`, sub: stats.persen >= 75 ? 'Target tercapai' : 'Belum mencapai target', color: pColor, bg: stats.persen >= 75 ? 'var(--c-success-light)' : stats.persen >= 40 ? 'var(--c-warning-light)' : 'var(--c-danger-light)' },
+                  { icon: <Users size={20} />, label: 'Total Wajib Pajak', value: stats.total, sub: `Tahun ${tahun}`, color: 'var(--c-navy)', bg: 'var(--c-navy-soft)' },
+                  { icon: <CheckCircle size={20} />, label: 'Sudah Lunas', value: stats.lunas, sub: `${stats.persen}% dari total`, color: 'var(--c-ok)', bg: 'var(--c-ok-soft)' },
+                  { icon: <XCircle size={20} />, label: 'Belum Lunas', value: stats.belum, sub: `${100 - stats.persen}% dari total`, color: 'var(--c-err)', bg: 'var(--c-err-soft)' },
+                  { icon: <TrendingUp size={20} />, label: 'Persentase Lunas', value: `${stats.persen}%`, sub: stats.persen >= 75 ? 'Target tercapai' : 'Belum mencapai target', color: pColor, bg: stats.persen >= 75 ? 'var(--c-ok-soft)' : stats.persen >= 40 ? 'var(--c-warn-soft)' : 'var(--c-err-soft)' },
                 ].map(({ icon, label, value, sub, color, bg }) => (
                   <div key={label} className="stat-card">
                     <div className="stat-icon" style={{ background: bg, color }}>{icon}</div>
                     <div className="stat-value">{value}</div>
-                    {sub && <div style={{ fontSize: 'var(--text-xs)', color, fontWeight: 600, marginBottom: 2 }}>{sub}</div>}
+                    {sub && <div style={{ fontSize: 'var(--t-xs)', color, fontWeight: 600, marginBottom: 2 }}>{sub}</div>}
                     <div className="stat-label">{label}</div>
                   </div>
                 ))}
               </div>
 
               {/* Progress Bar */}
-              <div className="card mb-4" style={{ padding: 'var(--sp-4)' }}>
+              <div className="card mb-4" style={{ padding: 'var(--s4)' }}>
                 <div className="flex items-center justify-between mb-2">
-                  <span style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--c-text-1)' }}>
+                  <span style={{ fontSize: 'var(--t-sm)', fontWeight: 600, color: 'var(--c-t1)' }}>
                     Progress Pelunasan Tahun {tahun}
                   </span>
-                  <span style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: pColor }}>
+                  <span style={{ fontSize: 'var(--t-xs)', fontWeight: 700, color: pColor }}>
                     {stats.persen}%
                   </span>
                 </div>
                 <ProgressBar persen={stats.persen} />
-                <div className="flex justify-between mt-1.5" style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)' }}>
+                <div className="flex justify-between mt-1.5" style={{ fontSize: 'var(--t-xs)', color: 'var(--c-t3)' }}>
                   <span>{stats.lunas} lunas</span>
                   <span>{stats.belum} belum lunas</span>
                 </div>
@@ -208,17 +208,17 @@ export default function RekapPage() {
               {/* Finance Cards */}
               <div className="grid gap-3 mb-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
                 {[
-                  { icon: <Banknote size={18} />, label: 'Total Pajak Terhutang', value: formatRupiah(stats.totalPajak), color: 'var(--c-navy)', bg: 'var(--c-navy-light)' },
-                  { icon: <CheckCircle size={18} />, label: 'Total Sudah Dibayar', value: formatRupiah(stats.totalBayar), color: 'var(--c-success)', bg: 'var(--c-success-light)' },
-                  { icon: <AlertCircle size={18} />, label: 'Total Tunggakan', value: formatRupiah(stats.tunggakan), color: 'var(--c-danger)', bg: 'var(--c-danger-light)' },
+                  { icon: <Banknote size={18} />, label: 'Total Pajak Terhutang', value: formatRupiah(stats.totalPajak), color: 'var(--c-navy)', bg: 'var(--c-navy-soft)' },
+                  { icon: <CheckCircle size={18} />, label: 'Total Sudah Dibayar', value: formatRupiah(stats.totalBayar), color: 'var(--c-ok)', bg: 'var(--c-ok-soft)' },
+                  { icon: <AlertCircle size={18} />, label: 'Total Tunggakan', value: formatRupiah(stats.tunggakan), color: 'var(--c-err)', bg: 'var(--c-err-soft)' },
                 ].map(({ icon, label, value, color, bg }) => (
-                  <div key={label} className="card flex items-center gap-3" style={{ padding: 'var(--sp-4)' }}>
-                    <div style={{ width: 40, height: 40, borderRadius: 'var(--radius-md)', background: bg, color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <div key={label} className="card flex items-center gap-3" style={{ padding: 'var(--s4)' }}>
+                    <div style={{ width: 40, height: 40, borderRadius: 'var(--r-md)', background: bg, color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       {icon}
                     </div>
                     <div className="min-w-0">
-                      <div style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)', marginBottom: 2 }}>{label}</div>
-                      <div style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{value}</div>
+                      <div style={{ fontSize: 'var(--t-xs)', color: 'var(--c-t3)', marginBottom: 2 }}>{label}</div>
+                      <div style={{ fontSize: 'var(--t-sm)', fontWeight: 700, color, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{value}</div>
                     </div>
                   </div>
                 ))}
@@ -226,8 +226,8 @@ export default function RekapPage() {
 
               {/* Tabel per Petugas */}
               <div className="card overflow-hidden" style={{ padding: 0 }}>
-                <div className="flex items-center justify-between" style={{ padding: 'var(--sp-3) var(--sp-4)', borderBottom: '1px solid var(--c-border)' }}>
-                  <span style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--c-text-1)' }}>
+                <div className="flex items-center justify-between" style={{ padding: 'var(--s3) var(--s4)', borderBottom: '1px solid var(--c-border)' }}>
+                  <span style={{ fontSize: 'var(--t-sm)', fontWeight: 700, color: 'var(--c-t1)' }}>
                     Rekap per Petugas
                   </span>
                 </div>
@@ -246,14 +246,14 @@ export default function RekapPage() {
                     </thead>
                     <tbody>
                       {petugasList.map((p, i) => {
-                        const pc = p.persen >= 75 ? 'var(--c-success)' : p.persen >= 40 ? 'var(--c-warning)' : 'var(--c-danger)';
+                        const pc = p.persen >= 75 ? 'var(--c-ok)' : p.persen >= 40 ? 'var(--c-warn)' : 'var(--c-err)';
                         return (
                           <tr key={p.nama}>
-                            <td style={{ color: 'var(--c-text-3)', textAlign: 'center' }}>{i + 1}</td>
+                            <td style={{ color: 'var(--c-t3)', textAlign: 'center' }}>{i + 1}</td>
                             <td style={{ fontWeight: 500 }}>{p.nama}</td>
                             <td style={{ textAlign: 'right', fontWeight: 600 }}>{p.total}</td>
-                            <td style={{ textAlign: 'right', fontWeight: 600, color: 'var(--c-success)' }}>{p.lunas}</td>
-                            <td style={{ textAlign: 'right', fontWeight: 600, color: 'var(--c-danger)' }}>{p.belum}</td>
+                            <td style={{ textAlign: 'right', fontWeight: 600, color: 'var(--c-ok)' }}>{p.lunas}</td>
+                            <td style={{ textAlign: 'right', fontWeight: 600, color: 'var(--c-err)' }}>{p.belum}</td>
                             <td className="no-print" style={{ paddingTop: 14 }}><ProgressBar persen={p.persen} /></td>
                             <td style={{ textAlign: 'right', fontWeight: 700 }}>
                               <span style={{ color: pc }}>{p.persen}%</span>
@@ -261,12 +261,12 @@ export default function RekapPage() {
                           </tr>
                         );
                       })}
-                      <tr style={{ background: 'var(--c-navy-light)', fontWeight: 700 }}>
+                      <tr style={{ background: 'var(--c-navy-soft)', fontWeight: 700 }}>
                         <td />
                         <td style={{ color: 'var(--c-navy)' }}>TOTAL</td>
                         <td style={{ textAlign: 'right', color: 'var(--c-navy)' }}>{stats.total}</td>
-                        <td style={{ textAlign: 'right', color: 'var(--c-success)' }}>{stats.lunas}</td>
-                        <td style={{ textAlign: 'right', color: 'var(--c-danger)' }}>{stats.belum}</td>
+                        <td style={{ textAlign: 'right', color: 'var(--c-ok)' }}>{stats.lunas}</td>
+                        <td style={{ textAlign: 'right', color: 'var(--c-err)' }}>{stats.belum}</td>
                         <td className="no-print" style={{ paddingTop: 14 }}><ProgressBar persen={stats.persen} /></td>
                         <td style={{ textAlign: 'right', fontWeight: 800, color: pColor }}>{stats.persen}%</td>
                       </tr>

@@ -18,7 +18,7 @@ export function SectionHeader({
         style={{
           width: 36,
           height: 36,
-          borderRadius: 'var(--radius-md)',
+          borderRadius: 'var(--r-md)',
           background: iconBg,
           display: 'flex',
           alignItems: 'center',
@@ -29,10 +29,10 @@ export function SectionHeader({
         {icon}
       </div>
       <div>
-        <div style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: 'var(--c-text-1)' }}>
+        <div style={{ fontWeight: 700, fontSize: 'var(--t-base)', color: 'var(--c-t1)' }}>
           {title}
         </div>
-        <div style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)', marginTop: 2 }}>
+        <div style={{ fontSize: 'var(--t-xs)', color: 'var(--c-t3)', marginTop: 2 }}>
           {sub}
         </div>
       </div>

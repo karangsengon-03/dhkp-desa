@@ -149,58 +149,58 @@ export function SeksiImport({ isLocked }: SeksiImportProps) {
 
   return (
     <>
-      <div className="card" style={{ padding: 'var(--sp-5)' }}>
+      <div className="card" style={{ padding: 'var(--s5)' }}>
         <div className="section-header">
-          <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-md)', background: isLocked ? 'var(--c-text-4)' : 'var(--c-success)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Upload size={18} style={{ color: 'var(--c-text-inv)' }} />
+          <div style={{ width: 36, height: 36, borderRadius: 'var(--r-md)', background: isLocked ? 'var(--c-t4)' : 'var(--c-ok)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Upload size={18} style={{ color: 'var(--c-inv)' }} />
           </div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: 'var(--c-text-1)' }}>Import Data DHKP</div>
-            <div style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)', marginTop: 2 }}>Unggah file Excel untuk batch import data wajib pajak</div>
+            <div style={{ fontWeight: 700, fontSize: 'var(--t-base)', color: 'var(--c-t1)' }}>Import Data DHKP</div>
+            <div style={{ fontSize: 'var(--t-xs)', color: 'var(--c-t3)', marginTop: 2 }}>Unggah file Excel untuk batch import data wajib pajak</div>
           </div>
         </div>
 
         {isLocked ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', padding: 'var(--sp-3) var(--sp-4)', borderRadius: 'var(--radius-md)', background: 'var(--c-danger-light)', border: '1px solid var(--c-danger)' }}>
-            <AlertTriangle size={16} style={{ color: 'var(--c-danger)', flexShrink: 0 }} />
-            <span style={{ fontSize: 'var(--text-sm)', color: 'var(--c-danger)', fontWeight: 500 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--s3)', padding: 'var(--s3) var(--s4)', borderRadius: 'var(--r-md)', background: 'var(--c-err-soft)', border: '1px solid var(--c-err)' }}>
+            <AlertTriangle size={16} style={{ color: 'var(--c-err)', flexShrink: 0 }} />
+            <span style={{ fontSize: 'var(--t-sm)', color: 'var(--c-err)', fontWeight: 500 }}>
               Data sedang dikunci. Import tidak dapat dilakukan.
             </span>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s4)' }}>
             {/* Format info */}
-            <div style={{ padding: 'var(--sp-3) var(--sp-4)', borderRadius: 'var(--radius-md)', background: 'var(--c-bg)', border: '1px solid var(--c-border)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 'var(--sp-2)' }}>
-                <CheckCircle size={13} style={{ color: 'var(--c-success)' }} />
-                <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--c-text-2)' }}>Format kolom yang diterima:</span>
+            <div style={{ padding: 'var(--s3) var(--s4)', borderRadius: 'var(--r-md)', background: 'var(--c-bg)', border: '1px solid var(--c-border)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 'var(--s2)' }}>
+                <CheckCircle size={13} style={{ color: 'var(--c-ok)' }} />
+                <span style={{ fontSize: 'var(--t-xs)', fontWeight: 600, color: 'var(--c-t2)' }}>Format kolom yang diterima:</span>
               </div>
-              <p style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)', lineHeight: 1.7 }}>
-                <code style={{ background: 'var(--c-surface)', padding: '2px 6px', borderRadius: 'var(--radius-sm)', fontSize: 11 }}>
+              <p style={{ fontSize: 'var(--t-xs)', color: 'var(--c-t3)', lineHeight: 1.7 }}>
+                <code style={{ background: 'var(--c-surface)', padding: '2px 6px', borderRadius: 'var(--r-sm)', fontSize: 11 }}>
                   No · NOP · Nomor Induk · Nama WP · Alamat Objek Pajak · Pajak Terhutang · Perubahan Pajak · Status Lunas · Tanggal Bayar · Luas Tanah · Luas Bangunan · Dikelola Oleh
                 </code>
               </p>
-              <p style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)', marginTop: 'var(--sp-2)' }}>
+              <p style={{ fontSize: 'var(--t-xs)', color: 'var(--c-t3)', marginTop: 'var(--s2)' }}>
                 Kolom <strong>NOP</strong> dan <strong>Nama WP</strong> wajib diisi. Status Lunas: <code>Lunas</code> / <code>Belum</code>.
               </p>
             </div>
 
             {/* Progress bar */}
             {importProgress && (
-              <div style={{ padding: 'var(--sp-3) var(--sp-4)', borderRadius: 'var(--radius-md)', background: 'var(--c-navy-light)', border: '1px solid var(--c-navy)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: 'var(--text-xs)', color: 'var(--c-navy)', fontWeight: 600 }}>
+              <div style={{ padding: 'var(--s3) var(--s4)', borderRadius: 'var(--r-md)', background: 'var(--c-navy-soft)', border: '1px solid var(--c-navy)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: 'var(--t-xs)', color: 'var(--c-navy)', fontWeight: 600 }}>
                   <span>Mengimport data...</span>
                   <span>{importProgress.done} dari {importProgress.total} berhasil diimpor</span>
                 </div>
-                <div style={{ background: 'var(--c-border)', borderRadius: 'var(--radius-full)', height: 8, overflow: 'hidden' }}>
-                  <div style={{ height: 8, background: 'var(--c-navy)', borderRadius: 'var(--radius-full)', transition: 'width 200ms ease', width: `${Math.round((importProgress.done / importProgress.total) * 100)}%` }} />
+                <div style={{ background: 'var(--c-border)', borderRadius: 'var(--r-full)', height: 8, overflow: 'hidden' }}>
+                  <div style={{ height: 8, background: 'var(--c-navy)', borderRadius: 'var(--r-full)', transition: 'width 200ms ease', width: `${Math.round((importProgress.done / importProgress.total) * 100)}%` }} />
                 </div>
               </div>
             )}
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-4)', flexWrap: 'wrap' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
-                <span style={{ fontSize: 'var(--text-sm)', fontWeight: 500, color: 'var(--c-text-3)', whiteSpace: 'nowrap' }}>Tahun:</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--s4)', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--s2)' }}>
+                <span style={{ fontSize: 'var(--t-sm)', fontWeight: 500, color: 'var(--c-t3)', whiteSpace: 'nowrap' }}>Tahun:</span>
                 <select
                   className="input-field"
                   value={tahunImport}
@@ -215,7 +215,7 @@ export function SeksiImport({ isLocked }: SeksiImportProps) {
                 className="btn btn-primary"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={importLoading}
-                style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-sm)' }}
+                style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--t-sm)' }}
               >
                 <Upload size={14} />
                 Pilih File XLSX

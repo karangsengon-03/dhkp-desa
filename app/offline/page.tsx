@@ -11,9 +11,9 @@ export default function OfflinePage() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 'var(--sp-6)',
+        padding: 'var(--s6)',
         background: 'var(--c-bg)',
-        gap: 'var(--sp-5)',
+        gap: 'var(--s5)',
         textAlign: 'center',
       }}
     >
@@ -34,15 +34,15 @@ export default function OfflinePage() {
       <div>
         <h1
           style={{
-            fontSize: 'var(--text-xl)',
+            fontSize: 'var(--t-xl)',
             fontWeight: 700,
-            color: 'var(--c-text-1)',
-            marginBottom: 'var(--sp-2)',
+            color: 'var(--c-t1)',
+            marginBottom: 'var(--s2)',
           }}
         >
           Tidak Ada Koneksi
         </h1>
-        <p style={{ fontSize: 'var(--text-sm)', color: 'var(--c-text-3)', maxWidth: 360 }}>
+        <p style={{ fontSize: 'var(--t-sm)', color: 'var(--c-t3)', maxWidth: 360 }}>
           Aplikasi DHKP memerlukan koneksi internet untuk mengakses data Firestore.
           Periksa koneksi Anda lalu coba lagi.
         </p>

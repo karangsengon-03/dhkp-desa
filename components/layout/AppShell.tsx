@@ -18,48 +18,48 @@ function SkeletonShell() {
       <div
         className="fixed top-0 left-0 right-0 z-20 flex items-center justify-between"
         style={{
-          height: 'var(--header-height-mobile)',
+          height: 'var(--header-h)',
           background: 'var(--c-surface)',
           borderBottom: '1px solid var(--c-border)',
-          padding: '0 var(--sp-3)',
+          padding: '0 var(--s3)',
         }}
       >
-        <div className="flex items-center" style={{ gap: 'var(--sp-3)' }}>
-          <div className="skeleton" style={{ width: 'var(--touch-min)', height: 'var(--touch-min)', borderRadius: 'var(--radius-md)' }} />
+        <div className="flex items-center" style={{ gap: 'var(--s3)' }}>
+          <div className="skeleton" style={{ width: 'var(--touch)', height: 'var(--touch)', borderRadius: 'var(--r-md)' }} />
           <div>
-            <div className="skeleton" style={{ width: 60, height: 14, borderRadius: 'var(--radius-sm)', marginBottom: 6 }} />
-            <div className="skeleton" style={{ width: 100, height: 11, borderRadius: 'var(--radius-sm)' }} />
+            <div className="skeleton" style={{ width: 60, height: 14, borderRadius: 'var(--r-sm)', marginBottom: 6 }} />
+            <div className="skeleton" style={{ width: 100, height: 11, borderRadius: 'var(--r-sm)' }} />
           </div>
         </div>
-        <div className="flex items-center" style={{ gap: 'var(--sp-2)' }}>
-          <div className="skeleton" style={{ width: 72, height: 32, borderRadius: 'var(--radius-sm)' }} />
-          <div className="skeleton" style={{ width: 'var(--touch-min)', height: 'var(--touch-min)', borderRadius: 'var(--radius-md)' }} />
-          <div className="skeleton" style={{ width: 28, height: 28, borderRadius: 'var(--radius-full)' }} />
+        <div className="flex items-center" style={{ gap: 'var(--s2)' }}>
+          <div className="skeleton" style={{ width: 72, height: 32, borderRadius: 'var(--r-sm)' }} />
+          <div className="skeleton" style={{ width: 'var(--touch)', height: 'var(--touch)', borderRadius: 'var(--r-md)' }} />
+          <div className="skeleton" style={{ width: 28, height: 28, borderRadius: 'var(--r-full)' }} />
         </div>
       </div>
 
       {/* Content skeleton */}
       <main className="header-offset" style={{ minHeight: '100vh' }}>
-        <div style={{ padding: 'var(--content-pad-mobile)' }}>
+        <div style={{ padding: 'var(--pad-page)' }}>
           {/* Page header skeleton */}
-          <div style={{ marginBottom: 'var(--sp-6)' }}>
-            <div className="skeleton" style={{ width: 200, height: 18, borderRadius: 'var(--radius-sm)', marginBottom: 'var(--sp-2)' }} />
-            <div className="skeleton" style={{ width: 280, height: 13, borderRadius: 'var(--radius-sm)' }} />
+          <div style={{ marginBottom: 'var(--s6)' }}>
+            <div className="skeleton" style={{ width: 200, height: 18, borderRadius: 'var(--r-sm)', marginBottom: 'var(--s2)' }} />
+            <div className="skeleton" style={{ width: 280, height: 13, borderRadius: 'var(--r-sm)' }} />
           </div>
           {/* Cards skeleton */}
           <div className="grid grid-cols-2 gap-3 mb-4" style={{ gridTemplateColumns: 'repeat(2, 1fr)' }}>
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="card" style={{ padding: '14px' }}>
-                <div className="skeleton" style={{ width: 36, height: 36, borderRadius: 'var(--radius-md)', marginBottom: 'var(--sp-3)' }} />
-                <div className="skeleton" style={{ width: '60%', height: 18, borderRadius: 'var(--radius-sm)', marginBottom: 6 }} />
-                <div className="skeleton" style={{ width: '80%', height: 12, borderRadius: 'var(--radius-sm)' }} />
+                <div className="skeleton" style={{ width: 36, height: 36, borderRadius: 'var(--r-md)', marginBottom: 'var(--s3)' }} />
+                <div className="skeleton" style={{ width: '60%', height: 18, borderRadius: 'var(--r-sm)', marginBottom: 6 }} />
+                <div className="skeleton" style={{ width: '80%', height: 12, borderRadius: 'var(--r-sm)' }} />
               </div>
             ))}
           </div>
           {/* Table skeleton */}
-          <div className="table-wrapper" style={{ padding: 'var(--sp-4)' }}>
+          <div className="table-wrapper" style={{ padding: 'var(--s4)' }}>
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="flex" style={{ gap: 'var(--sp-4)', marginBottom: 'var(--sp-3)' }}>
+              <div key={i} className="flex" style={{ gap: 'var(--s4)', marginBottom: 'var(--s3)' }}>
                 <div className="skeleton" style={{ width: 24, height: 14, borderRadius: 'var(--radius-xs)', flexShrink: 0 }} />
                 <div className="skeleton" style={{ width: 120, height: 14, borderRadius: 'var(--radius-xs)' }} />
                 <div className="skeleton" style={{ flex: 1, height: 14, borderRadius: 'var(--radius-xs)' }} />
@@ -107,7 +107,7 @@ export function AppShell({ children }: AppShellProps) {
       >
         <div
           className="animate-fade-in"
-          style={{ padding: 'var(--content-pad-mobile)' }}
+          style={{ padding: 'var(--pad-page)' }}
         >
           {children}
         </div>

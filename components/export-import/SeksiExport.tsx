@@ -21,14 +21,14 @@ interface SectionCardProps {
 
 function SectionCard({ icon, iconBg, title, sub, children }: SectionCardProps) {
   return (
-    <div className="card" style={{ padding: 'var(--sp-5)' }}>
+    <div className="card" style={{ padding: 'var(--s5)' }}>
       <div className="section-header">
-        <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-md)', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        <div style={{ width: 36, height: 36, borderRadius: 'var(--r-md)', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           {icon}
         </div>
         <div>
-          <div style={{ fontWeight: 700, fontSize: 'var(--text-base)', color: 'var(--c-text-1)' }}>{title}</div>
-          <div style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)', marginTop: 2 }}>{sub}</div>
+          <div style={{ fontWeight: 700, fontSize: 'var(--t-base)', color: 'var(--c-t1)' }}>{title}</div>
+          <div style={{ fontSize: 'var(--t-xs)', color: 'var(--c-t3)', marginTop: 2 }}>{sub}</div>
         </div>
       </div>
       {children}
@@ -107,14 +107,14 @@ export function SeksiExport() {
     <>
       {/* Export Data DHKP */}
       <SectionCard
-        icon={<FileSpreadsheet size={18} style={{ color: 'var(--c-text-inv)' }} />}
+        icon={<FileSpreadsheet size={18} style={{ color: 'var(--c-inv)' }} />}
         iconBg="var(--c-navy)"
         title="Export Data DHKP"
         sub="Unduh semua data wajib pajak ke file Excel (.xlsx)"
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-4)', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
-            <span style={{ fontSize: 'var(--text-sm)', fontWeight: 500, color: 'var(--c-text-3)', whiteSpace: 'nowrap' }}>Tahun:</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--s4)', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--s2)' }}>
+            <span style={{ fontSize: 'var(--t-sm)', fontWeight: 500, color: 'var(--c-t3)', whiteSpace: 'nowrap' }}>Tahun:</span>
             <select
               className="input-field"
               value={tahunExport}
@@ -128,7 +128,7 @@ export function SeksiExport() {
             className="btn btn-primary"
             onClick={handleExportData}
             disabled={exportLoading}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-sm)' }}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--t-sm)' }}
           >
             <Download size={14} />
             {exportLoading ? 'Mengexport...' : `Export DHKP ${tahunExport}`}
@@ -138,7 +138,7 @@ export function SeksiExport() {
 
       {/* Export Riwayat */}
       <SectionCard
-        icon={<History size={18} style={{ color: 'var(--c-text-inv)' }} />}
+        icon={<History size={18} style={{ color: 'var(--c-inv)' }} />}
         iconBg="var(--c-gold)"
         title="Export Riwayat Perubahan"
         sub="Unduh seluruh log perubahan data ke file Excel (.xlsx)"
@@ -147,7 +147,7 @@ export function SeksiExport() {
           className="btn btn-secondary"
           onClick={handleExportChangelog}
           disabled={exportChangelogLoading}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-sm)' }}
+          style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--t-sm)' }}
         >
           <Download size={14} />
           {exportChangelogLoading ? 'Mengexport...' : 'Export Riwayat Perubahan'}

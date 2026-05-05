@@ -27,7 +27,7 @@ export function UpdateBanner() {
 
   return (
     <div className="update-banner no-print">
-      <div className="flex items-center" style={{ gap: 'var(--sp-2)' }}>
+      <div className="flex items-center" style={{ gap: 'var(--s2)' }}>
         <RefreshCw size={14} />
         <span>Versi baru tersedia</span>
       </div>
@@ -36,7 +36,7 @@ export function UpdateBanner() {
         className="btn btn-sm"
         style={{
           background: 'var(--c-gold)',
-          color: 'var(--c-text-inv)',
+          color: 'var(--c-inv)',
           border: 'none',
           flexShrink: 0,
         }}

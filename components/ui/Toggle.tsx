@@ -16,7 +16,7 @@ export function Toggle({ checked, onChange, disabled = false, label }: TogglePro
       style={{ cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.45 : 1 }}
     >
       {/* Touch target wrapper — min 44×44px */}
-      <div className="relative flex items-center justify-center" style={{ width: 'var(--touch-min)', height: 'var(--touch-min)' }}>
+      <div className="relative flex items-center justify-center" style={{ width: 'var(--touch)', height: 'var(--touch)' }}>
         <input
           type="checkbox"
           className="sr-only"
@@ -29,8 +29,8 @@ export function Toggle({ checked, onChange, disabled = false, label }: TogglePro
           style={{
             width: 40,
             height: 24,
-            borderRadius: 'var(--radius-full)',
-            backgroundColor: checked ? 'var(--c-navy)' : 'var(--c-border-strong)',
+            borderRadius: 'var(--r-full)',
+            backgroundColor: checked ? 'var(--c-navy)' : 'var(--c-border-md)',
             transition: 'background-color 200ms ease',
             position: 'relative',
             flexShrink: 0,
@@ -44,8 +44,8 @@ export function Toggle({ checked, onChange, disabled = false, label }: TogglePro
               left: 4,
               width: 16,
               height: 16,
-              borderRadius: 'var(--radius-full)',
-              background: 'var(--c-text-inv)',
+              borderRadius: 'var(--r-full)',
+              background: 'var(--c-inv)',
               boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
               transition: 'transform 200ms ease',
               transform: checked ? 'translateX(16px)' : 'translateX(0)',
@@ -54,7 +54,7 @@ export function Toggle({ checked, onChange, disabled = false, label }: TogglePro
         </div>
       </div>
       {label && (
-        <span style={{ fontSize: 'var(--text-base)', fontWeight: 500, color: 'var(--c-text-2)' }}>
+        <span style={{ fontSize: 'var(--t-base)', fontWeight: 500, color: 'var(--c-t2)' }}>
           {label}
         </span>
       )}

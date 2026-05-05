@@ -83,16 +83,16 @@ export default function RiwayatPage() {
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
         <div>
-          <h1 className="font-bold" style={{ fontSize: 'var(--text-xl)', color: 'var(--c-text-1)' }}>
+          <h1 className="font-bold" style={{ fontSize: 'var(--t-xl)', color: 'var(--c-t1)' }}>
             Riwayat Perubahan
           </h1>
-          <p style={{ fontSize: 'var(--text-sm)', color: 'var(--c-text-3)', marginTop: 2 }}>
+          <p style={{ fontSize: 'var(--t-sm)', color: 'var(--c-t3)', marginTop: 2 }}>
             Log semua perubahan data DHKP
           </p>
         </div>
         <button
           className="btn btn-secondary"
-          style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-sm)' }}
+          style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--t-sm)' }}
           onClick={fetchData}
           disabled={loading}
         >
@@ -104,7 +104,7 @@ export default function RiwayatPage() {
       {/* Filter Bar */}
       <div className="flex flex-wrap gap-3 mb-4">
         <div style={{ position: 'relative', flex: '1 1 220px', minWidth: 180 }}>
-          <Search size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--c-text-4)', pointerEvents: 'none' }} />
+          <Search size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--c-t4)', pointerEvents: 'none' }} />
           <input
             className="input-field"
             style={{ paddingLeft: 32, width: '100%' }}
@@ -125,25 +125,25 @@ export default function RiwayatPage() {
               <option key={y} value={y}>{y}</option>
             ))}
           </select>
-          <ChevronDown size={14} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--c-text-4)', pointerEvents: 'none' }} />
+          <ChevronDown size={14} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--c-t4)', pointerEvents: 'none' }} />
         </div>
       </div>
 
       {/* Count */}
       {!loading && (
-        <div className="mb-3" style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)' }}>
+        <div className="mb-3" style={{ fontSize: 'var(--t-xs)', color: 'var(--c-t3)' }}>
           Menampilkan <strong>{filtered.length}</strong> dari <strong>{entries.length}</strong> riwayat
         </div>
       )}
 
       {loading ? (
-        <div className="flex justify-center items-center" style={{ padding: 'var(--sp-12) 0' }}>
+        <div className="flex justify-center items-center" style={{ padding: 'var(--s12) 0' }}>
           <RefreshCw size={28} className="animate-spin" style={{ color: 'var(--c-navy)' }} />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="card flex flex-col items-center gap-3 text-center" style={{ padding: 'var(--sp-12)' }}>
-          <History size={40} style={{ color: 'var(--c-text-4)' }} />
-          <p style={{ fontWeight: 600, color: 'var(--c-text-3)', fontSize: 'var(--text-base)' }}>
+        <div className="card flex flex-col items-center gap-3 text-center" style={{ padding: 'var(--s12)' }}>
+          <History size={40} style={{ color: 'var(--c-t4)' }} />
+          <p style={{ fontWeight: 600, color: 'var(--c-t3)', fontSize: 'var(--t-base)' }}>
             {entries.length === 0 ? 'Belum ada riwayat perubahan' : 'Tidak ada hasil sesuai filter'}
           </p>
         </div>
@@ -166,12 +166,12 @@ export default function RiwayatPage() {
               <tbody>
                 {filtered.map((e, i) => (
                   <tr key={e.id ?? i}>
-                    <td style={{ textAlign: 'center', color: 'var(--c-text-4)' }}>{i + 1}</td>
-                    <td style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)', whiteSpace: 'nowrap' }}>
+                    <td style={{ textAlign: 'center', color: 'var(--c-t4)' }}>{i + 1}</td>
+                    <td style={{ fontSize: 'var(--t-xs)', color: 'var(--c-t3)', whiteSpace: 'nowrap' }}>
                       {formatTimestamp(e.editedAt)}
                     </td>
                     <td>
-                      <span className="badge badge-info">{e.tahun}</span>
+                      <span className="badge badge-navy">{e.tahun}</span>
                     </td>
                     <td style={{ fontWeight: 500 }}>{e.namaWajibPajak || '—'}</td>
                     <td>
@@ -179,13 +179,13 @@ export default function RiwayatPage() {
                         {FIELD_LABELS[e.field] || e.field}
                       </span>
                     </td>
-                    <td style={{ color: 'var(--c-danger)', fontSize: 'var(--text-xs)' }}>
+                    <td style={{ color: 'var(--c-err)', fontSize: 'var(--t-xs)' }}>
                       {formatVal(e.field, e.nilaiLama)}
                     </td>
-                    <td style={{ color: 'var(--c-success)', fontSize: 'var(--text-xs)', fontWeight: 600 }}>
+                    <td style={{ color: 'var(--c-ok)', fontSize: 'var(--t-xs)', fontWeight: 600 }}>
                       {formatVal(e.field, e.nilaiBaru)}
                     </td>
-                    <td style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)' }}>
+                    <td style={{ fontSize: 'var(--t-xs)', color: 'var(--c-t3)' }}>
                       {e.editedBy || '—'}
                     </td>
                   </tr>

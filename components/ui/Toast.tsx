@@ -23,9 +23,9 @@ const icons: Record<ToastType, React.ReactNode> = {
 
 type ColorConfig = { border: string; icon: string };
 const colors: Record<ToastType, ColorConfig> = {
-  success: { border: 'var(--c-success)', icon: 'var(--c-success)' },
-  danger:  { border: 'var(--c-danger)',  icon: 'var(--c-danger)'  },
-  warning: { border: 'var(--c-warning)', icon: 'var(--c-warning)' },
+  success: { border: 'var(--c-ok)', icon: 'var(--c-ok)' },
+  danger:  { border: 'var(--c-err)',  icon: 'var(--c-err)'  },
+  warning: { border: 'var(--c-warn)', icon: 'var(--c-warn)' },
   info:    { border: 'var(--c-navy)',    icon: 'var(--c-navy)'    },
 };
 
@@ -48,7 +48,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       {/* Toast container — pojok kanan bawah */}
       <div
         className="fixed z-[100] flex flex-col pointer-events-none"
-        style={{ bottom: 'var(--sp-4)', right: 'var(--sp-4)', gap: 'var(--sp-2)', minWidth: 240, maxWidth: 360 }}
+        style={{ bottom: 'var(--s4)', right: 'var(--s4)', gap: 'var(--s2)', minWidth: 240, maxWidth: 360 }}
       >
         {toasts.map(toast => {
           const c = colors[toast.type];
@@ -57,10 +57,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               key={toast.id}
               className="pointer-events-auto flex items-start animate-toast-in"
               style={{
-                gap: 'var(--sp-3)',
-                padding: 'var(--sp-3) var(--sp-4)',
-                borderRadius: 'var(--radius-md)',
-                boxShadow: 'var(--shadow-md)',
+                gap: 'var(--s3)',
+                padding: 'var(--s3) var(--s4)',
+                borderRadius: 'var(--r-md)',
+                boxShadow: 'var(--sh-md)',
                 background: 'var(--c-surface)',
                 borderLeft: `3px solid ${c.border}`,
                 border: `1px solid var(--c-border)`,
@@ -73,14 +73,14 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               </span>
               <span
                 className="flex-1"
-                style={{ fontSize: 'var(--text-sm)', fontWeight: 500, color: 'var(--c-text-1)' }}
+                style={{ fontSize: 'var(--t-sm)', fontWeight: 500, color: 'var(--c-t1)' }}
               >
                 {toast.message}
               </span>
               <button
                 onClick={() => remove(toast.id)}
                 className="flex-shrink-0 transition-opacity"
-                style={{ opacity: 0.5, color: 'var(--c-text-3)' }}
+                style={{ opacity: 0.5, color: 'var(--c-t3)' }}
                 onMouseOver={e => (e.currentTarget.style.opacity = '1')}
                 onMouseOut={e => (e.currentTarget.style.opacity = '0.5')}
               >

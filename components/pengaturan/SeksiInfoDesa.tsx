@@ -46,15 +46,15 @@ export function SeksiInfoDesa({ appInfo, saving, onSaving, onChange }: SeksiInfo
   }
 
   return (
-    <div className="card" style={{ padding: 'var(--sp-5)' }}>
+    <div className="card" style={{ padding: 'var(--s5)' }}>
       <SectionHeader
-        icon={<Building2 size={18} style={{ color: 'var(--c-text-inv)' }} />}
+        icon={<Building2 size={18} style={{ color: 'var(--c-inv)' }} />}
         iconBg="var(--c-gold)"
         title="Informasi Desa"
         sub="Data yang tampil di header cetak dan rekap"
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 'var(--sp-4)', marginBottom: 'var(--sp-5)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 'var(--s4)', marginBottom: 'var(--s5)' }}>
         {(([
           ['propinsi', 'Provinsi', 'Contoh: Jawa Timur'],
           ['kotaKab', 'Kota / Kabupaten', 'Contoh: Kabupaten Bondowoso'],
@@ -73,29 +73,29 @@ export function SeksiInfoDesa({ appInfo, saving, onSaving, onChange }: SeksiInfo
       </div>
 
       {/* Logo Upload */}
-      <div style={{ marginBottom: 'var(--sp-5)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', marginBottom: 'var(--sp-2)' }}>
-          <ImageIcon size={13} style={{ color: 'var(--c-text-3)' }} />
-          <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--c-text-3)' }}>Logo Header</span>
-          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-4)' }}>PNG/SVG · maks 500 KB</span>
+      <div style={{ marginBottom: 'var(--s5)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--s2)', marginBottom: 'var(--s2)' }}>
+          <ImageIcon size={13} style={{ color: 'var(--c-t3)' }} />
+          <span style={{ fontSize: 'var(--t-xs)', fontWeight: 600, color: 'var(--c-t3)' }}>Logo Header</span>
+          <span style={{ fontSize: 'var(--t-xs)', color: 'var(--c-t4)' }}>PNG/SVG · maks 500 KB</span>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-4)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s4)' }}>
           {(['logoKiri', 'logoKanan'] as const).map((field) => (
             <div key={field}>
-              <div style={{ fontSize: 'var(--text-xs)', fontWeight: 500, color: 'var(--c-text-3)', marginBottom: 6 }}>
+              <div style={{ fontSize: 'var(--t-xs)', fontWeight: 500, color: 'var(--c-t3)', marginBottom: 6 }}>
                 Logo {field === 'logoKiri' ? 'Kiri' : 'Kanan'}
               </div>
               <div
                 onClick={() => (field === 'logoKiri' ? logoKiriRef : logoKananRef).current?.click()}
-                style={{ border: '2px dashed var(--c-border)', borderRadius: 'var(--radius-md)', minHeight: 90, padding: 'var(--sp-4)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', gap: 6, transition: 'border-color 150ms' }}
+                style={{ border: '2px dashed var(--c-border)', borderRadius: 'var(--r-md)', minHeight: 90, padding: 'var(--s4)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', gap: 6, transition: 'border-color 150ms' }}
               >
                 {appInfo[field] ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={appInfo[field] as string} alt={field} style={{ maxHeight: 68, maxWidth: '100%', objectFit: 'contain' }} />
                 ) : (
                   <>
-                    <ImageIcon size={26} style={{ color: 'var(--c-text-4)' }} />
-                    <span style={{ fontSize: 'var(--text-xs)', color: 'var(--c-text-3)' }}>Klik untuk unggah</span>
+                    <ImageIcon size={26} style={{ color: 'var(--c-t4)' }} />
+                    <span style={{ fontSize: 'var(--t-xs)', color: 'var(--c-t3)' }}>Klik untuk unggah</span>
                   </>
                 )}
               </div>
@@ -109,7 +109,7 @@ export function SeksiInfoDesa({ appInfo, saving, onSaving, onChange }: SeksiInfo
               {appInfo[field] && (
                 <button
                   onClick={() => onChange(field, '')}
-                  style={{ marginTop: 4, fontSize: 'var(--text-xs)', color: 'var(--c-danger)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                  style={{ marginTop: 4, fontSize: 'var(--t-xs)', color: 'var(--c-err)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                 >
                   Hapus logo
                 </button>
@@ -124,7 +124,7 @@ export function SeksiInfoDesa({ appInfo, saving, onSaving, onChange }: SeksiInfo
           className="btn btn-primary"
           onClick={handleSave}
           disabled={saving}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-sm)' }}
+          style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--t-sm)' }}
         >
           <Save size={14} />
           {saving ? 'Menyimpan...' : 'Simpan Pengaturan'}

@@ -55,9 +55,9 @@ export function Sidebar({ open, onClose, userName }: SidebarProps) {
       <aside
         className="fixed top-0 left-0 z-40 h-full flex flex-col"
         style={{
-          width: 'var(--sidebar-width)',
+          width: 'var(--sidebar-w)',
           background: 'var(--c-navy)',
-          boxShadow: 'var(--shadow-lg)',
+          boxShadow: 'var(--sh-lg)',
           transform: open ? 'translateX(0)' : 'translateX(-100%)',
           transition: open
             ? 'transform 200ms ease-out'
@@ -68,15 +68,15 @@ export function Sidebar({ open, onClose, userName }: SidebarProps) {
         <div
           className="flex items-center justify-between flex-shrink-0"
           style={{
-            padding: 'var(--sp-4)',
+            padding: 'var(--s4)',
             borderBottom: '1px solid rgba(255,255,255,0.1)',
           }}
         >
           <div>
-            <div style={{ fontSize: 'var(--text-lg)', fontWeight: 700, color: '#ffffff', lineHeight: 1.2 }}>
+            <div style={{ fontSize: 'var(--t-lg)', fontWeight: 700, color: '#ffffff', lineHeight: 1.2 }}>
               DHKP
             </div>
-            <div style={{ fontSize: 'var(--text-sm)', fontWeight: 400, color: 'rgba(255,255,255,0.65)', lineHeight: 1.4 }}>
+            <div style={{ fontSize: 'var(--t-sm)', fontWeight: 400, color: 'rgba(255,255,255,0.65)', lineHeight: 1.4 }}>
               Desa Karang Sengon
             </div>
           </div>
@@ -85,7 +85,7 @@ export function Sidebar({ open, onClose, userName }: SidebarProps) {
             onClick={onClose}
             aria-label="Tutup sidebar"
             className="flex items-center justify-center rounded-md transition-colors"
-            style={{ width: 'var(--touch-min)', height: 'var(--touch-min)', color: 'var(--c-text-inv)' }}
+            style={{ width: 'var(--touch)', height: 'var(--touch)', color: 'var(--c-inv)' }}
             onMouseOver={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.1)')}
             onMouseOut={e => (e.currentTarget.style.background = 'transparent')}
           >
@@ -96,7 +96,7 @@ export function Sidebar({ open, onClose, userName }: SidebarProps) {
         {/* Nav */}
         <nav
           className="flex-1 overflow-y-auto flex flex-col"
-          style={{ padding: 'var(--sp-3)', gap: 'var(--sp-1)' }}
+          style={{ padding: 'var(--s3)', gap: 'var(--s1)' }}
         >
           {navItems.map(({ href, label, icon: Icon }) => {
             const active = pathname === href || pathname.startsWith(href + '/');
@@ -119,24 +119,24 @@ export function Sidebar({ open, onClose, userName }: SidebarProps) {
           className="flex items-center flex-shrink-0"
           style={{
             borderTop: '1px solid rgba(255,255,255,0.1)',
-            padding: 'var(--sp-3) var(--sp-4)',
-            gap: 'var(--sp-2)',
+            padding: 'var(--s3) var(--s4)',
+            gap: 'var(--s2)',
           }}
         >
           {lock.isLocked ? (
             <>
-              <Lock size={13} style={{ color: 'var(--c-danger-light)', flexShrink: 0 }} />
+              <Lock size={13} style={{ color: 'var(--c-err-soft)', flexShrink: 0 }} />
               <span
                 className="truncate"
-                style={{ fontSize: 'var(--text-xs)', color: 'var(--c-danger-light)' }}
+                style={{ fontSize: 'var(--t-xs)', color: 'var(--c-err-soft)' }}
               >
                 Terkunci oleh {lock.lockedBy}
               </span>
             </>
           ) : (
             <>
-              <Unlock size={13} style={{ color: 'var(--c-success-light)', flexShrink: 0 }} />
-              <span style={{ fontSize: 'var(--text-xs)', color: 'var(--c-success-light)' }}>
+              <Unlock size={13} style={{ color: 'var(--c-ok-soft)', flexShrink: 0 }} />
+              <span style={{ fontSize: 'var(--t-xs)', color: 'var(--c-ok-soft)' }}>
                 Data terbuka
               </span>
             </>
@@ -146,16 +146,16 @@ export function Sidebar({ open, onClose, userName }: SidebarProps) {
         {/* Footer — nama user + logout */}
         <div
           className="flex-shrink-0"
-          style={{ padding: '0 var(--sp-3) var(--sp-4)' }}
+          style={{ padding: '0 var(--s3) var(--s4)' }}
         >
           <div
             className="truncate"
             style={{
-              fontSize: 'var(--text-xs)',
+              fontSize: 'var(--t-xs)',
               fontWeight: 500,
               color: 'rgba(255,255,255,0.5)',
-              padding: '0 var(--sp-4)',
-              marginBottom: 'var(--sp-1)',
+              padding: '0 var(--s4)',
+              marginBottom: 'var(--s1)',
             }}
           >
             {userName}
@@ -163,7 +163,7 @@ export function Sidebar({ open, onClose, userName }: SidebarProps) {
           <button
             onClick={handleLogout}
             className="nav-item w-full"
-            style={{ color: 'var(--c-danger-light)' }}
+            style={{ color: 'var(--c-err-soft)' }}
           >
             <LogOut size={18} />
             <span>Keluar</span>

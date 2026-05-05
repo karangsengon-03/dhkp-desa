@@ -15,13 +15,13 @@ export function Field({ label, children, error, className = '' }: FieldProps) {
     <div className={className}>
       <label
         className="block font-semibold mb-1.5"
-        style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}
+        style={{ color: 'var(--c-t3)', fontSize: 'var(--t-xs)' }}
       >
         {label}
       </label>
       {children}
       {error && (
-        <p className="mt-1" style={{ color: 'var(--c-danger)', fontSize: 'var(--text-xs)' }}>
+        <p className="mt-1" style={{ color: 'var(--c-err)', fontSize: 'var(--t-xs)' }}>
           {error}
         </p>
       )}
@@ -153,8 +153,8 @@ export function RecordFormFields({ form, errors, onChange }: RecordFormFieldsPro
         <label
           className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border transition-colors"
           style={{
-            borderColor: form.statusLunas ? 'var(--c-success)' : 'var(--c-border)',
-            background: form.statusLunas ? 'var(--c-success-light)' : 'var(--c-surface-2)',
+            borderColor: form.statusLunas ? 'var(--c-ok)' : 'var(--c-border)',
+            background: form.statusLunas ? 'var(--c-ok-soft)' : 'var(--c-surface-2)',
           }}
         >
           {/* Toggle visual */}
@@ -167,7 +167,7 @@ export function RecordFormFields({ form, errors, onChange }: RecordFormFieldsPro
             />
             <div
               className="w-11 h-6 rounded-full transition-colors duration-200"
-              style={{ background: form.statusLunas ? 'var(--c-success)' : 'var(--c-text-4)' }}
+              style={{ background: form.statusLunas ? 'var(--c-ok)' : 'var(--c-t4)' }}
             />
             <div
               className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"
@@ -177,11 +177,11 @@ export function RecordFormFields({ form, errors, onChange }: RecordFormFieldsPro
           <div>
             <div
               className="font-semibold"
-              style={{ color: 'var(--c-text-1)', fontSize: 'var(--text-sm)' }}
+              style={{ color: 'var(--c-t1)', fontSize: 'var(--t-sm)' }}
             >
               Status Lunas
             </div>
-            <div style={{ color: 'var(--c-text-3)', fontSize: 'var(--text-xs)' }}>
+            <div style={{ color: 'var(--c-t3)', fontSize: 'var(--t-xs)' }}>
               {form.statusLunas ? 'Sudah lunas' : 'Belum lunas'}
             </div>
           </div>
