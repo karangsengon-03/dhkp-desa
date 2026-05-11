@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Lock, Unlock, ShieldAlert } from 'lucide-react';
+import { Lock, Unlock, ShieldAlert, AlertTriangle, X } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
 import { setGlobalLock } from '@/lib/firestore';
 import { formatTimestamp } from '@/lib/format';
 import { GlobalLock } from '@/types';
 import { SectionHeader } from './SectionHeader';
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
 
 interface SeksiKunciProps {
   lock: GlobalLock & { lockedBy?: string; lockedAt?: { seconds: number; nanoseconds: number } };
@@ -16,9 +18,15 @@ interface SeksiKunciProps {
 export function SeksiKunci({ lock, userEmail }: SeksiKunciProps) {
   const { showToast } = useToast();
   const [lockLoading, setLockLoading] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
-  async function handleToggleLock() {
+  function handleClickToggle() {
+    setConfirmOpen(true);
+  }
+
+  async function handleConfirm() {
     if (!userEmail) return;
+    setConfirmOpen(false);
     setLockLoading(true);
     try {
       const newState = !lock.isLocked;
@@ -66,13 +74,56 @@ export function SeksiKunci({ lock, userEmail }: SeksiKunciProps) {
 
       <button
         className={`btn ${lock.isLocked ? 'btn-danger' : 'btn-primary'}`}
-        onClick={handleToggleLock}
+        onClick={handleClickToggle}
         disabled={lockLoading}
         style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--t-sm)' }}
       >
         {lock.isLocked ? <Unlock size={14} /> : <Lock size={14} />}
         {lockLoading ? 'Memproses...' : lock.isLocked ? 'Buka Kunci Data' : 'Kunci Semua Data'}
       </button>
+
+      {/* Dialog konfirmasi */}
+      <Modal
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        title={lock.isLocked ? 'Konfirmasi Buka Kunci' : 'Konfirmasi Kunci Data'}
+        size="sm"
+      >
+        <div className="flex flex-col items-center gap-4 py-2 text-center">
+          <div
+            className="w-14 h-14 rounded-full flex items-center justify-center"
+            style={{
+              background: lock.isLocked ? 'var(--c-ok-soft)' : 'var(--c-err-soft)',
+              color: lock.isLocked ? 'var(--c-ok)' : 'var(--c-err)',
+            }}
+          >
+            <AlertTriangle size={26} />
+          </div>
+          <div>
+            <p style={{ fontWeight: 700, fontSize: 'var(--t-base)', color: 'var(--c-t1)', marginBottom: 'var(--s2)' }}>
+              {lock.isLocked ? 'Buka kunci semua data?' : 'Kunci semua data?'}
+            </p>
+            <p style={{ fontSize: 'var(--t-sm)', color: 'var(--c-t3)', maxWidth: 280, margin: '0 auto' }}>
+              {lock.isLocked
+                ? 'Semua pengguna akan dapat mengubah data kembali setelah kunci dibuka.'
+                : 'Semua pengguna tidak dapat mengubah data selama kunci aktif.'}
+            </p>
+          </div>
+          <div className="flex gap-3 w-full">
+            <Button variant="ghost" className="flex-1" onClick={() => setConfirmOpen(false)}>
+              <X size={15} /> Batal
+            </Button>
+            <Button
+              variant={lock.isLocked ? 'primary' : 'danger'}
+              className="flex-1"
+              onClick={handleConfirm}
+            >
+              {lock.isLocked ? <Unlock size={15} /> : <Lock size={15} />}
+              {lock.isLocked ? 'Ya, Buka Kunci' : 'Ya, Kunci Data'}
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

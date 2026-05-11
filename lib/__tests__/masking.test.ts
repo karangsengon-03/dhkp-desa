@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { maskNOP, maskNomorInduk } from '../masking';
+import { maskNOP, maskNomorInduk } from '@/lib/masking';
 
 // ─── maskNOP ──────────────────────────────────────────────────────────────
 

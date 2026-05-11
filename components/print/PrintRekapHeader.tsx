@@ -80,7 +80,12 @@ export function PrintRekapHeader({ appInfo, tahun }: PrintRekapHeaderProps) {
 
       <div className="prh-inner">
         {appInfo?.logoKiri
-          ? <img src={appInfo.logoKiri} alt="Logo Kiri" className="prh-logo" />
+          ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            // Justifikasi: URL Firebase Storage dinamis — next/image tidak bisa mengoptimalkan
+            // URL eksternal tanpa konfigurasi domain. Komponen ini print-only, dirender sekali.
+            <img src={appInfo.logoKiri} alt="Logo Kiri" className="prh-logo" />
+          )
           : <div className="prh-placeholder" />}
 
         <div className="prh-titles">
@@ -92,7 +97,11 @@ export function PrintRekapHeader({ appInfo, tahun }: PrintRekapHeaderProps) {
         </div>
 
         {appInfo?.logoKanan
-          ? <img src={appInfo.logoKanan} alt="Logo Kanan" className="prh-logo" />
+          ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            // Justifikasi: sama seperti logo kiri — URL Firebase Storage dinamis, print-only.
+            <img src={appInfo.logoKanan} alt="Logo Kanan" className="prh-logo" />
+          )
           : <div className="prh-placeholder" />}
       </div>
 

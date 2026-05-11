@@ -45,6 +45,7 @@ export function Header({ onMenuClick, userName }: HeaderProps) {
       boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
     }}>
       <style>{`
+        /* hdr-btn — hex intentional, selalu di atas navy gelap (tidak ikut dark mode) */
         .hdr-btn {
           display: flex; align-items: center; justify-content: center;
           background: transparent; border: none; cursor: pointer;
@@ -73,10 +74,10 @@ export function Header({ onMenuClick, userName }: HeaderProps) {
 
         {/* Brand */}
         <div style={{ flex: 1, minWidth: 0, lineHeight: 1 }}>
-          <div style={{ fontSize: 19, fontWeight: 700, color: '#ffffff', whiteSpace: 'nowrap' }}>
+          <div style={{ fontSize: 19, fontWeight: 700, color: 'var(--c-inv)', whiteSpace: 'nowrap' }}>
             DHKP
           </div>
-          <div style={{ fontSize: 12, fontWeight: 400, color: 'rgba(255,255,255,0.60)', whiteSpace: 'nowrap', marginTop: 2 }}>
+          <div style={{ fontSize: 'var(--t-xs)', fontWeight: 400, color: 'rgba(255,255,255,0.60)', whiteSpace: 'nowrap', marginTop: 2 }}>
             Desa Karang Sengon
           </div>
         </div>
@@ -84,19 +85,19 @@ export function Header({ onMenuClick, userName }: HeaderProps) {
         {/* Controls kanan */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
 
-          {/* Status kunci */}
+          {/* Status kunci — warna lock badge intentional (kontras di atas navy) */}
           <button
             className="hdr-btn"
             onClick={handleToggleLock}
             disabled={lockLoading}
             title={lock.isLocked ? `Dikunci oleh ${lock.lockedBy}` : 'Data terbuka — klik untuk kunci'}
             style={{
-              gap: 6, padding: '0 10px', height: 36,
-              fontSize: 12, fontWeight: 600,
+              gap: 6, padding: '0 12px', height: 40,
+              fontSize: 13, fontWeight: 600,
               background: lock.isLocked
                 ? 'rgba(239,68,68,0.25)'
                 : 'rgba(34,197,94,0.20)',
-              color: lock.isLocked ? '#FCA5A5' : '#86EFAC',
+              color: lock.isLocked ? '#FCA5A5' : '#86EFAC', /* light red/green — kontras di atas navy */
               border: `1px solid ${lock.isLocked ? 'rgba(239,68,68,0.40)' : 'rgba(34,197,94,0.35)'}`,
               borderRadius: 8, whiteSpace: 'nowrap',
               opacity: lockLoading ? 0.5 : 1,
@@ -108,7 +109,7 @@ export function Header({ onMenuClick, userName }: HeaderProps) {
             <span style={{ marginLeft: 4 }}>{lock.isLocked ? 'Terkunci' : 'Terbuka'}</span>
           </button>
 
-          {/* Dark/Light toggle */}
+          {/* Dark/Light toggle — warna sun intentional (kontras di atas navy) */}
           <button
             className="hdr-btn"
             onClick={toggleTheme}
@@ -116,7 +117,7 @@ export function Header({ onMenuClick, userName }: HeaderProps) {
             style={{ width: 48, height: 48 }}
           >
             {theme === 'dark'
-              ? <Sun size={20} color="#FFD54F" />
+              ? <Sun size={20} color="#FFD54F" /> /* amber sun — kontras di atas navy */
               : <Moon size={20} color="rgba(255,255,255,0.80)" />
             }
           </button>
@@ -126,7 +127,7 @@ export function Header({ onMenuClick, userName }: HeaderProps) {
             title={userName}
             style={{
               width: 36, height: 36, borderRadius: '50%',
-              background: '#C9A227', color: '#1A1000',
+              background: 'var(--c-gold)', color: 'var(--c-gold-text)',
               fontSize: 14, fontWeight: 800,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               flexShrink: 0, userSelect: 'none',

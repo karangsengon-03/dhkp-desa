@@ -15,11 +15,39 @@ setPersistence(auth, browserLocalPersistence).catch(() => {
   // Gagal set persistence tidak fatal — Firebase tetap bisa login
 });
 
+/**
+ * Set cookie penanda sesi untuk middleware.
+ * Cookie ini dipakai middleware.ts untuk redirect server-side sebelum React hydrate.
+ * Bukan pengganti Firebase Auth — hanya penanda "sudah pernah login".
+ *
+ * Flag Secure ditambahkan secara kondisional:
+ * - Di production (HTTPS): Secure aktif → cegah transmisi via HTTP
+ * - Di localhost (HTTP): Secure tidak ditambahkan → tidak akan diblokir browser
+ */
+function isHttps(): boolean {
+  return typeof window !== 'undefined' && window.location.protocol === 'https:';
+}
+
+function setSessionCookie() {
+  if (typeof document === 'undefined') return;
+  const secureFlag = isHttps() ? '; Secure' : '';
+  document.cookie = `dhkp_session=1; path=/; SameSite=Strict; max-age=604800${secureFlag}`; // 7 hari
+}
+
+function clearSessionCookie() {
+  if (typeof document === 'undefined') return;
+  const secureFlag = isHttps() ? '; Secure' : '';
+  document.cookie = `dhkp_session=; path=/; SameSite=Strict; max-age=0${secureFlag}`;
+}
+
 export async function loginWithEmail(email: string, password: string) {
-  return signInWithEmailAndPassword(auth, email, password);
+  const result = await signInWithEmailAndPassword(auth, email, password);
+  setSessionCookie();
+  return result;
 }
 
 export async function logout() {
+  clearSessionCookie();
   return signOut(auth);
 }
 

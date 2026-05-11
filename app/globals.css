@@ -20,6 +20,7 @@
   --c-gold:        #C9A227;
   --c-gold-dark:   #A68420;
   --c-gold-soft:   #FBF4E0;   /* bg ringan untuk badge gold */
+  --c-gold-text:   #1A1000;   /* teks kontras tinggi di atas bg gold */
 
   /* ── Semantic — hanya untuk status ── */
   --c-ok:          #1B6B2F;   /* lunas, sukses */
@@ -62,9 +63,11 @@
   --t-xl:   24px;
 
   /* ── Radius ── */
+  --r-xs:   4px;
   --r-sm:   6px;
   --r-md:   8px;
   --r-lg:   12px;
+  --r-xl:   16px;
   --r-full: 9999px;
 
   /* ── Touch target ── */
@@ -203,7 +206,7 @@ body {
 }
 
 /* Size variants */
-.btn-sm { height: 36px; padding: 0 var(--s3); font-size: var(--t-xs); }
+.btn-sm { height: 40px; padding: 0 var(--s3); font-size: var(--t-xs); }
 .btn-lg { height: var(--touch); padding: 0 var(--s6); font-size: var(--t-base); }
 
 /* ═══════════════════════════════════════════════════════
@@ -229,7 +232,7 @@ body {
 
 /* Select */
 .select-field {
-  display: block; height: 40px;
+  display: block; height: 44px;
   padding: 0 36px 0 var(--s3);
   font-size: var(--t-sm); font-family: var(--font-sans);
   color: var(--c-t1); background: var(--c-surface);
@@ -242,7 +245,10 @@ body {
   background-position: right 10px center;
   transition: border-color 150ms ease;
 }
-.select-field:focus { border-color: var(--c-navy); }
+.select-field:focus {
+  border-color: var(--c-navy);
+  box-shadow: 0 0 0 3px var(--c-navy-soft); /* konsisten dengan .input-field:focus — indikator aksesibilitas */
+}
 
 /* ═══════════════════════════════════════════════════════
    BADGE
@@ -360,7 +366,7 @@ body {
    PAGINATION
 ═══════════════════════════════════════════════════════ */
 .page-btn {
-  min-width: 40px; height: 40px;
+  min-width: 48px; height: 48px;
   padding: 0 var(--s2);
   border-radius: var(--r-sm);
   font-size: var(--t-sm); font-weight: 500;

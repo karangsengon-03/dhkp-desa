@@ -1,5 +1,6 @@
 import { FileQuestion, Home } from 'lucide-react';
 import Link from 'next/link';
+import { ROUTES } from '@/lib/routes';
 
 export default function NotFound() {
   return (
@@ -20,7 +21,7 @@ export default function NotFound() {
         style={{
           width: 72,
           height: 72,
-          borderRadius: 'var(--radius-xl)',
+          borderRadius: 'var(--r-xl)',
           background: 'var(--c-navy-soft)',
           display: 'flex',
           alignItems: 'center',
@@ -58,7 +59,7 @@ export default function NotFound() {
       </div>
 
       <Link
-        href="/dashboard"
+        href={ROUTES.dashboard}
         className="btn btn-primary"
         style={{ display: 'flex', alignItems: 'center', gap: 6 }}
       >

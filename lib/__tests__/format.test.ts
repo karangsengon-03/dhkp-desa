@@ -13,7 +13,7 @@ import {
   formatTimestamp,
   formatWaktuRelatif,
   todayISO,
-} from '../format';
+} from '@/lib/format';
 
 // ─── formatRupiah ──────────────────────────────────────────────────────────
 

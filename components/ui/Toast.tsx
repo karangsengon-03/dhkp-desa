@@ -47,8 +47,8 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       {children}
       {/* Toast container — pojok kanan bawah */}
       <div
-        className="fixed z-[100] flex flex-col pointer-events-none"
-        style={{ bottom: 'var(--s4)', right: 'var(--s4)', gap: 'var(--s2)', minWidth: 240, maxWidth: 360 }}
+        className="fixed flex flex-col pointer-events-none"
+        style={{ bottom: 'var(--s4)', right: 'var(--s4)', gap: 'var(--s2)', minWidth: 240, maxWidth: 360, zIndex: 100 }}
       >
         {toasts.map(toast => {
           const c = colors[toast.type];

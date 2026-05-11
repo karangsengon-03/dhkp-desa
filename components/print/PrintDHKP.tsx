@@ -201,7 +201,13 @@ export function PrintDHKP({ records, appInfo, tahun }: PrintDHKPProps) {
             {/* Header lembaga */}
             <div className="lbg-wrap">
               {appInfo?.logoKiri
-                ? <img src={appInfo.logoKiri} alt="Logo" className="lbg-logo" />
+                ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  // Justifikasi: src adalah URL Firebase Storage dinamis — next/image tidak bisa
+                  // mengoptimalkan URL eksternal tanpa konfigurasi domain dan akan menambah overhead
+                  // yang tidak perlu untuk komponen print-only yang dirender sekali.
+                  <img src={appInfo.logoKiri} alt="Logo kiri" className="lbg-logo" />
+                )
                 : <div className="lbg-placeholder" />}
               <div className="lbg-center">
                 <div className="t1">PEMERINTAH {(appInfo?.kotaKab || 'KABUPATEN/KOTA').toUpperCase()}</div>
@@ -211,7 +217,11 @@ export function PrintDHKP({ records, appInfo, tahun }: PrintDHKPProps) {
                 )}
               </div>
               {appInfo?.logoKanan
-                ? <img src={appInfo.logoKanan} alt="Logo" className="lbg-logo" />
+                ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  // Justifikasi: sama seperti logo kiri — URL Firebase Storage dinamis, komponen print-only.
+                  <img src={appInfo.logoKanan} alt="Logo kanan" className="lbg-logo" />
+                )
                 : <div className="lbg-placeholder" />}
             </div>
 

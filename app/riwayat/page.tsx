@@ -7,32 +7,38 @@ import { LockBanner } from '@/components/dhkp/LockBanner';
 import { getChangelog } from '@/lib/changelog';
 import { ChangelogEntry } from '@/types';
 import { History, RefreshCw, Search, ChevronDown } from 'lucide-react';
-import { formatTimestamp } from '@/lib/format';
+import { formatTimestamp, formatRupiah } from '@/lib/format';
 
 const CURRENT_YEAR = new Date().getFullYear();
 const YEAR_OPTIONS = [0, ...Array.from({ length: 5 }, (_, i) => CURRENT_YEAR - i)];
 
 const FIELD_LABELS: Record<string, string> = {
-  statusLunas: 'Status Lunas',
-  pajakTerhutang: 'Pajak Terhutang',
-  perubahanPajak: 'Perubahan Pajak',
-  tanggalBayar: 'Tanggal Bayar',
-  namaWajibPajak: 'Nama Wajib Pajak',
-  nop: 'NOP',
-  nomorInduk: 'No. Induk',
+  statusLunas:      'Status Lunas',
+  pajakTerhutang:   'Pajak Terhutang',
+  perubahanPajak:   'Perubahan Pajak',
+  tanggalBayar:     'Tanggal Bayar',
+  namaWajibPajak:   'Nama Wajib Pajak',
+  nop:              'NOP',
+  nomorInduk:       'No. Induk',
   alamatObjekPajak: 'Alamat Objek',
-  luasTanah: 'Luas Tanah',
-  luasBangunan: 'Luas Bangunan',
-  dikelolaOleh: 'Dikelola Oleh',
+  luasTanah:        'Luas Tanah',
+  luasBangunan:     'Luas Bangunan',
+  dikelolaOleh:     'Dikelola Oleh',
 };
 
+/**
+ * Format nilai changelog untuk ditampilkan di tabel riwayat.
+ * Menggunakan formatRupiah dari lib/format untuk field keuangan
+ * agar konsisten dengan tampilan di halaman lain.
+ */
 function formatVal(field: string, val: unknown): string {
   if (val === undefined || val === null || val === '') return '—';
   if (field === 'statusLunas') return val ? 'Lunas' : 'Belum Lunas';
   if (field === 'pajakTerhutang' || field === 'perubahanPajak') {
     const n = Number(val);
     if (isNaN(n)) return String(val);
-    return n.toLocaleString('id-ID');
+    // Pakai formatRupiah dari lib/format untuk konsistensi di seluruh apps
+    return formatRupiah(n);
   }
   return String(val);
 }
@@ -95,6 +101,7 @@ export default function RiwayatPage() {
           style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--t-sm)' }}
           onClick={fetchData}
           disabled={loading}
+          aria-label="Refresh data riwayat"
         >
           <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           Refresh
@@ -111,6 +118,7 @@ export default function RiwayatPage() {
             placeholder="Cari nama, field, petugas..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            aria-label="Cari riwayat perubahan"
           />
         </div>
         <div style={{ position: 'relative', minWidth: 130 }}>
@@ -119,6 +127,7 @@ export default function RiwayatPage() {
             style={{ width: '100%', paddingRight: 32, appearance: 'none' }}
             value={tahun}
             onChange={(e) => setTahun(Number(e.target.value))}
+            aria-label="Filter tahun"
           >
             <option value={0}>Semua Tahun</option>
             {YEAR_OPTIONS.filter((y) => y !== 0).map((y) => (

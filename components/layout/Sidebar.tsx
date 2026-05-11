@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { useGlobalLock } from '@/hooks/useGlobalLock';
 import { logout } from '@/lib/auth';
+import { ROUTES } from '@/lib/routes';
+import { useAuth } from '@/hooks/useAuth';
 
 interface SidebarProps {
   open: boolean;
@@ -16,25 +18,27 @@ interface SidebarProps {
 }
 
 const NAV = [
-  { href: '/dashboard',     label: 'Beranda',           icon: LayoutDashboard },
-  { href: '/data',          label: 'Data DHKP',          icon: ClipboardList   },
-  { href: '/rekap',         label: 'Rekap Lunas',        icon: CheckSquare     },
-  { href: '/riwayat',       label: 'Riwayat Perubahan',  icon: History         },
-  { href: '/export-import', label: 'Export / Import',    icon: FileSpreadsheet },
-  { href: '/pengaturan',    label: 'Pengaturan',         icon: Settings        },
+  { href: ROUTES.dashboard,    label: 'Beranda',           icon: LayoutDashboard },
+  { href: ROUTES.data,         label: 'Data DHKP',          icon: ClipboardList   },
+  { href: ROUTES.rekap,        label: 'Rekap Lunas',        icon: CheckSquare     },
+  { href: ROUTES.riwayat,      label: 'Riwayat Perubahan',  icon: History         },
+  { href: ROUTES.exportImport, label: 'Ekspor / Impor',     icon: FileSpreadsheet },
+  { href: ROUTES.pengaturan,   label: 'Pengaturan',         icon: Settings        },
 ];
 
-/* Semua warna sidebar hardcode — tidak ikut tema, selalu navy gelap */
+/* Semua warna sidebar hardcode — intentional, tidak ikut tema, selalu navy gelap.
+   Nilai-nilai ini adalah mirror dari CSS tokens untuk konteks dark-nav:
+   bg = --c-navy, text = --c-inv, gold = --c-gold, danger = light red di atas navy */
 const S = {
-  bg:       '#1E3A5F',
+  bg:       '#1E3A5F', /* mirror: --c-navy */
   border:   'rgba(255,255,255,0.10)',
-  text:     '#ffffff',
+  text:     '#ffffff', /* mirror: --c-inv */
   textSub:  'rgba(255,255,255,0.60)',
   textFaint:'rgba(255,255,255,0.40)',
   hover:    'rgba(255,255,255,0.09)',
   active:   'rgba(255,255,255,0.16)',
-  gold:     '#C9A227',
-  danger:   '#FCA5A5',
+  gold:     '#C9A227', /* mirror: --c-gold */
+  danger:   '#FCA5A5', /* light red — kontras di atas navy */
   logout:   'rgba(255,190,190,0.85)',
 };
 
@@ -42,10 +46,11 @@ export function Sidebar({ open, onClose, userName }: SidebarProps) {
   const pathname = usePathname();
   const router   = useRouter();
   const lock     = useGlobalLock();
+  const { user } = useAuth();
 
   async function handleLogout() {
     await logout();
-    router.replace('/login');
+    router.replace(ROUTES.login);
   }
 
   return (
@@ -82,7 +87,7 @@ export function Sidebar({ open, onClose, userName }: SidebarProps) {
         }}>
           <div>
             <div style={{ fontSize: 20, fontWeight: 700, color: S.text, lineHeight: 1.2 }}>DHKP</div>
-            <div style={{ fontSize: 13, color: S.textSub, marginTop: 2 }}>Desa Karang Sengon</div>
+            <div style={{ fontSize: 'var(--t-xs)', color: S.textSub, marginTop: 2 }}>Desa Karang Sengon</div>
           </div>
           <button
             onClick={onClose}
@@ -138,8 +143,15 @@ export function Sidebar({ open, onClose, userName }: SidebarProps) {
 
         {/* Footer */}
         <div style={{ padding: '0 12px 20px', flexShrink: 0 }}>
-          <div style={{ fontSize: 12, color: S.textFaint, padding: '0 16px', marginBottom: 4 }}>
-            {userName}
+          <div style={{ padding: '0 16px', marginBottom: 6 }}>
+            <div style={{ fontSize: 'var(--t-xs)', color: S.textSub, fontWeight: 600, lineHeight: 1.3 }}>
+              {userName}
+            </div>
+            {user?.email && (
+              <div style={{ fontSize: 'var(--t-xs)', color: S.textFaint, marginTop: 2, lineHeight: 1.3, wordBreak: 'break-all' }}>
+                {user.email}
+              </div>
+            )}
           </div>
           <button
             onClick={handleLogout}

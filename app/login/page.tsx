@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { loginWithEmail, getSavedUser, saveUser } from '@/lib/auth';
 import { useToast } from '@/components/ui/Toast';
+import { ROUTES } from '@/lib/routes';
 
 export default function LoginPage() {
   const { user, loading } = useAuth();
@@ -19,7 +21,7 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!loading && user) router.replace('/dashboard');
+    if (!loading && user) router.replace(ROUTES.dashboard);
   }, [user, loading, router]);
 
   useEffect(() => {
@@ -30,17 +32,17 @@ export default function LoginPage() {
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     if (!email || !password) {
-      showToast('Email dan password wajib diisi', 'warning');
+      showToast('Email dan kata sandi wajib diisi', 'warning');
       return;
     }
     setSubmitting(true);
     try {
       await loginWithEmail(email, password);
       if (remember) saveUser(email, email.split('@')[0]);
-      showToast('Login berhasil!', 'success');
-      router.replace('/dashboard');
+      showToast('Berhasil masuk ke sistem', 'success');
+      router.replace(ROUTES.dashboard);
     } catch {
-      showToast('Email atau password salah', 'danger');
+      showToast('Email atau kata sandi salah', 'danger');
     } finally {
       setSubmitting(false);
     }
@@ -61,12 +63,17 @@ export default function LoginPage() {
 
         {/* Logo & Brand */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          {/*
+            Menggunakan next/image untuk optimasi otomatis (WebP, lazy load).
+            unoptimized=false (default) agar Next.js bisa serve format optimal.
+          */}
+          <Image
             src="/icons/icon-128.png"
             alt="DHKP"
+            width={72}
+            height={72}
+            priority
             style={{
-              width: 72, height: 72,
               borderRadius: 16,
               margin: '0 auto 16px',
               boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
@@ -104,72 +111,57 @@ export default function LoginPage() {
 
             {/* Email */}
             <div>
-              <label style={{
-                display: 'block', fontSize: 13,
-                fontWeight: 600, color: '#595959',
-                marginBottom: 8,
-              }}>
+              <label
+                htmlFor="login-email"
+                style={{
+                  display: 'block', fontSize: 13,
+                  fontWeight: 600, color: '#595959',
+                  marginBottom: 8,
+                }}
+              >
                 Email
               </label>
               <input
+                id="login-email"
                 type="email"
                 placeholder="nama@desa.go.id"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 autoComplete="email"
                 required
-                style={{
-                  display: 'block', width: '100%',
-                  height: 48, padding: '0 14px',
-                  fontSize: 15, fontFamily: 'inherit',
-                  color: '#1A1A1A',
-                  background: '#F8F9FA',
-                  border: '1.5px solid #DDD8CE',
-                  borderRadius: 8,
-                  outline: 'none',
-                  boxSizing: 'border-box',
-                }}
-                onFocus={e => { e.target.style.borderColor = '#1E3A5F'; e.target.style.background = '#fff'; }}
-                onBlur={e => { e.target.style.borderColor = '#DDD8CE'; e.target.style.background = '#F8F9FA'; }}
+                className="login-input"
               />
             </div>
 
-            {/* Password */}
+            {/* Kata Sandi */}
             <div>
-              <label style={{
-                display: 'block', fontSize: 13,
-                fontWeight: 600, color: '#595959',
-                marginBottom: 8,
-              }}>
-                Password
+              <label
+                htmlFor="login-password"
+                style={{
+                  display: 'block', fontSize: 13,
+                  fontWeight: 600, color: '#595959',
+                  marginBottom: 8,
+                }}
+              >
+                Kata Sandi
               </label>
               <div style={{ position: 'relative' }}>
                 <input
+                  id="login-password"
                   type={showPass ? 'text' : 'password'}
                   placeholder="••••••••"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   autoComplete="current-password"
                   required
-                  style={{
-                    display: 'block', width: '100%',
-                    height: 48, padding: '0 48px 0 14px',
-                    fontSize: 15, fontFamily: 'inherit',
-                    color: '#1A1A1A',
-                    background: '#F8F9FA',
-                    border: '1.5px solid #DDD8CE',
-                    borderRadius: 8,
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                  }}
-                  onFocus={e => { e.target.style.borderColor = '#1E3A5F'; e.target.style.background = '#fff'; }}
-                  onBlur={e => { e.target.style.borderColor = '#DDD8CE'; e.target.style.background = '#F8F9FA'; }}
+                  className="login-input"
+                  style={{ paddingRight: 48 }}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPass(v => !v)}
                   tabIndex={-1}
-                  aria-label={showPass ? 'Sembunyikan password' : 'Tampilkan password'}
+                  aria-label={showPass ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
                   style={{
                     position: 'absolute', right: 0, top: 0,
                     width: 48, height: 48,
@@ -205,7 +197,7 @@ export default function LoginPage() {
               </span>
             </label>
 
-            {/* Submit */}
+            {/* Tombol Masuk */}
             <button
               type="submit"
               disabled={submitting}
@@ -244,7 +236,7 @@ export default function LoginPage() {
 
           <p style={{
             textAlign: 'center', marginTop: 20,
-            fontSize: 12, color: '#A0A0A0',
+            fontSize: 13, color: '#A0A0A0',
           }}>
             Desa Karang Sengon · PBB-P2
           </p>
@@ -252,6 +244,36 @@ export default function LoginPage() {
 
         <style>{`
           @keyframes spin { to { transform: rotate(360deg); } }
+
+          /*
+           * .login-input: input styling khusus halaman login.
+           * Menggunakan CSS class (bukan inline style) agar :focus-visible global
+           * dari globals.css tetap berfungsi untuk keyboard navigation.
+           * Border-color pada focus dihandle via box-shadow agar tidak konflik
+           * dengan :focus-visible outline.
+           */
+          .login-input {
+            display: block;
+            width: 100%;
+            height: 48px;
+            padding: 0 14px;
+            font-size: 15px;
+            font-family: inherit;
+            color: #1A1A1A;
+            background: #F8F9FA;
+            border: 1.5px solid #DDD8CE;
+            border-radius: 8px;
+            box-sizing: border-box;
+            transition: border-color 150ms ease, box-shadow 150ms ease;
+          }
+          .login-input:focus,
+          .login-input:focus-visible {
+            outline: 2px solid transparent; /* outline transparan agar tidak double dengan box-shadow di bawah */
+            outline-offset: 2px;
+            border-color: #1E3A5F;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(30,58,95,0.15);
+          }
         `}</style>
       </div>
     </div>

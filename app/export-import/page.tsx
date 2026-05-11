@@ -17,7 +17,7 @@ export default function ExportImportPage() {
   const lock = useGlobalLock();
 
   return (
-    <AppShell pageTitle="Export & Import">
+    <AppShell pageTitle="Ekspor & Impor">
       <LockBanner lock={lock} />
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s4)' }}>

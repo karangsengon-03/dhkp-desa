@@ -31,7 +31,7 @@ Dibangun sebagai Progressive Web App (PWA) berbasis Next.js + Firebase, dirancan
 | Lucide React | ^0.400.0 | Ikon |
 | XLSX (SheetJS) | ^0.18.5 | Ekspor/impor Excel |
 | Zod | ^3.23.8 | Validasi form & env vars |
-| Sentry | ^10.x | Error monitoring (opsional) |
+| Vercel Logs | — | Error monitoring via Vercel Functions Logs |
 | Vitest | ^4.x | Unit testing |
 
 ---
@@ -86,14 +86,13 @@ Aktifkan di Firebase Console:
 - **Authentication** → Sign-in method → Email/Password
 - **Firestore Database** → Buat database (mode production)
 
-### Konfigurasi Sentry (Opsional)
+### Monitoring Error
 
-Untuk error monitoring di production:
-1. Buat project di [sentry.io](https://sentry.io)
-2. Tambahkan ke `.env.local`:
-   ```env
-   NEXT_PUBLIC_SENTRY_DSN=https://xxx@xxx.ingest.sentry.io/xxx
-   ```
+Error di production dipantau via:
+- **Vercel Functions Logs** — tersedia di dashboard Vercel → project → Functions
+- **Firebase Console** → Firestore / Auth untuk error terkait database
+
+Sentry tidak digunakan karena membutuhkan langganan berbayar.
 
 ---
 

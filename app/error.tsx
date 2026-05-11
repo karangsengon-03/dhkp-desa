@@ -3,6 +3,8 @@
 import { useEffect } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import Link from 'next/link';
+import { logger } from '@/lib/logger';
+import { ROUTES } from '@/lib/routes';
 
 export default function ErrorPage({
   error,
@@ -12,11 +14,8 @@ export default function ErrorPage({
   reset: () => void;
 }) {
   useEffect(() => {
-  console.error('[DHKP Error]', error);
-  import('@sentry/nextjs')
-    .then(({ captureException }) => captureException(error))
-    .catch(() => {});
-}, [error]);
+    logger.exception(error);
+  }, [error]);
 
   return (
     <div
@@ -36,7 +35,7 @@ export default function ErrorPage({
         style={{
           width: 72,
           height: 72,
-          borderRadius: 'var(--radius-xl)',
+          borderRadius: 'var(--r-xl)',
           background: 'var(--c-err-soft)',
           display: 'flex',
           alignItems: 'center',
@@ -89,7 +88,7 @@ export default function ErrorPage({
           Muat Ulang Halaman
         </button>
         <Link
-          href="/dashboard"
+          href={ROUTES.dashboard}
           className="btn btn-secondary"
           style={{ display: 'flex', alignItems: 'center', gap: 6 }}
         >

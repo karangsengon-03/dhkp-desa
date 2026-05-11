@@ -1,6 +1,10 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import {
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+} from 'firebase/firestore';
 import { env } from '@/lib/env';
 
 const firebaseConfig = {
@@ -15,5 +19,14 @@ const firebaseConfig = {
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+
+// Offline persistence — kritis untuk operator desa dengan koneksi tidak stabil.
+// persistentMultipleTabManager: aman dipakai di beberapa tab sekaligus tanpa konflik.
+// Dengan ini, data Firestore tersimpan lokal di IndexedDB dan tersync saat online kembali.
+export const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({
+    tabManager: persistentMultipleTabManager(),
+  }),
+});
+
 export default app;

@@ -21,14 +21,14 @@ export default function OfflinePage() {
         style={{
           width: 72,
           height: 72,
-          borderRadius: 'var(--radius-xl)',
-          background: 'var(--c-warning-light, #FFF3CD)',
+          borderRadius: 'var(--r-xl)',
+          background: 'var(--c-warn-soft)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
-        <WifiOff size={36} style={{ color: 'var(--c-warning, #B45309)' }} />
+        <WifiOff size={36} style={{ color: 'var(--c-warn)' }} />
       </div>
 
       <div>

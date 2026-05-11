@@ -5,6 +5,68 @@ Format: `[Prioritas] Deskripsi — file yang diubah`
 
 ---
 
+## Audit Fix — 2026-05-10
+**Scope: Perbaikan keamanan, aksesibilitas, performa offline, dan kualitas kode**
+
+### 🔴 KRITIS
+
+#### #C1 — Security Headers HTTP
+- `next.config.ts`: tambah `securityHeaders` array lengkap: `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy`, `Strict-Transport-Security`, `Content-Security-Policy` (disesuaikan untuk Firebase + Vercel Analytics). Headers diterapkan ke semua route `/(.*)`
+
+#### #C2 — Firestore Security Rules
+- `firestore.rules` (FILE BARU): rules per collection — `dhkp/{tahun}/records`, `settings`, `changelog`. Semua memerlukan `request.auth != null`. Changelog tidak bisa di-update atau delete. Field immutable `createdAt` tidak bisa diubah setelah dibuat.
+
+#### #C3 — Cookie Sesi Flag `Secure`
+- `lib/auth.ts`: tambah fungsi `isHttps()` — cookie `dhkp_session` sekarang menyertakan flag `Secure` secara kondisional (aktif di production HTTPS, tidak aktif di localhost HTTP). Berlaku untuk `setSessionCookie()` dan `clearSessionCookie()`.
+
+### 🟠 PENTING
+
+#### #P1 — Firestore Offline Persistence
+- `lib/firebase.ts`: ganti `getFirestore(app)` dengan `initializeFirestore(app, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) })`. Data Firestore sekarang tersimpan di IndexedDB dan tersync otomatis saat koneksi pulih.
+
+#### #P2 — Focus Visible Input Login
+- `app/login/page.tsx`: hapus `outline: 'none'` inline dari input email dan password. Ganti dengan CSS class `.login-input` yang mendefinisikan `focus` dan `focus-visible` state secara eksplisit dengan `border-color + box-shadow`. Keyboard navigation sekarang berfungsi sempurna di halaman login.
+- `app/login/page.tsx`: ganti `<img>` dengan `next/image` (`Image` component) dengan `width`, `height`, dan `priority` prop. Hapus eslint-disable comment yang tidak lagi diperlukan.
+
+#### #P3 — any Tanpa Komentar di SeksiImport
+- `components/export-import/SeksiImport.tsx`: tambah komentar `// reason:` sebelum `(diff as any)[f]` yang menjelaskan justifikasi teknikal.
+
+#### #P4 — Format Nilai Keuangan di Riwayat
+- `app/riwayat/page.tsx`: fungsi `formatVal` sekarang menggunakan `formatRupiah` dari `@/lib/format` untuk field `pajakTerhutang` dan `perubahanPajak`. Konsisten dengan tampilan di halaman lain.
+
+### 🟡 PERLU FIX
+
+#### #F1 — Offline Indicator Banner
+- `components/layout/AppShell.tsx`: `useNetworkStatus` sudah ada sejak sebelumnya (toast). Tidak ada perubahan di sini karena sudah berfungsi via toast.
+
+#### #F2 — Import Path Test Files
+- `lib/__tests__/masking.test.ts`: ganti `from '../masking'` → `from '@/lib/masking'`
+- `lib/__tests__/format.test.ts`: ganti `from '../format'` → `from '@/lib/format'`
+
+#### #F3 — Select Field Focus Aksesibilitas
+- `app/globals.css`: `.select-field:focus` sekarang menyertakan `box-shadow: 0 0 0 3px var(--c-navy-soft)` — konsisten dengan `.input-field:focus`.
+
+### 🔵 SARAN
+
+#### #S1 — Hapus Sentry
+- `next.config.ts`: hapus `withSentryConfig` wrapper dan import `@sentry/nextjs`. Sentry tidak dipakai (berbayar, memperlambat build).
+- `sentry.client.config.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`: dihapus.
+- `lib/logger.ts`: hapus import dinamis Sentry. Production: silent. Development: console.
+- `package.json`: hapus `@sentry/nextjs` dari dependencies.
+
+#### #S2 — Skiplink Aksesibilitas
+- `components/layout/AppShell.tsx`: tambah skip link `<a href="#main-content">Langsung ke konten</a>` — tersembunyi secara visual, muncul saat difokus via keyboard. `<main>` mendapat `id="main-content"`.
+
+#### #S3 — Manifest.json
+- `public/manifest.json`: tambah `"lang": "id"` dan `"categories": ["government", "productivity"]`.
+
+
+
+Semua perubahan signifikan pada proyek ini didokumentasikan di sini.
+Format: `[Prioritas] Deskripsi — file yang diubah`
+
+---
+
 ## Fase 4 — 2026-05-04
 **Scope: Dokumentasi, Dependencies, Monitoring, Testing**
 

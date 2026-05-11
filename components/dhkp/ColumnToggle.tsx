@@ -97,8 +97,8 @@ export function ColumnToggle({ visible, onToggle, onShowAll }: Props) {
         Kolom
         {hiddenCount > 0 && (
           <span style={{
-            background: 'var(--c-gold)', color: '#1A1000',
-            fontSize: 11, fontWeight: 700,
+            background: 'var(--c-gold)', color: 'var(--c-gold-text)',
+            fontSize: 'var(--t-xs)', fontWeight: 700,
             padding: '1px 6px', borderRadius: 99,
             marginLeft: 2,
           }}>
@@ -125,7 +125,7 @@ export function ColumnToggle({ visible, onToggle, onShowAll }: Props) {
             <button
               onClick={onShowAll}
               style={{
-                fontSize: 12, fontWeight: 600, color: 'var(--c-navy)',
+                fontSize: 'var(--t-xs)', fontWeight: 600, color: 'var(--c-navy)',
                 background: 'none', border: 'none', cursor: 'pointer', padding: 0,
               }}
             >

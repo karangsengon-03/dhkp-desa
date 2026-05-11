@@ -17,14 +17,6 @@ import {
 const CURRENT_YEAR = new Date().getFullYear();
 const YEAR_OPTIONS = Array.from({ length: 5 }, (_, i) => CURRENT_YEAR - i);
 
-interface PetugasRekap {
-  nama: string;
-  total: number;
-  lunas: number;
-  belum: number;
-  persen: number;
-}
-
 function ProgressBar({ persen }: { persen: number }) {
   const color = persen >= 75 ? 'var(--c-ok)' : persen >= 40 ? 'var(--c-warn)' : 'var(--c-err)';
   return (
@@ -54,12 +46,10 @@ export default function RekapPage() {
     });
   }, [tahun]);
 
-  // Setelah set printMode, tunggu render selesai lalu print
   useEffect(() => {
     if (printMode === null) return;
     const t = setTimeout(() => {
       window.print();
-      // Reset setelah print dialog
       const onAfter = () => { setPrintMode(null); window.removeEventListener('afterprint', onAfter); };
       window.addEventListener('afterprint', onAfter);
     }, 80);
@@ -76,25 +66,7 @@ export default function RekapPage() {
     return { total, lunas, belum, persen, totalPajak, totalBayar, tunggakan: totalPajak - totalBayar };
   }, [records]);
 
-  const petugasList: PetugasRekap[] = useMemo(() => {
-    const map: Record<string, { lunas: number; total: number }> = {};
-    records.forEach((r) => {
-      const nama = r.dikelolaOleh || '(Tidak diketahui)';
-      if (!map[nama]) map[nama] = { lunas: 0, total: 0 };
-      map[nama].total++;
-      if (r.statusLunas) map[nama].lunas++;
-    });
-    return Object.entries(map)
-      .map(([nama, v]) => ({
-        nama, total: v.total, lunas: v.lunas,
-        belum: v.total - v.lunas,
-        persen: v.total > 0 ? Math.round((v.lunas / v.total) * 100) : 0,
-      }))
-      .sort((a, b) => b.total - a.total);
-  }, [records]);
-
   const pColor = stats.persen >= 75 ? 'var(--c-ok)' : stats.persen >= 40 ? 'var(--c-warn)' : 'var(--c-err)';
-
   const isDhkpPrint = printMode === 'dhkp';
 
   return (
@@ -108,14 +80,12 @@ export default function RekapPage() {
         }
       `}</style>
 
-      {/* Mode cetak DHKP: hanya tampilkan PrintDHKP */}
       {isDhkpPrint ? (
         <PrintDHKP records={records} appInfo={appInfo} tahun={tahun} />
       ) : (
         <>
           <LockBanner lock={lock} />
 
-          {/* Toolbar */}
           <div className="no-print flex items-center justify-between gap-4 mb-5 flex-wrap">
             <div>
               <h1 className="font-bold" style={{ fontSize: 'var(--t-xl)', color: 'var(--c-t1)' }}>
@@ -155,7 +125,6 @@ export default function RekapPage() {
             </div>
           </div>
 
-          {/* Print Header untuk cetak rekap */}
           <PrintRekapHeader appInfo={appInfo} tahun={tahun} />
 
           {loading ? (
@@ -222,57 +191,6 @@ export default function RekapPage() {
                     </div>
                   </div>
                 ))}
-              </div>
-
-              {/* Tabel per Petugas */}
-              <div className="card overflow-hidden" style={{ padding: 0 }}>
-                <div className="flex items-center justify-between" style={{ padding: 'var(--s3) var(--s4)', borderBottom: '1px solid var(--c-border)' }}>
-                  <span style={{ fontSize: 'var(--t-sm)', fontWeight: 700, color: 'var(--c-t1)' }}>
-                    Rekap per Petugas
-                  </span>
-                </div>
-                <div className="table-wrapper" style={{ borderRadius: 0, border: 'none' }}>
-                  <table className="dhkp-table">
-                    <thead>
-                      <tr>
-                        <th style={{ width: 40 }}>No</th>
-                        <th>Nama Petugas</th>
-                        <th style={{ textAlign: 'right' }}>Total WP</th>
-                        <th style={{ textAlign: 'right' }}>Lunas</th>
-                        <th style={{ textAlign: 'right' }}>Belum</th>
-                        <th className="no-print" style={{ width: 160 }}>Progress</th>
-                        <th style={{ textAlign: 'right', width: 60 }}>%</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {petugasList.map((p, i) => {
-                        const pc = p.persen >= 75 ? 'var(--c-ok)' : p.persen >= 40 ? 'var(--c-warn)' : 'var(--c-err)';
-                        return (
-                          <tr key={p.nama}>
-                            <td style={{ color: 'var(--c-t3)', textAlign: 'center' }}>{i + 1}</td>
-                            <td style={{ fontWeight: 500 }}>{p.nama}</td>
-                            <td style={{ textAlign: 'right', fontWeight: 600 }}>{p.total}</td>
-                            <td style={{ textAlign: 'right', fontWeight: 600, color: 'var(--c-ok)' }}>{p.lunas}</td>
-                            <td style={{ textAlign: 'right', fontWeight: 600, color: 'var(--c-err)' }}>{p.belum}</td>
-                            <td className="no-print" style={{ paddingTop: 14 }}><ProgressBar persen={p.persen} /></td>
-                            <td style={{ textAlign: 'right', fontWeight: 700 }}>
-                              <span style={{ color: pc }}>{p.persen}%</span>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                      <tr style={{ background: 'var(--c-navy-soft)', fontWeight: 700 }}>
-                        <td />
-                        <td style={{ color: 'var(--c-navy)' }}>TOTAL</td>
-                        <td style={{ textAlign: 'right', color: 'var(--c-navy)' }}>{stats.total}</td>
-                        <td style={{ textAlign: 'right', color: 'var(--c-ok)' }}>{stats.lunas}</td>
-                        <td style={{ textAlign: 'right', color: 'var(--c-err)' }}>{stats.belum}</td>
-                        <td className="no-print" style={{ paddingTop: 14 }}><ProgressBar persen={stats.persen} /></td>
-                        <td style={{ textAlign: 'right', fontWeight: 800, color: pColor }}>{stats.persen}%</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
               </div>
             </>
           )}

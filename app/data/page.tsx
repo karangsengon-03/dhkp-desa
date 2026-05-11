@@ -8,6 +8,7 @@ import { useDHKP } from '@/hooks/useDHKP';
 import { useGlobalLock } from '@/hooks/useGlobalLock';
 import { useAuth } from '@/hooks/useAuth';
 import { deleteRecord } from '@/lib/firestore';
+import { logChange } from '@/lib/changelog';
 import { DHKPRecord } from '@/types';
 import { LockBanner } from '@/components/dhkp/LockBanner';
 import { RecordTable } from '@/components/dhkp/RecordTable';
@@ -69,7 +70,11 @@ export default function DataPage() {
   }, [filtered, safePage]);
 
   const totalPajakPage = pageRecords.reduce((s, r) => s + r.pajakTerhutang, 0);
-  const totalPajakAll  = filtered.reduce((s, r) => s + r.pajakTerhutang, 0);
+  // Total s.d. halaman ini = semua record dari halaman 1 hingga akhir halaman saat ini
+  const totalPajakAll  = useMemo(() => {
+    const endIdx = safePage * PAGE_SIZE;
+    return filtered.slice(0, endIdx).reduce((s, r) => s + r.pajakTerhutang, 0);
+  }, [filtered, safePage]);
 
   const maxNomor    = records.length > 0 ? Math.max(...records.map(r => r.nomor || 0)) : 0;
   const currentUser = user?.email ?? 'Unknown';
@@ -78,16 +83,44 @@ export default function DataPage() {
   function handleSearchChange(v: string) { setSearch(v); setCurrentPage(1); }
   function handleTahunChange(y: number) { setTahun(y); setCurrentPage(1); }
 
-  function handleOpenAdd() { setEditRecord(null); setModalOpen(true); }
-  function handleOpenEdit(r: DHKPRecord) { setEditRecord(r); setModalOpen(true); }
-  function handleOpenDelete(r: DHKPRecord) { setDeleteTarget(r); }
+  function handleOpenAdd() {
+    setEditRecord(null);
+    setModalOpen(true);
+  }
+
+  function handleOpenEdit(r: DHKPRecord) {
+    // Set editRecord dulu, baru buka modal agar useEffect di RecordModal
+    // selalu menerima editRecord yang sudah ter-set saat open berubah ke true
+    setEditRecord(r);
+    setModalOpen(true);
+  }
+
+  function handleOpenDelete(r: DHKPRecord) {
+    setDeleteTarget(r);
+  }
+
+  function handleCloseModal() {
+    setModalOpen(false);
+    // Reset editRecord setelah animasi tutup (150ms)
+    setTimeout(() => setEditRecord(null), 200);
+  }
 
   async function handleConfirmDelete() {
     if (!deleteTarget) return;
     setDeleteLoading(true);
     try {
+      // Catat audit trail SEBELUM menghapus, agar data masih bisa direferensi
+      await logChange(
+        deleteTarget.id,
+        tahun,
+        deleteTarget.namaWajibPajak,
+        currentUser,
+        'Hapus Data',
+        deleteTarget.namaWajibPajak,
+        'DATA DIHAPUS'
+      );
       await deleteRecord(tahun, deleteTarget.id);
-      showToast('Record berhasil dihapus', 'success');
+      showToast(`Data berhasil dihapus`, 'success');
       setDeleteTarget(null);
     } catch {
       showToast('Gagal menghapus data', 'danger');
@@ -246,8 +279,8 @@ export default function DataPage() {
         editRecord={editRecord}
         maxNomor={maxNomor}
         currentUser={currentUser}
-        onClose={() => setModalOpen(false)}
-        onSaved={() => {}}
+        onClose={handleCloseModal}
+        onSaved={handleCloseModal}
       />
       <DeleteConfirmModal
         open={deleteTarget !== null}
@@ -275,7 +308,7 @@ function FilterBadge({ label, value, icon, color, bg, active, onClick }: {
         color: active ? 'var(--c-inv)' : color,
         borderColor: color,
         fontSize: 'var(--t-sm)',
-        height: 40,
+        height: 44,
       }}
     >
       {icon}{label}: <strong>{value}</strong>

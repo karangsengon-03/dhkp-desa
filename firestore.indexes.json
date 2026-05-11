@@ -1,0 +1,19 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "records",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "nomor", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "changelog",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "editedAt", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

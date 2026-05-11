@@ -4,7 +4,7 @@ import { useState, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import { Upload, AlertTriangle, CheckCircle } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
-import { addRecord } from '@/lib/firestore';
+import { addRecord, updateRecord, getDHKP } from '@/lib/firestore';
 import { DHKPRecord } from '@/types';
 import { ImportPreviewModal } from '@/components/dhkp/ImportPreviewModal';
 import { ImportRow } from '@/app/export-import/page';
@@ -28,6 +28,36 @@ function pick(raw: Record<string, unknown>, ...keys: string[]): unknown {
     if (raw[k] !== undefined && raw[k] !== '') return raw[k];
   }
   return undefined;
+}
+
+/** Bandingkan dua nilai secara string agar angka/boolean terbandingkan konsisten */
+function isSameValue(a: unknown, b: unknown): boolean {
+  return String(a ?? '').trim() === String(b ?? '').trim();
+}
+
+/** Kembalikan field yang berubah antara incoming dan existing, atau null jika tidak ada perubahan */
+function getChangedFields(
+  incoming: Partial<DHKPRecord>,
+  existing: DHKPRecord
+): Partial<DHKPRecord> | null {
+  const fields: Array<keyof Omit<DHKPRecord, 'id'>> = [
+    'nomor', 'nop', 'nomorInduk', 'namaWajibPajak', 'alamatObjekPajak',
+    'pajakTerhutang', 'perubahanPajak', 'statusLunas', 'tanggalBayar',
+    'luasTanah', 'luasBangunan', 'dikelolaOleh',
+  ];
+  const diff: Partial<DHKPRecord> = {};
+  let hasChange = false;
+  for (const f of fields) {
+    if (!isSameValue(incoming[f], existing[f])) {
+      // reason: dynamic key assignment ke Partial<DHKPRecord> via string union tidak bisa
+      // di-typed tanpa mapped type workaround yang lebih kompleks dari nilainya di konteks ini.
+      // f selalu merupakan keyof DHKPRecord yang valid karena berasal dari array fields di atas.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (diff as any)[f] = incoming[f];
+      hasChange = true;
+    }
+  }
+  return hasChange ? diff : null;
 }
 
 function validateImportRow(raw: Record<string, unknown>, idx: number): ImportRow {
@@ -62,7 +92,7 @@ export function SeksiImport({ isLocked }: SeksiImportProps) {
   const { showToast } = useToast();
   const [tahunImport, setTahunImport] = useState(CURRENT_YEAR);
   const [importLoading, setImportLoading] = useState(false);
-  const [importProgress, setImportProgress] = useState<{ done: number; total: number } | null>(null);
+  const [importProgress, setImportProgress] = useState<{ done: number; total: number; skipped: number } | null>(null);
   const [importRows, setImportRows] = useState<ImportRow[]>([]);
   const [previewOpen, setPreviewOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -95,6 +125,7 @@ export function SeksiImport({ isLocked }: SeksiImportProps) {
           return;
         }
         const parsed = rawRows.map((r, i) => validateImportRow(r, i));
+        // Deteksi duplikat NOP dalam file yang sama
         const nopSeen = new Map<string, number>();
         parsed.forEach((item, i) => {
           const nop = item.row.nop || '';
@@ -119,31 +150,81 @@ export function SeksiImport({ isLocked }: SeksiImportProps) {
   async function handleConfirmImport() {
     if (isLocked) { showToast('Data sedang dikunci.', 'danger'); return; }
     setImportLoading(true);
+
+    // Tutup preview agar user bisa lihat progress di card bawah
+    setPreviewOpen(false);
+
     const validRows = importRows.filter((r) => r.errors.length === 0);
-    setImportProgress({ done: 0, total: validRows.length });
+    setImportProgress({ done: 0, total: validRows.length, skipped: 0 });
+
     let sukses = 0;
+    let diperbarui = 0;
+    let dilewati = 0;
     let gagal = 0;
+
     try {
+      // Fetch semua data existing sekali — untuk perbandingan per NOP
+      const existingRecords = await getDHKP(tahunImport);
+      const existingByNOP = new Map<string, DHKPRecord>();
+      existingRecords.forEach((r) => {
+        if (r.nop) existingByNOP.set(r.nop.trim(), r);
+      });
+
       for (let i = 0; i < validRows.length; i++) {
+        const incoming = validRows[i].row;
+        const nop = (incoming.nop ?? '').trim();
+        const existing = nop ? existingByNOP.get(nop) : undefined;
+
         try {
-          await addRecord(tahunImport, { ...validRows[i].row, tahun: tahunImport } as Omit<DHKPRecord, 'id'>);
-          sukses++;
+          if (existing) {
+            // NOP sudah ada — cek apakah ada perubahan
+            const diff = getChangedFields(incoming, existing);
+            if (diff === null) {
+              // Tidak ada perubahan — lewati
+              dilewati++;
+            } else {
+              // Ada perubahan — update
+              await updateRecord(tahunImport, existing.id, { ...diff, tahun: tahunImport });
+              diperbarui++;
+            }
+          } else {
+            // NOP baru — tambahkan
+            await addRecord(tahunImport, { ...incoming, tahun: tahunImport } as Omit<DHKPRecord, 'id'>);
+            sukses++;
+          }
         } catch {
           gagal++;
         }
-        setImportProgress({ done: i + 1, total: validRows.length });
+
+        setImportProgress({ done: i + 1, total: validRows.length, skipped: dilewati });
       }
+
+      const parts: string[] = [];
+      if (sukses > 0) parts.push(`${sukses} ditambahkan`);
+      if (diperbarui > 0) parts.push(`${diperbarui} diperbarui`);
+      if (dilewati > 0) parts.push(`${dilewati} tidak berubah (dilewati)`);
+      if (gagal > 0) parts.push(`${gagal} gagal`);
+
       showToast(
-        `Import selesai: ${sukses} sukses${gagal > 0 ? `, ${gagal} gagal` : ''}`,
+        `Import selesai: ${parts.join(', ')}`,
         gagal > 0 ? 'warning' : 'success',
       );
-      setPreviewOpen(false);
       setImportRows([]);
     } catch {
-      showToast('Import gagal', 'danger');
+      showToast('Import gagal — koneksi bermasalah', 'danger');
     } finally {
       setImportLoading(false);
-      setImportProgress(null);
+      setTimeout(() => setImportProgress(null), 3000);
+    }
+  }
+
+  /** Tutup preview modal saja — tidak reset rows saat import sedang berjalan */
+  function handleClosePreview() {
+    if (!importLoading) {
+      setPreviewOpen(false);
+      setImportRows([]);
+    } else {
+      setPreviewOpen(false);
     }
   }
 
@@ -169,19 +250,20 @@ export function SeksiImport({ isLocked }: SeksiImportProps) {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s4)' }}>
-            {/* Format info */}
+            {/* Info format */}
             <div style={{ padding: 'var(--s3) var(--s4)', borderRadius: 'var(--r-md)', background: 'var(--c-bg)', border: '1px solid var(--c-border)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 'var(--s2)' }}>
                 <CheckCircle size={13} style={{ color: 'var(--c-ok)' }} />
                 <span style={{ fontSize: 'var(--t-xs)', fontWeight: 600, color: 'var(--c-t2)' }}>Format kolom yang diterima:</span>
               </div>
               <p style={{ fontSize: 'var(--t-xs)', color: 'var(--c-t3)', lineHeight: 1.7 }}>
-                <code style={{ background: 'var(--c-surface)', padding: '2px 6px', borderRadius: 'var(--r-sm)', fontSize: 11 }}>
+                <code style={{ background: 'var(--c-surface)', padding: '2px 6px', borderRadius: 'var(--r-sm)', fontSize: 'var(--t-xs)' }}>
                   No · NOP · Nomor Induk · Nama WP · Alamat Objek Pajak · Pajak Terhutang · Perubahan Pajak · Status Lunas · Tanggal Bayar · Luas Tanah · Luas Bangunan · Dikelola Oleh
                 </code>
               </p>
               <p style={{ fontSize: 'var(--t-xs)', color: 'var(--c-t3)', marginTop: 'var(--s2)' }}>
                 Kolom <strong>NOP</strong> dan <strong>Nama WP</strong> wajib diisi. Status Lunas: <code>Lunas</code> / <code>Belum</code>.
+                Jika NOP sudah ada dan <strong>tidak ada perubahan</strong>, data dilewati otomatis.
               </p>
             </div>
 
@@ -189,8 +271,11 @@ export function SeksiImport({ isLocked }: SeksiImportProps) {
             {importProgress && (
               <div style={{ padding: 'var(--s3) var(--s4)', borderRadius: 'var(--r-md)', background: 'var(--c-navy-soft)', border: '1px solid var(--c-navy)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: 'var(--t-xs)', color: 'var(--c-navy)', fontWeight: 600 }}>
-                  <span>Mengimport data...</span>
-                  <span>{importProgress.done} dari {importProgress.total} berhasil diimpor</span>
+                  <span>{importLoading ? 'Mengimport data...' : 'Import selesai'}</span>
+                  <span>
+                    {importProgress.done} dari {importProgress.total} diproses
+                    {importProgress.skipped > 0 && ` · ${importProgress.skipped} dilewati`}
+                  </span>
                 </div>
                 <div style={{ background: 'var(--c-border)', borderRadius: 'var(--r-full)', height: 8, overflow: 'hidden' }}>
                   <div style={{ height: 8, background: 'var(--c-navy)', borderRadius: 'var(--r-full)', transition: 'width 200ms ease', width: `${Math.round((importProgress.done / importProgress.total) * 100)}%` }} />
@@ -227,7 +312,7 @@ export function SeksiImport({ isLocked }: SeksiImportProps) {
 
       <ImportPreviewModal
         open={previewOpen}
-        onClose={() => { setPreviewOpen(false); setImportRows([]); }}
+        onClose={handleClosePreview}
         onConfirm={handleConfirmImport}
         rows={importRows}
         loading={importLoading}

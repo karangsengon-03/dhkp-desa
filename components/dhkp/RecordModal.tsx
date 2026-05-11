@@ -129,16 +129,28 @@ export function RecordModal({
           { key: 'luasBangunan', label: 'Luas Bangunan' },
           { key: 'dikelolaOleh', label: 'Dikelola Oleh' },
         ];
-        for (const { key, label } of fieldsToLog) {
+        // Kumpulkan semua log yang berubah, lalu kirim atomik via Promise.all
+        const changedLogs = fieldsToLog.filter(({ key }) => {
           const oldVal = editRecord[key as keyof DHKPRecord] as string | number | boolean;
           const newVal = payload[key] as string | number | boolean;
-          if (String(oldVal) !== String(newVal)) {
-            await logChange(editRecord.id, tahun, editRecord.namaWajibPajak, currentUser, label, oldVal, newVal);
-          }
+          return String(oldVal) !== String(newVal);
+        });
+        if (changedLogs.length > 0) {
+          await Promise.all(
+            changedLogs.map(({ key, label }) =>
+              logChange(
+                editRecord.id, tahun, editRecord.namaWajibPajak, currentUser, label,
+                editRecord[key as keyof DHKPRecord] as string | number | boolean,
+                payload[key] as string | number | boolean
+              )
+            )
+          );
         }
         showToast('Data berhasil diperbarui', 'success');
       } else {
-        await addRecord(tahun, payload);
+        const newId = await addRecord(tahun, payload);
+        // Audit trail untuk data baru
+        await logChange(newId, tahun, payload.namaWajibPajak, currentUser, 'Tambah Data', '', 'Data baru ditambahkan');
         showToast('Data berhasil ditambahkan', 'success');
       }
       onSaved();

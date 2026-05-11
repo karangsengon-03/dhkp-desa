@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Pencil, Trash2, FileX, Eye, EyeOff } from 'lucide-react';
 import { DHKPRecord, GlobalLock } from '@/types';
 import { Toggle } from '@/components/ui/Toggle';
@@ -24,6 +24,19 @@ interface RecordTableProps {
   totalPajakPage: number;
   totalPajakAll: number;
   visible: Set<ColKey>;
+}
+
+/** Style helper untuk TH — didefinisikan di luar komponen agar tidak jadi "component during render" */
+function thStyle(right?: boolean): React.CSSProperties {
+  return {
+    background: 'var(--c-navy)', color: 'var(--c-inv)',
+    fontSize: 'var(--t-xs)', fontWeight: 700,
+    textTransform: 'uppercase', letterSpacing: '0.05em',
+    height: 44, padding: '0 12px',
+    textAlign: right ? 'right' : 'left',
+    whiteSpace: 'nowrap',
+    borderRight: '1px solid rgba(255,255,255,0.08)',
+  };
 }
 
 export function RecordTable({
@@ -74,42 +87,28 @@ export function RecordTable({
     );
   }
 
-  const TH = ({ children, right }: { children: React.ReactNode; right?: boolean }) => (
-    <th style={{
-      background: '#1E3A5F', color: '#ffffff',
-      fontSize: 12, fontWeight: 700,
-      textTransform: 'uppercase', letterSpacing: '0.05em',
-      height: 44, padding: '0 12px',
-      textAlign: right ? 'right' : 'left',
-      whiteSpace: 'nowrap',
-      borderRight: '1px solid rgba(255,255,255,0.08)',
-    }}>
-      {children}
-    </th>
-  );
-
   return (
     <div className="table-wrapper">
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr>
             {/* NO — selalu tampil */}
-            <TH><span style={{ display: 'flex', justifyContent: 'center' }}>No</span></TH>
-            {show('nop')              && <TH>NOP</TH>}
-            {show('nomorInduk')       && <TH>No. Induk</TH>}
-            {show('namaWajibPajak')   && <TH>Nama Wajib Pajak</TH>}
-            {show('alamatObjekPajak') && <TH>Alamat Objek</TH>}
-            {show('pajakTerhutang')   && <TH right>Pajak Terhutang</TH>}
-            {show('perubahanPajak')   && <TH right>Perubahan</TH>}
-            {show('statusLunas')      && <TH><span style={{ display: 'flex', justifyContent: 'center' }}>Lunas</span></TH>}
-            {show('tanggalBayar')     && <TH>Tgl Bayar</TH>}
-            {show('luasTanah')        && <TH right>Luas Tanah</TH>}
-            {show('luasBangunan')     && <TH right>Luas Bgn</TH>}
-            {show('dikelolaOleh')     && <TH>Dikelola</TH>}
+            <th style={thStyle()}><span style={{ display: 'flex', justifyContent: 'center' }}>No</span></th>
+            {show('nop')              && <th style={thStyle()}>NOP</th>}
+            {show('nomorInduk')       && <th style={thStyle()}>No. Induk</th>}
+            {show('namaWajibPajak')   && <th style={thStyle()}>Nama Wajib Pajak</th>}
+            {show('alamatObjekPajak') && <th style={thStyle()}>Alamat Objek</th>}
+            {show('pajakTerhutang')   && <th style={thStyle(true)}>Pajak Terhutang</th>}
+            {show('perubahanPajak')   && <th style={thStyle(true)}>Perubahan</th>}
+            {show('statusLunas')      && <th style={thStyle()}><span style={{ display: 'flex', justifyContent: 'center' }}>Lunas</span></th>}
+            {show('tanggalBayar')     && <th style={thStyle()}>Tgl Bayar</th>}
+            {show('luasTanah')        && <th style={thStyle(true)}>Luas Tanah</th>}
+            {show('luasBangunan')     && <th style={thStyle(true)}>Luas Bgn</th>}
+            {show('dikelolaOleh')     && <th style={thStyle()}>Dikelola</th>}
             {/* AKSI — selalu tampil */}
             <th style={{
-              background: '#1E3A5F', color: '#fff',
-              fontSize: 12, fontWeight: 700, textTransform: 'uppercase',
+              background: 'var(--c-navy)', color: 'var(--c-inv)',
+              fontSize: 'var(--t-xs)', fontWeight: 700, textTransform: 'uppercase',
               letterSpacing: '0.05em', height: 44, padding: '0 12px',
               textAlign: 'center', whiteSpace: 'nowrap',
               position: 'sticky', right: 0, zIndex: 3,
@@ -123,7 +122,7 @@ export function RecordTable({
           {records.map((record, idx) => {
             const rev = revealedIds.has(record.id);
             const isLunas = record.statusLunas;
-            const rowBg = isLunas ? '#F0FDF4' : (idx % 2 === 0 ? 'var(--c-surface)' : 'var(--c-surface-2)');
+            const rowBg = isLunas ? 'var(--c-ok-soft)' : (idx % 2 === 0 ? 'var(--c-surface)' : 'var(--c-surface-2)');
 
             return (
               <tr key={record.id} style={{ background: rowBg, borderBottom: '1px solid var(--c-border)' }}>
@@ -140,8 +139,9 @@ export function RecordTable({
                       <span>{rev ? (record.nop || '-') : maskNOP(record.nop)}</span>
                       {record.nop && (
                         <button type="button" onClick={() => toggleReveal(record.id)}
-                          style={{ width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--c-t4)', borderRadius: 4 }}>
-                          {rev ? <EyeOff size={13} /> : <Eye size={13} />}
+                          aria-label={rev ? 'Sembunyikan NOP' : 'Tampilkan NOP'}
+                          style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--c-t4)', borderRadius: 4 }}>
+                          {rev ? <EyeOff size={14} /> : <Eye size={14} />}
                         </button>
                       )}
                     </div>
@@ -174,7 +174,7 @@ export function RecordTable({
                 {/* Pajak */}
                 {show('pajakTerhutang') && (
                   <td style={{ padding: '0 12px', height: 52, textAlign: 'right', whiteSpace: 'nowrap', minWidth: 140 }}>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: '#1E3A5F' }}>{formatRupiah(record.pajakTerhutang)}</span>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--c-navy)' }}>{formatRupiah(record.pajakTerhutang)}</span>
                   </td>
                 )}
 
@@ -224,20 +224,28 @@ export function RecordTable({
 
                 {/* Aksi */}
                 <td style={{
-                  padding: '0 12px', height: 52,
+                  padding: '0 8px', height: 52,
                   position: 'sticky', right: 0,
-                  background: isLunas ? '#F0FDF4' : rowBg,
+                  background: isLunas ? 'var(--c-ok-soft)' : rowBg,
                   borderLeft: '1px solid var(--c-border)',
-                  minWidth: 100,
+                  minWidth: 108,
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                    <button onClick={() => onEdit(record)} disabled={isLocked}
-                      style={{ width: 36, height: 36, borderRadius: 6, border: 'none', cursor: isLocked ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--c-navy-soft)', color: 'var(--c-navy)', opacity: isLocked ? 0.35 : 1 }}>
-                      <Pencil size={15} />
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                    <button
+                      onClick={() => onEdit(record)}
+                      disabled={isLocked}
+                      aria-label={`Edit data ${record.namaWajibPajak}`}
+                      style={{ width: 44, height: 44, borderRadius: 6, border: 'none', cursor: isLocked ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--c-navy-soft)', color: 'var(--c-navy)', opacity: isLocked ? 0.35 : 1 }}
+                    >
+                      <Pencil size={16} />
                     </button>
-                    <button onClick={() => onDelete(record)} disabled={isLocked}
-                      style={{ width: 36, height: 36, borderRadius: 6, border: 'none', cursor: isLocked ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--c-err-soft)', color: 'var(--c-err)', opacity: isLocked ? 0.35 : 1 }}>
-                      <Trash2 size={15} />
+                    <button
+                      onClick={() => onDelete(record)}
+                      disabled={isLocked}
+                      aria-label={`Hapus data ${record.namaWajibPajak}`}
+                      style={{ width: 44, height: 44, borderRadius: 6, border: 'none', cursor: isLocked ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--c-err-soft)', color: 'var(--c-err)', opacity: isLocked ? 0.35 : 1 }}
+                    >
+                      <Trash2 size={16} />
                     </button>
                   </div>
                 </td>
@@ -247,20 +255,67 @@ export function RecordTable({
         </tbody>
 
         <tfoot>
+          {/* Baris 1 — Total halaman ini */}
           <tr style={{ background: 'var(--c-navy-soft)', borderTop: '2px solid var(--c-border-md)' }}>
-            <td colSpan={3} style={{ padding: '10px 12px', fontSize: 13, fontWeight: 600, color: 'var(--c-t3)', textAlign: 'right' }}>
+            <td
+              colSpan={
+                1 +
+                (show('nop') ? 1 : 0) +
+                (show('nomorInduk') ? 1 : 0) +
+                (show('namaWajibPajak') ? 1 : 0) +
+                (show('alamatObjekPajak') ? 1 : 0)
+              }
+              style={{ padding: '10px 12px', fontSize: 'var(--t-xs)', fontWeight: 600, color: 'var(--c-t3)', textAlign: 'right' }}
+            >
               Total Halaman Ini
             </td>
-            {show('nop') && <td />}
-            {show('nomorInduk') && <td />}
-            {show('namaWajibPajak') && <td />}
-            {show('alamatObjekPajak') && <td />}
             {show('pajakTerhutang') && (
-              <td style={{ padding: '10px 12px', textAlign: 'right', fontSize: 14, fontWeight: 700, color: '#1E3A5F', whiteSpace: 'nowrap' }}>
+              <td style={{ padding: '10px 12px', textAlign: 'right', fontSize: 14, fontWeight: 700, color: 'var(--c-navy)', whiteSpace: 'nowrap' }}>
                 {formatRupiah(totalPajakPage)}
               </td>
             )}
-            <td colSpan={20} />
+            <td
+              colSpan={
+                (show('perubahanPajak') ? 1 : 0) +
+                (show('statusLunas') ? 1 : 0) +
+                (show('tanggalBayar') ? 1 : 0) +
+                (show('luasTanah') ? 1 : 0) +
+                (show('luasBangunan') ? 1 : 0) +
+                (show('dikelolaOleh') ? 1 : 0) +
+                1 /* kolom Aksi selalu ada */
+              }
+            />
+          </tr>
+          {/* Baris 2 — Total kumulatif s.d. halaman ini (dari halaman 1 sampai halaman saat ini) */}
+          <tr style={{ background: 'var(--c-navy)', borderTop: '1px solid var(--c-border-md)' }}>
+            <td
+              colSpan={
+                1 +
+                (show('nop') ? 1 : 0) +
+                (show('nomorInduk') ? 1 : 0) +
+                (show('namaWajibPajak') ? 1 : 0) +
+                (show('alamatObjekPajak') ? 1 : 0)
+              }
+              style={{ padding: '10px 12px', fontSize: 'var(--t-xs)', fontWeight: 700, color: 'var(--c-inv)', textAlign: 'right' }}
+            >
+              Total s.d. Halaman Ini
+            </td>
+            {show('pajakTerhutang') && (
+              <td style={{ padding: '10px 12px', textAlign: 'right', fontSize: 14, fontWeight: 800, color: 'var(--c-gold)', whiteSpace: 'nowrap' }}>
+                {formatRupiah(totalPajakAll)}
+              </td>
+            )}
+            <td
+              colSpan={
+                (show('perubahanPajak') ? 1 : 0) +
+                (show('statusLunas') ? 1 : 0) +
+                (show('tanggalBayar') ? 1 : 0) +
+                (show('luasTanah') ? 1 : 0) +
+                (show('luasBangunan') ? 1 : 0) +
+                (show('dikelolaOleh') ? 1 : 0) +
+                1 /* kolom Aksi selalu ada */
+              }
+            />
           </tr>
         </tfoot>
       </table>

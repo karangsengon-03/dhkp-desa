@@ -1,6 +1,6 @@
 'use client';
 
-import { CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
+import { X, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import { ImportRow } from '@/app/export-import/page';
 import { maskNOP } from '@/lib/masking';
 
@@ -20,7 +20,7 @@ export function ImportPreviewModal({ open, onClose, onConfirm, rows, loading }: 
 
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
-      {/* Backdrop */}
+      {/* Backdrop — bisa diklik untuk tutup saat tidak loading */}
       <div
         onClick={!loading ? onClose : undefined}
         style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(2px)' }}
@@ -34,15 +34,16 @@ export function ImportPreviewModal({ open, onClose, onConfirm, rows, loading }: 
           <div>
             <div style={{ fontWeight: 700, fontSize: 'var(--t-lg)', color: 'var(--c-t1)' }}>Preview Import</div>
             <div style={{ fontSize: 'var(--t-xs)', color: 'var(--c-t3)', marginTop: 2 }}>
-              {rows.length} baris terbaca dari file
+              {rows.length} baris terbaca · NOP sudah ada akan diperbarui jika ada perubahan
             </div>
           </div>
+          {/* X selalu bisa diklik — saat loading hanya tutup modal, tidak batalkan import */}
           <button
             onClick={onClose}
-            disabled={loading}
+            title={loading ? 'Tutup preview (import tetap berjalan)' : 'Tutup'}
             style={{ width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--c-t3)', borderRadius: 'var(--r-md)' }}
           >
-            <XCircle size={20} />
+            <X size={20} />
           </button>
         </div>
 
@@ -96,7 +97,7 @@ export function ImportPreviewModal({ open, onClose, onConfirm, rows, loading }: 
                     </td>
                     <td style={{ fontSize: 'var(--t-xs)', color: ok ? 'var(--c-ok)' : 'var(--c-err)' }}>
                       {ok
-                        ? <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><CheckCircle size={12} /> Siap diimport</span>
+                        ? <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><CheckCircle size={12} /> Siap diproses</span>
                         : item.errors.join(' · ')
                       }
                     </td>
@@ -113,9 +114,9 @@ export function ImportPreviewModal({ open, onClose, onConfirm, rows, loading }: 
             className="btn btn-ghost"
             onClick={onClose}
             disabled={loading}
-            style={{ fontSize: 'var(--t-sm)' }}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--t-sm)' }}
           >
-            Batal
+            <XCircle size={14} /> Batal
           </button>
           <button
             className="btn btn-primary"
@@ -124,7 +125,7 @@ export function ImportPreviewModal({ open, onClose, onConfirm, rows, loading }: 
             style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--t-sm)' }}
           >
             <CheckCircle size={14} />
-            {loading ? 'Mengimport...' : `Import ${valid.length} Data`}
+            {loading ? 'Memproses...' : `Proses ${valid.length} Data`}
           </button>
         </div>
       </div>
