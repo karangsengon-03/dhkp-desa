@@ -91,7 +91,7 @@ export default function PengaturanPage() {
     <AppShell pageTitle="Pengaturan">
       <LockBanner lock={lock} />
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s4)' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s5)' }}>
 
         {/* Akun & Keamanan */}
         <SeksiAkun

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { loginWithEmail, getSavedUser, saveUser } from '@/lib/auth';
+import { loginWithEmail, getSavedCredentials, saveCredentials } from '@/lib/auth';
 import { useToast } from '@/components/ui/Toast';
 import { ROUTES } from '@/lib/routes';
 
@@ -20,13 +20,17 @@ export default function LoginPage() {
   const [remember, setRemember] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
+  // Redirect jika sudah login
   useEffect(() => {
     if (!loading && user) router.replace(ROUTES.dashboard);
   }, [user, loading, router]);
 
+  // Pre-fill dari localStorage
   useEffect(() => {
-    const saved = getSavedUser();
+    const saved = getSavedCredentials();
     if (saved?.email) setEmail(saved.email);
+    if (saved?.password) setPassword(saved.password);
+    if (saved?.email) setRemember(true);
   }, []);
 
   async function handleLogin(e: React.FormEvent) {
@@ -38,14 +42,16 @@ export default function LoginPage() {
     setSubmitting(true);
     try {
       await loginWithEmail(email, password);
-      if (remember) saveUser(email, email.split('@')[0]);
+      // Simpan kredensial jika centang "ingat"
+      if (remember) {
+        saveCredentials(email, password, email.split('@')[0]);
+      }
       showToast('Berhasil masuk ke sistem', 'success');
-      // Tidak redirect di sini — biarkan useEffect yang watch `user` dari onAuthStateChanged
-      // yang handle redirect. Ini mencegah race condition antara Firebase Auth state update
-      // dan router.replace yang dipanggil sebelum user state terupdate di useAuth.
+      // Tidak redirect di sini — useEffect watch user yang handle redirect
+      // untuk menghindari race condition dengan onAuthStateChanged
     } catch {
       showToast('Email atau kata sandi salah', 'danger');
-      setSubmitting(false); // hanya reset di error — saat sukses biarkan loading sampai redirect
+      setSubmitting(false);
     }
   }
 
@@ -54,9 +60,7 @@ export default function LoginPage() {
   return (
     <div style={{
       minHeight: '100dvh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
       background: 'var(--c-navy)',
       padding: '24px 16px',
     }}>
@@ -64,28 +68,17 @@ export default function LoginPage() {
 
         {/* Logo & Brand */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          {/*
-            Menggunakan next/image untuk optimasi otomatis (WebP, lazy load).
-            unoptimized=false (default) agar Next.js bisa serve format optimal.
-          */}
           <Image
             src="/icons/icon-128.png"
             alt="DHKP"
-            width={72}
-            height={72}
+            width={72} height={72}
             priority
             style={{
-              borderRadius: 16,
-              margin: '0 auto 16px',
+              borderRadius: 16, margin: '0 auto 16px', display: 'block',
               boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-              display: 'block',
             }}
           />
-          <h1 style={{
-            fontSize: 28, fontWeight: 800,
-            color: '#ffffff', letterSpacing: '-0.5px',
-            marginBottom: 4,
-          }}>
+          <h1 style={{ fontSize: 28, fontWeight: 800, color: '#ffffff', letterSpacing: '-0.5px', marginBottom: 4 }}>
             DHKP
           </h1>
           <p style={{ fontSize: 15, fontWeight: 500, color: 'var(--c-gold)' }}>
@@ -95,16 +88,11 @@ export default function LoginPage() {
 
         {/* Card */}
         <div style={{
-          background: '#ffffff',
-          borderRadius: 16,
+          background: '#ffffff', borderRadius: 16,
           padding: '32px 28px',
           boxShadow: '0 24px 64px rgba(0,0,0,0.4)',
         }}>
-          <p style={{
-            fontSize: 15, fontWeight: 600,
-            color: '#1A1A1A', textAlign: 'center',
-            marginBottom: 24,
-          }}>
+          <p style={{ fontSize: 15, fontWeight: 600, color: '#1A1A1A', textAlign: 'center', marginBottom: 24 }}>
             Masuk ke Sistem
           </p>
 
@@ -112,14 +100,7 @@ export default function LoginPage() {
 
             {/* Email */}
             <div>
-              <label
-                htmlFor="login-email"
-                style={{
-                  display: 'block', fontSize: 13,
-                  fontWeight: 600, color: '#595959',
-                  marginBottom: 8,
-                }}
-              >
+              <label htmlFor="login-email" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#595959', marginBottom: 8 }}>
                 Email
               </label>
               <input
@@ -136,14 +117,7 @@ export default function LoginPage() {
 
             {/* Kata Sandi */}
             <div>
-              <label
-                htmlFor="login-password"
-                style={{
-                  display: 'block', fontSize: 13,
-                  fontWeight: 600, color: '#595959',
-                  marginBottom: 8,
-                }}
-              >
+              <label htmlFor="login-password" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#595959', marginBottom: 8 }}>
                 Kata Sandi
               </label>
               <div style={{ position: 'relative' }}>
@@ -177,24 +151,16 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Ingat email — baris sendiri, jelas */}
-            <label style={{
-              display: 'flex', alignItems: 'center',
-              gap: 10, cursor: 'pointer',
-              padding: '4px 0',
-            }}>
+            {/* Ingat kredensial */}
+            <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', padding: '4px 0' }}>
               <input
                 type="checkbox"
                 checked={remember}
                 onChange={e => setRemember(e.target.checked)}
-                style={{
-                  width: 18, height: 18,
-                  flexShrink: 0, cursor: 'pointer',
-                  accentColor: '#1E3A5F',
-                }}
+                style={{ width: 18, height: 18, flexShrink: 0, cursor: 'pointer', accentColor: '#1E3A5F' }}
               />
               <span style={{ fontSize: 14, color: '#595959', userSelect: 'none' }}>
-                Ingat email saya
+                Ingat email &amp; kata sandi
               </span>
             </label>
 
@@ -227,52 +193,29 @@ export default function LoginPage() {
                   Masuk...
                 </>
               ) : (
-                <>
-                  <LogIn size={18} />
-                  Masuk
-                </>
+                <><LogIn size={18} /> Masuk</>
               )}
             </button>
           </form>
 
-          <p style={{
-            textAlign: 'center', marginTop: 20,
-            fontSize: 13, color: '#A0A0A0',
-          }}>
+          <p style={{ textAlign: 'center', marginTop: 20, fontSize: 13, color: '#A0A0A0' }}>
             Desa Karang Sengon · PBB-P2
           </p>
         </div>
 
         <style>{`
           @keyframes spin { to { transform: rotate(360deg); } }
-
-          /*
-           * .login-input: input styling khusus halaman login.
-           * Menggunakan CSS class (bukan inline style) agar :focus-visible global
-           * dari globals.css tetap berfungsi untuk keyboard navigation.
-           * Border-color pada focus dihandle via box-shadow agar tidak konflik
-           * dengan :focus-visible outline.
-           */
           .login-input {
-            display: block;
-            width: 100%;
-            height: 48px;
-            padding: 0 14px;
-            font-size: 15px;
-            font-family: inherit;
-            color: #1A1A1A;
-            background: #F8F9FA;
-            border: 1.5px solid #DDD8CE;
-            border-radius: 8px;
+            display: block; width: 100%; height: 48px;
+            padding: 0 14px; font-size: 15px; font-family: inherit;
+            color: #1A1A1A; background: #F8F9FA;
+            border: 1.5px solid #DDD8CE; border-radius: 8px;
             box-sizing: border-box;
             transition: border-color 150ms ease, box-shadow 150ms ease;
           }
-          .login-input:focus,
-          .login-input:focus-visible {
-            outline: 2px solid transparent; /* outline transparan agar tidak double dengan box-shadow di bawah */
-            outline-offset: 2px;
-            border-color: #1E3A5F;
-            background: #fff;
+          .login-input:focus, .login-input:focus-visible {
+            outline: 2px solid transparent; outline-offset: 2px;
+            border-color: #1E3A5F; background: #fff;
             box-shadow: 0 0 0 3px rgba(30,58,95,0.15);
           }
         `}</style>

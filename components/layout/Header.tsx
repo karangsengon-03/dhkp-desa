@@ -40,12 +40,11 @@ export function Header({ onMenuClick, userName }: HeaderProps) {
     <header className="no-print" style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 20,
       height: 'var(--header-h)',
-      background: '#1E3A5F',  /* hardcode — selalu navy gelap di light & dark */
+      background: '#1E3A5F',
       borderBottom: '1px solid rgba(255,255,255,0.08)',
       boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
     }}>
       <style>{`
-        /* hdr-btn — hex intentional, selalu di atas navy gelap (tidak ikut dark mode) */
         .hdr-btn {
           display: flex; align-items: center; justify-content: center;
           background: transparent; border: none; cursor: pointer;
@@ -59,7 +58,7 @@ export function Header({ onMenuClick, userName }: HeaderProps) {
 
       <div style={{
         display: 'flex', alignItems: 'center', height: '100%',
-        padding: '0 16px', gap: '12px',
+        padding: '0 16px', gap: '8px',
       }}>
 
         {/* Hamburger */}
@@ -67,74 +66,84 @@ export function Header({ onMenuClick, userName }: HeaderProps) {
           className="hdr-btn"
           onClick={onMenuClick}
           aria-label="Buka menu navigasi"
-          style={{ width: 48, height: 48 }}
+          style={{ width: 44, height: 44, flexShrink: 0 }}
         >
           <Menu size={22} />
         </button>
 
-        {/* Brand */}
-        <div style={{ flex: 1, minWidth: 0, lineHeight: 1 }}>
-          <div style={{ fontSize: 19, fontWeight: 700, color: 'var(--c-inv)', whiteSpace: 'nowrap' }}>
+        {/* Brand — min-width 0 agar bisa terpotong, flex-shrink 1 */}
+        <div style={{ flex: '1 1 0', minWidth: 0, lineHeight: 1 }}>
+          <div style={{ fontSize: 18, fontWeight: 700, color: '#ffffff', whiteSpace: 'nowrap' }}>
             DHKP
           </div>
-          <div style={{ fontSize: 'var(--t-xs)', fontWeight: 400, color: 'rgba(255,255,255,0.60)', whiteSpace: 'nowrap', marginTop: 2 }}>
-            Desa Karang Sengon
+          {/* "Karang Sengon" — tanpa kata "Desa" agar tidak tergeser lock badge */}
+          <div style={{ fontSize: 11, fontWeight: 400, color: 'rgba(255,255,255,0.60)', whiteSpace: 'nowrap', marginTop: 1 }}>
+            Karang Sengon
           </div>
         </div>
 
-        {/* Controls kanan */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+        {/* Controls kanan — flex-shrink 0, tidak boleh mengecil */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
 
-          {/* Status kunci — warna lock badge intentional (kontras di atas navy) */}
+          {/* Status kunci */}
           <button
             className="hdr-btn"
             onClick={handleToggleLock}
             disabled={lockLoading}
             title={lock.isLocked ? `Dikunci oleh ${lock.lockedBy}` : 'Data terbuka — klik untuk kunci'}
             style={{
-              gap: 6, padding: '0 12px', height: 40,
-              fontSize: 13, fontWeight: 600,
+              gap: 5, padding: '0 10px', height: 36,
+              fontSize: 12, fontWeight: 600,
               background: lock.isLocked
                 ? 'rgba(239,68,68,0.25)'
                 : 'rgba(34,197,94,0.20)',
-              color: lock.isLocked ? '#FCA5A5' : '#86EFAC', /* light red/green — kontras di atas navy */
+              color: lock.isLocked ? '#FCA5A5' : '#86EFAC',
               border: `1px solid ${lock.isLocked ? 'rgba(239,68,68,0.40)' : 'rgba(34,197,94,0.35)'}`,
               borderRadius: 8, whiteSpace: 'nowrap',
               opacity: lockLoading ? 0.5 : 1,
               cursor: lockLoading ? 'not-allowed' : 'pointer',
-              width: 'auto',
             }}
           >
-            {lock.isLocked ? <Lock size={13} /> : <Unlock size={13} />}
-            <span style={{ marginLeft: 4 }}>{lock.isLocked ? 'Terkunci' : 'Terbuka'}</span>
+            {lock.isLocked ? <Lock size={12} /> : <Unlock size={12} />}
+            <span style={{ marginLeft: 3 }}>{lock.isLocked ? 'Terkunci' : 'Terbuka'}</span>
           </button>
 
-          {/* Dark/Light toggle — warna sun intentional (kontras di atas navy) */}
+          {/* Dark/Light toggle */}
           <button
             className="hdr-btn"
             onClick={toggleTheme}
             aria-label={theme === 'dark' ? 'Ganti ke mode terang' : 'Ganti ke mode gelap'}
-            style={{ width: 48, height: 48 }}
+            style={{ width: 44, height: 44 }}
           >
             {theme === 'dark'
-              ? <Sun size={20} color="#FFD54F" /> /* amber sun — kontras di atas navy */
+              ? <Sun size={20} color="#FFD54F" />
               : <Moon size={20} color="rgba(255,255,255,0.80)" />
             }
           </button>
 
-          {/* Avatar */}
-          <div
-            title={userName}
-            style={{
-              width: 36, height: 36, borderRadius: '50%',
-              background: 'var(--c-gold)', color: 'var(--c-gold-text)',
-              fontSize: 14, fontWeight: 800,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              flexShrink: 0, userSelect: 'none',
+          {/* Avatar — sekarang jadi tombol logout */}
+          <button
+            className="hdr-btn"
+            title={`${userName} — klik untuk keluar`}
+            style={{ padding: 0, borderRadius: '50%', width: 36, height: 36 }}
+            onClick={() => {
+              // Buka sidebar untuk logout — konsisten, tidak buat flow baru
+              // Trigger event custom yang dibaca Sidebar
+              window.dispatchEvent(new CustomEvent('dhkp:open-sidebar'));
             }}
           >
-            {initial}
-          </div>
+            <div
+              style={{
+                width: 34, height: 34, borderRadius: '50%',
+                background: 'var(--c-gold)', color: '#1E3A5F',
+                fontSize: 14, fontWeight: 800,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                userSelect: 'none', pointerEvents: 'none',
+              }}
+            >
+              {initial}
+            </div>
+          </button>
         </div>
       </div>
     </header>

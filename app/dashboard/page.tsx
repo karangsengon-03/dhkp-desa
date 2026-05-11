@@ -95,7 +95,7 @@ export default function DashboardPage() {
       {loading ? (
         <>
           {/* Skeleton stat cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-5 mb-6">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="stat-card">
                 <div className="w-9 h-9 rounded-lg skeleton mb-3" />
@@ -105,7 +105,7 @@ export default function DashboardPage() {
             ))}
           </div>
           {/* Skeleton finance cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-6">
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="card p-5 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg skeleton flex-shrink-0" />
@@ -139,7 +139,7 @@ export default function DashboardPage() {
       ) : (
         <>
           {/* 6 stat cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-5 mb-6">
             <StatCard icon={<Users size={22} />}
               iconBg="var(--c-navy-soft)" iconColor="var(--c-navy)"
               label="Total Objek" value={total} />
@@ -161,7 +161,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Finance cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-6">
             <FinCard icon={<Banknote size={20} />}
               iconBg="var(--c-navy-soft)" iconColor="var(--c-navy)"
               label="Total Pajak Terhutang" value={formatRupiah(totalPajak)} valueColor="var(--c-navy)" />
