@@ -40,11 +40,12 @@ export default function LoginPage() {
       await loginWithEmail(email, password);
       if (remember) saveUser(email, email.split('@')[0]);
       showToast('Berhasil masuk ke sistem', 'success');
-      router.replace(ROUTES.dashboard);
+      // Tidak redirect di sini — biarkan useEffect yang watch `user` dari onAuthStateChanged
+      // yang handle redirect. Ini mencegah race condition antara Firebase Auth state update
+      // dan router.replace yang dipanggil sebelum user state terupdate di useAuth.
     } catch {
       showToast('Email atau kata sandi salah', 'danger');
-    } finally {
-      setSubmitting(false);
+      setSubmitting(false); // hanya reset di error — saat sukses biarkan loading sampai redirect
     }
   }
 
